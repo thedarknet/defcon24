@@ -1,0 +1,5 @@
+STM32F103C8T6 
+
+http://www2.st.com/content/st_com/en/products/microcontrollers/stm32-32-bit-arm-cortex-mcus/stm32f1-series/stm32f103/stm32f103c8.html
+https://my2.st.com/content/my_st_com/en/products/ecosystems/stm32-open-development-environment.html
+https://sourceforge.net/projects/stm32flash/files/
