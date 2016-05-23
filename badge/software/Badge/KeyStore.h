@@ -13,11 +13,21 @@ class ContactStore {
 		static const uint8_t NumRecordsOffset = 1;
 		static const uint8_t ReseveOffset1 = 3;
 		static const uint8_t CURRENT_VERSION = 0xDC;
+	
+		static const uint16_t MAX_CONTACTS = 300;
+		/////////////////////////////
 		//start Address[0] = Version byte
 		//start Address[1-2] = NumOfRecords
-		//start Address[3] = Reserved
-		//start Address[4-(4+sizeof(MyInfo))] - my info
-		//start address[MyInfo+1] = array of contacts
+		//[ my info ]
+		//start Address[3-4] = radio unique id
+		//start Address[5-17] = badge owner agent name
+		//start Address[18-42] = badge owner public key
+		//start Address[43-55] = badge owner private key
+		//[ my info ]
+		//start address[56-95] = Contact0
+		//start address[(every 38 bytes)] = Contact1
+		//start address[] - Contact N
+		/////////////////////////////
 	
 		class RecordInfo {
 			public:
@@ -27,19 +37,21 @@ class ContactStore {
 				uint8_t getVersion();
 				uint16_t getNumRecords();
 				void setNumRecords(uint16_t num);
+				void incRecordCount();
+				bool isFull();
 			private:
-					uint32_t StartAddress;
+				uint32_t StartAddress;
 		};
-	
 	  
 		class Contact {
 			public:
+				static const uint8_t SIZE = sizeof(uint16_t) + AGENT_NAME_LENGTH + PUBLIC_KEY_LENGTH;
 				uint16_t getUniqueID();
 				const char *getAgentName();
 				uint8_t *getPublicKey();
 				void setUniqueID(uint16_t id);
-				void setAgentname(const char *name);
-				void setPublicKey(uint8_t *key);
+				void setAgentname(const char name[AGENT_NAME_LENGTH]);
+				void setPublicKey(uint8_t key[PUBLIC_KEY_LENGTH]);
 				Contact(uint32_t startAddress);
 			protected:
 				uint32_t StartAddress;
@@ -50,18 +62,23 @@ class ContactStore {
 	
 		class MyInfo : public Contact {
 			public:
+				static const uint8_t SIZE = Contact::SIZE + PRIVATE_KEY_LENGTH;
+			public:
 				//uint8_t MyPrivateKey[PRIVATE_KEY_LENGTH];
 				uint8_t *getPrivateKey();
 				MyInfo(uint32_t startAddress);
 		};
+		
 		static const uint8_t OffSetToFirstContact = sizeof(MyInfo);
 	public:
 		ContactStore(uint32_t startAddr, uint32_t size);
+		MyInfo getMyInfo();
 		bool init();
-		bool addContact(const Contact &c);
-		bool removeContact(const char *AgentName);
+		bool addContact(uint16_t uid, char agentName[AGENT_NAME_LENGTH], uint8_t key[PUBLIC_KEY_LENGTH]);
 		uint16_t getNumContactsThatCanBeStored();
 		uint16_t getCurrentStoredContactCount();
+	protected:
+		uint32_t getStartContactsAddress();
 	private:
 		uint32_t StartAddress;
 		uint32_t StorageSize;

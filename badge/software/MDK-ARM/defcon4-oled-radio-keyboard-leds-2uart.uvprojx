@@ -473,7 +473,7 @@
             <File>
               <FileName>KeyStore.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>.\KeyStore.cpp</FilePath>
+              <FilePath>..\Badge\KeyStore.cpp</FilePath>
             </File>
           </Files>
         </Group>
