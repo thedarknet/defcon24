@@ -15,7 +15,7 @@ QKeyboard::QKeyboard(PinConfig Y1Pin, PinConfig Y2Pin, PinConfig Y3Pin, PinConfi
 
 void QKeyboard::scan() {
 	uint8_t selectedPin = NO_PIN_SELECTED;
-	int xPins = 1; //sizeof(XPins)/sizeof(XPins[0])
+	int xPins = sizeof(XPins)/sizeof(XPins[0]);
 	for(int r = 0;r<xPins;++r) {
 		for (uint8_t x=0;x<xPins;++x) {
 			//set the correct X pin

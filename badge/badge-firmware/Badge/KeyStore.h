@@ -16,15 +16,14 @@ class ContactStore {
 	
 		static const uint16_t MAX_CONTACTS = 300;
 		/////////////////////////////
-		//start Address[0] = Version byte
-		//start Address[1-2] = NumOfRecords
+		//start Address[0-1] = Version byte
 		//[ my info ]
-		//start Address[3-4] = radio unique id
-		//start Address[5-17] = badge owner agent name
-		//start Address[18-42] = badge owner public key
-		//start Address[43-55] = badge owner private key
+		//start Address[2-3] = radio unique id
+		//start Address[4-27] = badge owner public key
+		//start Address[28-39] = badge owner private key
+		//start Address[40-51] = badge owner agent name
 		//[ my info ]
-		//start address[56-95] = Contact0
+		//start address[52-89] = Contact0
 		//start address[(every 38 bytes)] = Contact1
 		//start address[] - Contact N
 		/////////////////////////////
