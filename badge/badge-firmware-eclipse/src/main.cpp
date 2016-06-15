@@ -90,9 +90,9 @@ int main(void)
 
   /* USER CODE BEGIN 2 */
 	startBadge();
-	HAL_TIM_OC_Start(&htim2,TIM_CHANNEL_2);
-	delay(3000);
-	HAL_TIM_OC_Stop(&htim2,TIM_CHANNEL_2);
+	//HAL_TIM_OC_Start(&htim2,TIM_CHANNEL_2);
+	//delay(3000);
+	//HAL_TIM_OC_Stop(&htim2,TIM_CHANNEL_2);
   /* USER CODE END 2 */
 
   /* Infinite loop */

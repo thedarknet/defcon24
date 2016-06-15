@@ -16,19 +16,20 @@ QKeyboard::QKeyboard(PinConfig Y1Pin, PinConfig Y2Pin, PinConfig Y3Pin, PinConfi
 void QKeyboard::scan() {
 	uint8_t selectedPin = NO_PIN_SELECTED;
 	int xPins = sizeof(XPins)/sizeof(XPins[0]);
+	int yPins = sizeof(YPins)/sizeof(YPins[0]);
 	for(int r = 0;r<xPins;++r) {
 		for (uint8_t x=0;x<xPins;++x) {
 			//set the correct X pin
-			if(x==r) {
+			if(x!=r) {
 				HAL_GPIO_WritePin(XPins[x].Port,XPins[x].Pin,GPIO_PIN_SET);
 			} else {
 				HAL_GPIO_WritePin(XPins[x].Port,XPins[x].Pin,GPIO_PIN_RESET);
 			}
 		}
 		//Read Y bins
-		for(uint8_t y=0;y<sizeof(YPins)/sizeof(YPins[0]);y++) {
+		for(uint8_t y=0;y<yPins;y++) {
 			if(HAL_GPIO_ReadPin(YPins[y].Port,YPins[y].Pin)==GPIO_PIN_RESET) {
-				selectedPin = r*xPins + y;
+				selectedPin = r*yPins + y;
 				break;
 			} 
 		}
