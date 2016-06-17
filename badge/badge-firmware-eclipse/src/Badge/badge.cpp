@@ -5,6 +5,7 @@
 #include <Keyboard.h>
 #include <KeyStore.h>
 #include <tim.h>
+#include <usart.h>
 
 GUI_TickerData td("HI FROM STM32", 0, 0, 120, 10);
 char sendingBuf[64] = { '\0' };
@@ -27,12 +28,22 @@ QKeyboard KB(QKeyboard::PinConfig(KEYBOARD_Y1_GPIO_Port, KEYBOARD_Y1_Pin),
 RH_RF69 Radio(RFM69_SPI_NSS_Pin,RFM69_Interrupt_DIO0_Pin);
 
 //start at 45K for 19K
-static const uint32_t START_STORAGE_LOCATION = 0x800B000;
-ContactStore MyContacts(START_STORAGE_LOCATION, 0x4E00);
+//start at 55K for 10
+static const uint32_t START_STORAGE_LOCATION = 0x800d400; //0x800B000;
+ContactStore MyContacts(START_STORAGE_LOCATION, 0x2710); //0x4E00);
 
 void delay(uint32_t time) {
 	HAL_Delay(time);
 }
+
+void initUARTIR() {
+	HAL_TIM_OC_Start(&htim2,TIM_CHANNEL_2);
+}
+
+void stopUARTIR() {
+	HAL_TIM_OC_Stop(&htim2,TIM_CHANNEL_2);
+}
+
 
 uint32_t nextStateSwitchTime = 0;
 
@@ -41,7 +52,7 @@ void startBadge() {
 	HAL_FLASH_Unlock();
 	//FLASH_PageErase(START_STORAGE_LOCATION);
 	//HAL_FLASH_PageErase(START_STORAGE_LOCATION);
-	HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD,0x800B000,0xDCDC);
+	HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD,START_STORAGE_LOCATION,0xDCDC);
 	//private key loc
 	uint32_t loc = START_STORAGE_LOCATION + ContactStore::RecordInfo::SIZE + ContactStore::Contact::SIZE;
 	uint8_t privKey[ContactStore::PRIVATE_KEY_LENGTH] = {1,2,3,4,5,6,7,8,9,10,11,12};
@@ -88,6 +99,7 @@ void startBadge() {
 	//gui_ticker(&td);
 	//td.bg
 	nextStateSwitchTime = HAL_GetTick() + 5000;
+	initUARTIR();
 }
 
 int counter = 0;
@@ -99,33 +111,6 @@ void checkStateTimer(int nextState, int timeToNextSwitch) {
 	}
 }
 
-UART_HandleTypeDef UartHandle;
-
-void initUARTIR() {
-	/*##-1- Configure the UART peripheral ######################################*/
-	/* Put the USART peripheral in the Asynchronous mode (UART Mode) */
-	/* UART1 configured as follow:
-	 - Word Length = 8 Bits
-	 - Stop Bit = One Stop bit
-	 - Parity = None
-	 - BaudRate = 9600 baud
-	 - Hardware flow control disabled (RTS and CTS signals) */
-	UartHandle.Instance = USART2;
-	UartHandle.Init.BaudRate = 9600;
-	UartHandle.Init.WordLength = UART_WORDLENGTH_8B;
-	UartHandle.Init.StopBits = UART_STOPBITS_1;
-	UartHandle.Init.Parity = UART_PARITY_NONE;
-	UartHandle.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-	UartHandle.Init.Mode = UART_MODE_TX_RX;
-
-	HAL_TIM_OC_Start(&htim2,TIM_CHANNEL_2);
-		//delay(3000);
-		//HAL_TIM_OC_Stop(&htim2,TIM_CHANNEL_2);
-}
-
-void stopUARTIR() {
-	HAL_TIM_OC_Stop(&htim2,TIM_CHANNEL_2);
-}
 
 void loopBadge() {
 	char buf[128];
@@ -195,13 +180,13 @@ void loopBadge() {
 	case 8: {
 		char transbuf[64];
 		char receiveBuf[64];
-		 if(HAL_UART_Transmit(&UartHandle, (uint8_t*)&transbuf[0], sizeof(transbuf), 5000)!= HAL_OK)
+		 if(HAL_UART_Transmit(&huart2, (uint8_t*)&transbuf[0], sizeof(transbuf), 5000)!= HAL_OK)
 		  {
 		    //Error_Handler();
 		  }
 
 		  		  /*##-3- Put UART peripheral in reception process ###########################*/
-		  if(HAL_UART_Receive(&UartHandle, (uint8_t *)&receiveBuf[0], sizeof(receiveBuf), 5000) != HAL_OK)
+		  if(HAL_UART_Receive(&huart2, (uint8_t *)&receiveBuf[0], sizeof(receiveBuf), 5000) != HAL_OK)
 		  {
 		    //Error_Handler();
 		  }

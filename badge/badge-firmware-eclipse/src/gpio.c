@@ -107,11 +107,11 @@ void MX_GPIO_Init(void)
   HAL_GPIO_Init(LED_OUT1_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, LED_IR_STATUS_Pin|KEYBOARD_X2_Pin|KEYBOARD_X3_Pin|KEYBOARD_X4_Pin 
+  HAL_GPIO_WritePin(GPIOB, LED_IR_STATUS_Pin|KEYBOARD_X1_Pin|KEYBOARD_X2_Pin|KEYBOARD_X3_Pin|KEYBOARD_X4_Pin
                           |LED_OUT2_Pin|LED_OUT3_Pin|LED_OUT4_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(KEYBOARD_X1_GPIO_Port, KEYBOARD_X1_Pin, GPIO_PIN_SET);
+  //HAL_GPIO_WritePin(KEYBOARD_X1_GPIO_Port, KEYBOARD_X1_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LED_OUT1_GPIO_Port, LED_OUT1_Pin, GPIO_PIN_RESET);
