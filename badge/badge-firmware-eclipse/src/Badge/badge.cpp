@@ -25,7 +25,7 @@ QKeyboard KB(QKeyboard::PinConfig(KEYBOARD_Y1_GPIO_Port, KEYBOARD_Y1_Pin),
 		QKeyboard::PinConfig(KEYBOARD_X3_GPIO_Port, KEYBOARD_X3_Pin),
 		QKeyboard::PinConfig(KEYBOARD_X4_GPIO_Port, KEYBOARD_X4_Pin));
 
-RH_RF69 Radio(RFM69_SPI_NSS_Pin,RFM69_Interrupt_DIO0_Pin);
+RH_RF69 Radio(RFM69_SPI_NSS_Pin, RFM69_Interrupt_DIO0_Pin);
 
 //start at 45K for 19K
 //start at 55K for 10
@@ -37,13 +37,12 @@ void delay(uint32_t time) {
 }
 
 void initUARTIR() {
-	HAL_TIM_OC_Start(&htim2,TIM_CHANNEL_2);
+	HAL_TIM_OC_Start(&htim2, TIM_CHANNEL_2);
 }
 
 void stopUARTIR() {
-	HAL_TIM_OC_Stop(&htim2,TIM_CHANNEL_2);
+	HAL_TIM_OC_Stop(&htim2, TIM_CHANNEL_2);
 }
-
 
 uint32_t nextStateSwitchTime = 0;
 
@@ -52,12 +51,16 @@ void startBadge() {
 	HAL_FLASH_Unlock();
 	//FLASH_PageErase(START_STORAGE_LOCATION);
 	//HAL_FLASH_PageErase(START_STORAGE_LOCATION);
-	HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD,START_STORAGE_LOCATION,0xDCDC);
+	HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD, START_STORAGE_LOCATION,
+			0xDCDC);
 	//private key loc
-	uint32_t loc = START_STORAGE_LOCATION + ContactStore::RecordInfo::SIZE + ContactStore::Contact::SIZE;
-	uint8_t privKey[ContactStore::PRIVATE_KEY_LENGTH] = {1,2,3,4,5,6,7,8,9,10,11,12};
-	for(int i=0;i<ContactStore::PRIVATE_KEY_LENGTH;i+=4) {
-		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD,loc+i,(*((uint32_t *)&privKey[i])));
+	uint32_t loc = START_STORAGE_LOCATION + ContactStore::RecordInfo::SIZE
+			+ ContactStore::Contact::SIZE;
+	uint8_t privKey[ContactStore::PRIVATE_KEY_LENGTH] = { 1, 2, 3, 4, 5, 6, 7,
+			8, 9, 10, 11, 12 };
+	for (int i = 0; i < ContactStore::PRIVATE_KEY_LENGTH; i += 4) {
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, loc + i,
+				(*((uint32_t *) &privKey[i])));
 	}
 	HAL_FLASH_Lock();
 #endif
@@ -72,34 +75,41 @@ void startBadge() {
 	gui_text(&buf[0], 0, 40, 0);
 	gui_draw();
 #if ONE_TIME==1
-	if(MyContacts.getRecordInfo().getNumRecords()==0) {
+	if (MyContacts.getRecordInfo().getNumRecords() == 0) {
 		tmp++;
 	}
 	MyContacts.getMyInfo().setUniqueID(1);
-	if(MyContacts.getMyInfo().getUniqueID()==1) {
+	if (MyContacts.getMyInfo().getUniqueID() == 1) {
 		tmp++;
 	}
 	MyContacts.getMyInfo().setAgentname("Demetrius");
-	if(0==memcmp(MyContacts.getMyInfo().getAgentName(),"Demetrius",strlen("Demetrius"))) {
+	if (0
+			== memcmp(MyContacts.getMyInfo().getAgentName(), "Demetrius",
+					strlen("Demetrius"))) {
 		tmp++;
 	}
-	uint8_t pubkey[ContactStore::PUBLIC_KEY_LENGTH] = {0};
+	uint8_t pubkey[ContactStore::PUBLIC_KEY_LENGTH] = { 0 };
 	MyContacts.getMyInfo().setPublicKey(pubkey);
 	uint8_t *readPrivKey = MyContacts.getMyInfo().getPrivateKey();
 
-	sprintf(&buf[0],"K(priv): %u%u%u%u%u%u%u%u%u%u%u%u",privKey[0],privKey[1],privKey[2],privKey[3],privKey[4],privKey[5],privKey[6],privKey[7]
-			,privKey[8],privKey[9],privKey[10],privKey[11]);
-	gui_text(&buf[0],0,40,0);
+	sprintf(&buf[0], "K(priv): %u%u%u%u%u%u%u%u%u%u%u%u", privKey[0],
+			privKey[1], privKey[2], privKey[3], privKey[4], privKey[5],
+			privKey[6], privKey[7], privKey[8], privKey[9], privKey[10],
+			privKey[11]);
+	gui_text(&buf[0], 0, 40, 0);
 	gui_draw();
 
 #endif
 
-	//Radio.send((const uint8_t*)"HI",strlen("HI"));
+	Radio.send((const uint8_t*)"HI",strlen("HI"));
 	//printf("Here");
 	//gui_ticker(&td);
 	//td.bg
 	nextStateSwitchTime = HAL_GetTick() + 5000;
 	initUARTIR();
+
+	////////
+	state = 6;
 }
 
 int counter = 0;
@@ -110,7 +120,6 @@ void checkStateTimer(int nextState, int timeToNextSwitch) {
 		nextStateSwitchTime = HAL_GetTick() + timeToNextSwitch;
 	}
 }
-
 
 void loopBadge() {
 	char buf[128];
@@ -134,7 +143,8 @@ void loopBadge() {
 				MyContacts.getMyInfo().getUniqueID(),
 				MyContacts.getMyInfo().getAgentName(), "HPUB");
 		gui_lable_multiline(&buf[0], 0, 10, 120, 50, SSD1306_COLOR_BLACK, 0);
-		checkStateTimer(2, 10000);
+		//checkStateTimer(2, 10000);
+		checkStateTimer(8, 10000);
 	}
 		break;
 	case 2: {
@@ -156,43 +166,68 @@ void loopBadge() {
 		break;
 	case 6:
 		sprintf(sendingBuf, "Sending 'Hi for the %d time'", counter++);
-		//Radio.send((const uint8_t*)&sendingBuf[0],strlen(sendingBuf));
+		Radio.send((const uint8_t*)&sendingBuf[0],strlen(sendingBuf));
+		gui_lable_multiline(sendingBuf, 0, 10, 120, 50,
+										SSD1306_COLOR_BLACK, 0);
 		nextStateSwitchTime = HAL_GetTick() + 10000;
-		state = 2;
+		HAL_Delay(500);
+		state = 6;
 		break;
 	case 7: {
-//			if(Radio.available()>0) {
-//				uint8_t bufSize = 64;
-//				memset(&receivingBuf[0],0,64);
-//				//Radio.recv((uint8_t*)&receivingBuf[0],&bufSize);
-//				nextStateSwitchTime = HAL_GetTick()+2000;
-//				state = 0;
-//			} else {
-//				if(nextStateSwitchTime<HAL_GetTick()) {
-//					state = 0;
-//					nextStateSwitchTime = HAL_GetTick()+2000;
-//					sprintf(&receivingBuf[0],"timed out");
-//				}
-//				HAL_Delay(10);
-//			}
+		sprintf(receivingBuf, "Receiving for %d time", counter++);
+		gui_lable_multiline(sendingBuf, 0, 10, 120, 50,SSD1306_COLOR_BLACK, 0);
+			if(Radio.available()>0) {
+				uint8_t bufSize = 64;
+				memset(&receivingBuf[0],0,64);
+				Radio.recv((uint8_t*)&receivingBuf[0],&bufSize);
+				nextStateSwitchTime = HAL_GetTick()+2000;
+				state = 7;
+			} else {
+				if(nextStateSwitchTime<HAL_GetTick()) {
+					state = 7;
+					nextStateSwitchTime = HAL_GetTick()+2000;
+					gui_lable_multiline("timeout", 0, 10, 120, 50,SSD1306_COLOR_BLACK, 0);
+				}
+				HAL_Delay(100);
+			}
 	}
 		break;
 	case 8: {
-		char transbuf[64];
-		char receiveBuf[64];
-		 if(HAL_UART_Transmit(&huart2, (uint8_t*)&transbuf[0], sizeof(transbuf), 5000)!= HAL_OK)
-		  {
-		    //Error_Handler();
-		  }
-
-		  		  /*##-3- Put UART peripheral in reception process ###########################*/
-		  if(HAL_UART_Receive(&huart2, (uint8_t *)&receiveBuf[0], sizeof(receiveBuf), 5000) != HAL_OK)
-		  {
-		    //Error_Handler();
-		  }
-
+		gui_lable_multiline("receiver", 0, 10, 120, 50,
+								SSD1306_COLOR_BLACK, 0);
+		HAL_StatusTypeDef status;
+		char receiveBuf[64] = { '\0' };
+		status = HAL_UART_Receive(&huart2, (uint8_t *) &receiveBuf[0],
+					sizeof(receiveBuf)-1, 5000);
+			if (status == HAL_OK
+					|| (status == HAL_TIMEOUT
+							&& huart2.RxXferCount != huart2.RxXferSize)) {
+				//Error_Handler();
+				sprintf(&buf[0], "UART:  %s", &receiveBuf[0]);
+				gui_lable_multiline(&buf[0], 0, 30, 120, 50, SSD1306_COLOR_BLACK,
+						0);
+			}
+	}
+	break;
+	case 9: {
+		gui_lable_multiline("transmitter", 0, 10, 120, 50,
+										SSD1306_COLOR_BLACK, 0);
+		if (KB.getLastPinSeleted() != QKeyboard::NO_PIN_SELECTED) {
+					state = 9;
+				}
+		char transbuf[64] = {1,1,1,1,1,1,1,1,1,1};
+		//strcpy(&transbuf[0], "AAAAAAAA");
+		HAL_StatusTypeDef status;
+			status = HAL_UART_Transmit(&huart2, (uint8_t*) &transbuf[0],
+					10, 5000);
+		if (HAL_OK == status) {
+			gui_lable_multiline("sent ok", 0, 10, 120, 50,
+						SSD1306_COLOR_BLACK, 0);
 		}
+		delay(500);
 
+	}
+	break;
 	}
 	//const char * str = "HI STM32";
 	//gui_text(str,10,10,SSD1306_COLOR_WHITE);

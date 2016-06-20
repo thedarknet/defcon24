@@ -50,7 +50,10 @@ bool RHGenericDriver::waitAvailableTimeout(uint16_t timeout)
 
 bool RHGenericDriver::waitPacketSent()
 {
+#if BEFORE_DAC
+	//turning off interupts
     while (_mode == RHModeTx)
+#endif
 	YIELD; // Wait for any previous transmit to finish
     return true;
 }

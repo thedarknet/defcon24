@@ -22,8 +22,19 @@ bool RHSPIDriver::init()
     return true;
 }
 
+class ChipSelect {
+public:
+	ChipSelect() {
+		HAL_GPIO_WritePin(GPIOA,RFM69_SPI_NSS_Pin,GPIO_PIN_RESET);
+	}
+	~ChipSelect() {
+		HAL_GPIO_WritePin(GPIOA,RFM69_SPI_NSS_Pin,GPIO_PIN_SET);
+	}
+};
+
 uint8_t RHSPIDriver::spiRead(uint8_t reg)
 {
+	ChipSelect cs;
 	uint8_t t[2];
 	t[0] = reg & ~RH_SPI_WRITE_MASK;
 	t[1] = 0;
@@ -34,6 +45,7 @@ uint8_t RHSPIDriver::spiRead(uint8_t reg)
 
 uint8_t RHSPIDriver::spiWrite(uint8_t reg, uint8_t val)
 {
+	ChipSelect cs;
 	uint8_t t[2];
 	t[0] = reg | RH_SPI_WRITE_MASK;
 	t[1] = val;
@@ -43,6 +55,7 @@ uint8_t RHSPIDriver::spiWrite(uint8_t reg, uint8_t val)
 
 uint8_t RHSPIDriver::spiBurstRead(uint8_t reg, uint8_t* dest, uint8_t len)
 {
+	ChipSelect cs;
 	memset(dest,0,len);
 	dest[0] = reg&~RH_SPI_WRITE_MASK;
 	HAL_SPI_TransmitReceive(&hspi1,dest,dest,1,SPI_TIMEOUT);
@@ -53,6 +66,7 @@ uint8_t RHSPIDriver::spiBurstRead(uint8_t reg, uint8_t* dest, uint8_t len)
 
 uint8_t RHSPIDriver::spiBurstWrite(uint8_t reg, const uint8_t* src, uint8_t len)
 {
+	ChipSelect cs;
 	reg |=RH_SPI_WRITE_MASK;
 	HAL_SPI_TransmitReceive(&hspi1,&reg,&reg,1,SPI_TIMEOUT);
 	uint8_t status = reg;
