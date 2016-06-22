@@ -79,15 +79,7 @@
 #define RFM69_CTL_SENDACK   0x80
 #define RFM69_CTL_REQACK    0x40
 
-class CSelect {
-public:
-	CSelect() {
-		HAL_GPIO_WritePin(GPIOA,RFM69_SPI_NSS_Pin,GPIO_PIN_RESET);
-	}
-	~CSelect() {
-		HAL_GPIO_WritePin(GPIOA,RFM69_SPI_NSS_Pin,GPIO_PIN_SET);
-	}
-};
+
 
 class RFM69 {
   public:

@@ -71,7 +71,7 @@ void startBadge() {
 	//Radio.setHeaderFrom(1);
 	//Radio.setHeaderTo(2);
 	//Radio.setHeaderId(0);
-#if 0
+#if 1
 	Radio.initialize(RF69_915MHZ,1);
 	#define INITIAL_STATE 6
 #else
