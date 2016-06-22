@@ -23,5 +23,5 @@ If you get complaints about missing software I found these links helpful.
 Then close this repo and then import this directory into you're workspace (remeber to uncheck the option to copy all files to your workspace).
 
 Debug configuration:
-![alt text](https://github.com/thedarknet/defcon24/raw/master/src/common/images/icon48.png "Debug Config")
+![alt text](https://raw.githubusercontent.com/thedarknet/defcon24/master/badge/Screenshot%20from%202016-06-21%2022%3A05%3A16.png?token=AAogPW9rZvxenttQmwpecIIIWCeDPGSTks5Xc1gcwA%3D%3D "Debug Config")
 
