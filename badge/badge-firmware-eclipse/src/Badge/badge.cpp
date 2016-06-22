@@ -1,7 +1,8 @@
 #include "badge.h"
 #include "stdint.h"
 #include "gui.h"
-#include <RH_RF69.h>
+//#include <RH_RF69.h>
+#include <RFM69.h>
 #include <Keyboard.h>
 #include <KeyStore.h>
 #include <tim.h>
@@ -25,7 +26,8 @@ QKeyboard KB(QKeyboard::PinConfig(KEYBOARD_Y1_GPIO_Port, KEYBOARD_Y1_Pin),
 		QKeyboard::PinConfig(KEYBOARD_X3_GPIO_Port, KEYBOARD_X3_Pin),
 		QKeyboard::PinConfig(KEYBOARD_X4_GPIO_Port, KEYBOARD_X4_Pin));
 
-RH_RF69 Radio(RFM69_SPI_NSS_Pin, RFM69_Interrupt_DIO0_Pin);
+//RH_RF69 Radio(RFM69_SPI_NSS_Pin, RFM69_Interrupt_DIO0_Pin);
+RFM69 Radio;
 
 //start at 45K for 19K
 //start at 55K for 10
@@ -65,10 +67,17 @@ void startBadge() {
 	HAL_FLASH_Lock();
 #endif
 	gui_init();
-	Radio.init();
-	Radio.setHeaderFrom(1);
-	Radio.setHeaderTo(2);
-	Radio.setHeaderId(0);
+	//Radio.init();
+	//Radio.setHeaderFrom(1);
+	//Radio.setHeaderTo(2);
+	//Radio.setHeaderId(0);
+#if 0
+	Radio.initialize(RF69_915MHZ,1);
+	#define INITIAL_STATE 6
+#else
+	Radio.initialize(RF69_915MHZ,2);
+	#define INITIAL_STATE 7
+#endif
 	char buf[16] = { 0 };
 	int result = MyContacts.init();
 	sprintf(&buf[0], "Flash init: %d", result);
@@ -101,15 +110,22 @@ void startBadge() {
 
 #endif
 
-	Radio.send((const uint8_t*)"HI",strlen("HI"));
+	//Radio.send((const uint8_t*)"HI",strlen("HI"));
+	//Radio.setModeIdle();
+	//Radio.send(2,"hi",2,true);
 	//printf("Here");
 	//gui_ticker(&td);
 	//td.bg
+	uint32_t f = Radio.getFrequency();
+	sprintf(&buf[0],"Fre:  %d", f);
+	gui_text(&buf[0], 0, 20, 0);
+	//Radio.readAllRegs();
+	sprintf(&buf[0],"rssi: %d", Radio.readRSSI(false));
 	nextStateSwitchTime = HAL_GetTick() + 5000;
 	initUARTIR();
 
 	////////
-	state = 6;
+	state = INITIAL_STATE;
 }
 
 int counter = 0;
@@ -120,6 +136,8 @@ void checkStateTimer(int nextState, int timeToNextSwitch) {
 		nextStateSwitchTime = HAL_GetTick() + timeToNextSwitch;
 	}
 }
+
+uint32_t lastSendTime = 0;
 
 void loopBadge() {
 	char buf[128];
@@ -165,28 +183,36 @@ void loopBadge() {
 	}
 		break;
 	case 6:
-		sprintf(sendingBuf, "Sending 'Hi for the %d time'", counter++);
-		Radio.send((const uint8_t*)&sendingBuf[0],strlen(sendingBuf));
-		gui_lable_multiline(sendingBuf, 0, 10, 120, 50,
-										SSD1306_COLOR_BLACK, 0);
+		//HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+		if(HAL_GetTick()-lastSendTime>1000) {
+			lastSendTime = HAL_GetTick();
+			sprintf(sendingBuf, "Sending 'Hi for the %d time'", counter++);
+			//Radio.send((const uint8_t*)&sendingBuf[0],strlen(sendingBuf));
+			Radio.send(2,sendingBuf,strlen(sendingBuf),true);
+
+			gui_lable_multiline(sendingBuf, 0, 10, 120, 50,
+											SSD1306_COLOR_BLACK, 0);
+		}
 		nextStateSwitchTime = HAL_GetTick() + 10000;
-		HAL_Delay(500);
+		HAL_Delay(1000);
 		state = 6;
 		break;
 	case 7: {
 		sprintf(receivingBuf, "Receiving for %d time", counter++);
-		gui_lable_multiline(sendingBuf, 0, 10, 120, 50,SSD1306_COLOR_BLACK, 0);
-			if(Radio.available()>0) {
-				uint8_t bufSize = 64;
-				memset(&receivingBuf[0],0,64);
-				Radio.recv((uint8_t*)&receivingBuf[0],&bufSize);
-				nextStateSwitchTime = HAL_GetTick()+2000;
+		gui_lable_multiline(receivingBuf, 0, 20, 120, 50,SSD1306_COLOR_BLACK, 0);
+		//Radio.setModeRx();
+			//if(Radio.available()>0) {
+			if(Radio.receiveDone()) {
+				memset(&receivingBuf[0],0,sizeof(receivingBuf));
+				//Radio.recv((uint8_t*)&receivingBuf[0],&bufSize);
+				gui_lable_multiline(receivingBuf, 0, 30, 120, 50,SSD1306_COLOR_BLACK, 0);
+				nextStateSwitchTime = HAL_GetTick()+4000;
 				state = 7;
 			} else {
 				if(nextStateSwitchTime<HAL_GetTick()) {
 					state = 7;
 					nextStateSwitchTime = HAL_GetTick()+2000;
-					gui_lable_multiline("timeout", 0, 10, 120, 50,SSD1306_COLOR_BLACK, 0);
+					gui_lable_multiline("timeout", 0, 30, 120, 50,SSD1306_COLOR_BLACK, 0);
 				}
 				HAL_Delay(100);
 			}
@@ -228,7 +254,15 @@ void loopBadge() {
 
 	}
 	break;
+	case 10:
+	{
+		HAL_GetDEVID();
+		HAL_GetREVID();
+		HAL_GetHalVersion();
 	}
+	break;
+	}
+
 	//const char * str = "HI STM32";
 	//gui_text(str,10,10,SSD1306_COLOR_WHITE);
 	gui_draw();

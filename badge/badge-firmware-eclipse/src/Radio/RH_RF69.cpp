@@ -417,11 +417,17 @@ void RH_RF69::setSyncWords(const uint8_t* syncWords, uint8_t len) {
 	syncconfig |= (len - 1) << 3;
 	spiWrite(RH_RF69_REG_2E_SYNCCONFIG, syncconfig);
 #else
-	//TODO still not fixed
-	if(syncWords) {
+	if(syncWords && len && len <=8) {
 		syncconfig |= RH_RF69_SYNCCONFIG_SYNCON;
+		syncconfig &= ~RH_RF69_SYNCCONFIG_SYNCSIZE;
+		syncconfig |= (len - 1) << 3;
+		spiWrite(RH_RF69_REG_2E_SYNCCONFIG, syncconfig);
+		for(int i=0;i<len;i++) {
+			spiWrite(RH_RF69_REG_2F_SYNCVALUE1+i, syncWords[i]);
+		}
 	} else {
 		syncconfig &= ~RH_RF69_SYNCCONFIG_SYNCON;
+		spiWrite(RH_RF69_REG_2E_SYNCCONFIG, syncconfig);
 	}
 #endif
 }

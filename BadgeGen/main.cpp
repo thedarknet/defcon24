@@ -134,6 +134,9 @@ void usage() {
     std::cerr << "usage" <<std::endl;
 }
 
+//REMEMBER WE NEED a 2 BYTE RADIO ID:
+// byte 1 is the network ID we'll use so between 0-6
+// byte 2 # between 0-255
 int main(int argc, char *argv[]) {
     char create = 0, generate = 0;;
     int ch = 0;

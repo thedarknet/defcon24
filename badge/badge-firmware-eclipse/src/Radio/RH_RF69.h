@@ -102,6 +102,7 @@
 #define RH_RF69_REG_2D_PREAMBLELSB                          0x2d
 #define RH_RF69_REG_2E_SYNCCONFIG                           0x2e
 #define RH_RF69_REG_2F_SYNCVALUE1                           0x2f
+#define RH_RF69_REG_2F_SYNCVALUE2                           0x30
 // another 7 sync word bytes follow, 30 through 36 inclusive
 #define RH_RF69_REG_37_PACKETCONFIG1                        0x37
 #define RH_RF69_REG_38_PAYLOADLENGTH                        0x38
