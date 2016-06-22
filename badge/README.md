@@ -1,7 +1,7 @@
 Install Dev Env:
 * go here:  http://gnuarmeclipse.github.io/ for background and step by step
-* 
-** Basic steps:
+
+Basic steps:
 
 ** Install eclipse Luna CDT (c++ env)
 
