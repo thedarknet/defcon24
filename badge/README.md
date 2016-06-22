@@ -3,9 +3,9 @@ Install Dev Env:
 
 Basic steps:
 
-** Install eclipse Luna CDT (c++ env)
+* Install eclipse Luna CDT (c++ env)
 
-** add a new market place:  
+* add a new market place:  
 
 
 name: GNU ARM Eclipse Plug-ins
@@ -15,16 +15,10 @@ You will see the ecplise arm plugin select it and it will install for you.
 
 If you get complaints about missing software I found these links helpful.
 
-** apt-get install gcc-arm-none-eabi (or something close to that)
+* apt-get install gcc-arm-none-eabi (or something close to that)
 
-** apt-get install openocd
-
-*** Or download from 
-
-*** to configure openocd in eclipse look here: http://gnuarmeclipse.github.io/debug/openocd/
-
-*** to download new version of openocd:  http://gnuarmeclipse.github.io/openocd/download/
+* apt-get install openocd Or download from to configure openocd in eclipse look here: http://gnuarmeclipse.github.io/debug/openocd/ OR to download new version of openocd:  http://gnuarmeclipse.github.io/openocd/download/
 
 
-then close this repo and then import this directory into you're workspace (remeber to uncheck the option to copy all files to your workspace).
+Then close this repo and then import this directory into you're workspace (remeber to uncheck the option to copy all files to your workspace).
 
