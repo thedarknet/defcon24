@@ -31,7 +31,7 @@ uint32_t ContactStore::RecordInfo::getStartContactsAddress() {
 uint16_t ContactStore::RecordInfo::getNumRecords() {
 	int retVal = 0;
 	uint32_t contactsAddr = getStartContactsAddress();
-	while(*((uint16_t*)contactsAddr)!=0xFFFF) retVal++;
+	//while(*((uint16_t*)contactsAddr)!=0xFFFF) retVal++;
 	return retVal;
 }
 

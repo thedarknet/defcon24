@@ -753,7 +753,7 @@ HAL_StatusTypeDef HAL_UART_Receive(UART_HandleTypeDef *huart, uint8_t *pData, ui
     /* Check the remain data to be received */
     while(huart->RxXferCount > 0)
     {
-      huart->RxXferCount--;
+      //huart->RxXferCount--;
       if(huart->Init.WordLength == UART_WORDLENGTH_9B)
       {
         if(UART_WaitOnFlagUntilTimeout(huart, UART_FLAG_RXNE, RESET, Timeout) != HAL_OK)
@@ -789,6 +789,7 @@ HAL_StatusTypeDef HAL_UART_Receive(UART_HandleTypeDef *huart, uint8_t *pData, ui
         }
 
       }
+      huart->RxXferCount--;
     }
 
     /* Check if a non-blocking transmit process is ongoing or not */
