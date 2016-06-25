@@ -71,13 +71,17 @@ void startBadge() {
 	//Radio.setHeaderFrom(1);
 	//Radio.setHeaderTo(2);
 	//Radio.setHeaderId(0);
-#if 1
+
+#if 0
 	Radio.initialize(RF69_915MHZ,1);
-	#define INITIAL_STATE 6
-#else
-	Radio.initialize(RF69_915MHZ,2);
+#define INITIAL_STATE 6
+#elif 0
+	Radio.initialize(RF69_915MHZ, 2);
 	#define INITIAL_STATE 7
+#else
+#define INITIAL_STATE 1
 #endif
+	Radio.setPowerLevel(31);
 	char buf[16] = { 0 };
 	int result = MyContacts.init();
 	sprintf(&buf[0], "Flash init: %d", result);
@@ -117,10 +121,10 @@ void startBadge() {
 	//gui_ticker(&td);
 	//td.bg
 	uint32_t f = Radio.getFrequency();
-	sprintf(&buf[0],"Fre:  %d", f);
+	sprintf(&buf[0], "Fre:  %d", f);
 	gui_text(&buf[0], 0, 20, 0);
 	//Radio.readAllRegs();
-	sprintf(&buf[0],"rssi: %d", Radio.readRSSI(false));
+	sprintf(&buf[0], "rssi: %d", Radio.readRSSI(false));
 	nextStateSwitchTime = HAL_GetTick() + 5000;
 	initUARTIR();
 
@@ -161,8 +165,7 @@ void loopBadge() {
 				MyContacts.getMyInfo().getUniqueID(),
 				MyContacts.getMyInfo().getAgentName(), "HPUB");
 		gui_lable_multiline(&buf[0], 0, 10, 120, 50, SSD1306_COLOR_BLACK, 0);
-		//checkStateTimer(2, 10000);
-		checkStateTimer(8, 10000);
+		checkStateTimer(2, 10000);
 	}
 		break;
 	case 2: {
@@ -184,83 +187,84 @@ void loopBadge() {
 		break;
 	case 6:
 		//HAL_NVIC_EnableIRQ(EXTI0_IRQn);
-		if(HAL_GetTick()-lastSendTime>1000) {
+		if (HAL_GetTick() - lastSendTime > 1000) {
 			lastSendTime = HAL_GetTick();
 			sprintf(sendingBuf, "Sending 'Hi for the %d time'", counter++);
 			//Radio.send((const uint8_t*)&sendingBuf[0],strlen(sendingBuf));
-			Radio.send(2,sendingBuf,strlen(sendingBuf),true);
+			Radio.send(2, sendingBuf, strlen(sendingBuf), true);
 
-			gui_lable_multiline(sendingBuf, 0, 10, 120, 50,
-											SSD1306_COLOR_BLACK, 0);
+			gui_lable_multiline(sendingBuf, 0, 10, 120, 50, SSD1306_COLOR_BLACK,
+					0);
 		}
 		nextStateSwitchTime = HAL_GetTick() + 10000;
 		HAL_Delay(1000);
 		state = 6;
 		break;
 	case 7: {
-		sprintf(receivingBuf, "Receiving for %d time", counter++);
-		gui_lable_multiline(receivingBuf, 0, 20, 120, 50,SSD1306_COLOR_BLACK, 0);
-		//Radio.setModeRx();
-			//if(Radio.available()>0) {
-			if(Radio.receiveDone()) {
-				memset(&receivingBuf[0],0,sizeof(receivingBuf));
+		if(HAL_GetTick() - lastSendTime > 1000) {
+			sprintf(receivingBuf, "Receiving for %d time", counter++);
+			lastSendTime = HAL_GetTick();
+			gui_lable_multiline(receivingBuf, 0, 20, 120, 50, SSD1306_COLOR_BLACK,
+					0);
+			if (Radio.receiveDone()) {
+				memset(&receivingBuf[0], 0, sizeof(receivingBuf));
 				//Radio.recv((uint8_t*)&receivingBuf[0],&bufSize);
-				gui_lable_multiline(receivingBuf, 0, 30, 120, 50,SSD1306_COLOR_BLACK, 0);
-				nextStateSwitchTime = HAL_GetTick()+4000;
+				gui_lable_multiline(receivingBuf, 0, 30, 120, 50,
+						SSD1306_COLOR_BLACK, 0);
+				nextStateSwitchTime = HAL_GetTick() + 4000;
 				state = 7;
 			} else {
-				if(nextStateSwitchTime<HAL_GetTick()) {
+				if (nextStateSwitchTime < HAL_GetTick()) {
 					state = 7;
-					nextStateSwitchTime = HAL_GetTick()+2000;
-					gui_lable_multiline("timeout", 0, 30, 120, 50,SSD1306_COLOR_BLACK, 0);
+					nextStateSwitchTime = HAL_GetTick() + 2000;
+					gui_lable_multiline("timeout", 0, 30, 120, 50,
+							SSD1306_COLOR_BLACK, 0);
 				}
-				HAL_Delay(100);
 			}
+			HAL_Delay(1000);
+		}
 	}
 		break;
 	case 8: {
-		gui_lable_multiline("receiver", 0, 10, 120, 50,
-								SSD1306_COLOR_BLACK, 0);
+		gui_lable_multiline("receiver", 0, 10, 120, 50, SSD1306_COLOR_BLACK, 0);
 		HAL_StatusTypeDef status;
 		char receiveBuf[64] = { '\0' };
 		status = HAL_UART_Receive(&huart2, (uint8_t *) &receiveBuf[0],
-					sizeof(receiveBuf)-1, 5000);
-			if (status == HAL_OK
-					|| (status == HAL_TIMEOUT
-							&& huart2.RxXferCount != huart2.RxXferSize)) {
-				//Error_Handler();
-				sprintf(&buf[0], "UART:  %s", &receiveBuf[0]);
-				gui_lable_multiline(&buf[0], 0, 30, 120, 50, SSD1306_COLOR_BLACK,
-						0);
-			}
+				sizeof(receiveBuf) - 1, 5000);
+		if (status == HAL_OK
+				|| (status == HAL_TIMEOUT
+						&& huart2.RxXferCount != huart2.RxXferSize)) {
+			//Error_Handler();
+			sprintf(&buf[0], "UART:  %s", &receiveBuf[0]);
+			gui_lable_multiline(&buf[0], 0, 30, 120, 50, SSD1306_COLOR_BLACK,
+					0);
+		}
 	}
-	break;
+		break;
 	case 9: {
-		gui_lable_multiline("transmitter", 0, 10, 120, 50,
-										SSD1306_COLOR_BLACK, 0);
+		gui_lable_multiline("transmitter", 0, 10, 120, 50, SSD1306_COLOR_BLACK,
+				0);
 		if (KB.getLastPinSeleted() != QKeyboard::NO_PIN_SELECTED) {
-					state = 9;
-				}
-		char transbuf[64] = {1,1,1,1,1,1,1,1,1,1};
+			state = 9;
+		}
+		char transbuf[64] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
 		//strcpy(&transbuf[0], "AAAAAAAA");
 		HAL_StatusTypeDef status;
-			status = HAL_UART_Transmit(&huart2, (uint8_t*) &transbuf[0],
-					10, 5000);
+		status = HAL_UART_Transmit(&huart2, (uint8_t*) &transbuf[0], 10, 5000);
 		if (HAL_OK == status) {
-			gui_lable_multiline("sent ok", 0, 10, 120, 50,
-						SSD1306_COLOR_BLACK, 0);
+			gui_lable_multiline("sent ok", 0, 10, 120, 50, SSD1306_COLOR_BLACK,
+					0);
 		}
 		delay(500);
 
 	}
-	break;
-	case 10:
-	{
+		break;
+	case 10: {
 		HAL_GetDEVID();
 		HAL_GetREVID();
 		HAL_GetHalVersion();
 	}
-	break;
+		break;
 	}
 
 	//const char * str = "HI STM32";
