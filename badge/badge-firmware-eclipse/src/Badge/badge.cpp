@@ -157,6 +157,11 @@ StateBase *CurrentState = StateFactory::getLogoState(3000);
 void loopBadge() {
 
 
+	ReturnStateContext rsc = CurrentState->run();
+
+	if(rsc.Err.ok()) {
+		CurrentState = rsc.NextMenuToRun;
+	}
 
 	char buf[128];
 

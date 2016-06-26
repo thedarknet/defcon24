@@ -6,11 +6,11 @@
 
 class StateBase;
 
-struct MenuRet {
-	MenuRet(StateBase *next, const ErrorType &er) :
+struct ReturnStateContext {
+	ReturnStateContext(StateBase *next, const ErrorType &er) :
 			NextMenuToRun(next), Err(er) {
 	}
-	MenuRet(StateBase *n) :
+	ReturnStateContext(StateBase *n) :
 			NextMenuToRun(n), Err() {
 	}
 	StateBase *NextMenuToRun;
@@ -20,14 +20,14 @@ struct MenuRet {
 class StateBase {
 public:
 	StateBase();
-	MenuRet run();
+	ReturnStateContext run();
 	uint32_t timeInState();
 	virtual ~StateBase();
 protected:
 	ErrorType init();
 	ErrorType shutdown();
 	virtual ErrorType onInit()=0;
-	virtual MenuRet onRun()=0;
+	virtual ReturnStateContext onRun()=0;
 	virtual ErrorType onShutdown()=0;
 	static const uint32_t INIT_BIT = 0x01;
 private:
@@ -45,12 +45,30 @@ public:
 	void setTimeInLogo(uint16_t t) {TimeInLogoState = t;}
 protected:
 	virtual ErrorType onInit();
-	virtual MenuRet onRun();
+	virtual ReturnStateContext onRun();
 	virtual ErrorType onShutdown();
 
 private:
 	GUI_TickerData td;
 	uint16_t TimeInLogoState;
+};
+
+class DisplayMessageState : public StateBase {
+public:
+	DisplayMessageState(uint16_t timeInState, StateBase *nextState);
+	virtual ~DisplayMessageState();
+	void setMessage(const char *msg);
+	void setTimeInLogo(uint16_t t) {TimeInState = t;}
+	void setNextState(StateBase *b) {NextState = b;}
+	StateBase *getNextState() {return NextState;}
+protected:
+	virtual ErrorType onInit();
+	virtual ReturnStateContext onRun();
+	virtual ErrorType onShutdown();
+private:
+	char Message[64];
+	uint16_t TimeInState;
+	StateBase *NextState;
 };
 
 //=============================

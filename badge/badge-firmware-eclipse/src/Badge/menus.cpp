@@ -4,8 +4,8 @@ StateBase::StateBase() :
 		StateData(0), StateStartTime(0) {
 }
 
-MenuRet StateBase::run() {
-	MenuRet sr(this);
+ReturnStateContext StateBase::run() {
+	ReturnStateContext sr(this);
 	if (!hasBeenInitialized()) {
 		ErrorType et = init();
 		if (!et.ok()) {
@@ -55,15 +55,15 @@ ErrorType LogoState::onInit() {
 	return ErrorType();
 }
 
-MenuRet LogoState::onRun() {
+ReturnStateContext LogoState::onRun() {
 	gui_ticker(&td);
 	td.x++;
 	if (td.x > 127)
 		td.x = 0;
 	if (timeInState() > TimeInLogoState) {
-		return MenuRet(StateFactory::getMenuState());
+		return ReturnStateContext(StateFactory::getMenuState());
 	} else {
-		return MenuRet(this);
+		return ReturnStateContext(this);
 	}
 }
 
@@ -74,10 +74,38 @@ ErrorType LogoState::onShutdown() {
 LogoState::~LogoState() {
 }
 
+DisplayMessageState::DisplayMessageState(uint16_t timeInState,
+		StateBase *nextState) :
+		TimeInState(timeInState), NextState(nextState) {
+}
+
+DisplayMessageState::~DisplayMessageState() {
+}
+
+ErrorType DisplayMessageState::onInit() {
+	return ErrorType();
+}
+
+void DisplayMessageState::setMessage(const char *msg) {
+	strncpy(&this->Message[0],msg,sizeof(this->Message));
+}
+
+ReturnStateContext DisplayMessageState::onRun() {
+	gui_lable_multiline(&this->Message[0], 0, 10, 120, 50, SSD1306_COLOR_BLACK, 0);
+	if (timeInState() > TimeInState) {
+		return ReturnStateContext(StateFactory::getMenuState());
+	} else {
+		return ReturnStateContext(this);
+	}
+}
+
+ErrorType DisplayMessageState::onShutdown() {
+	return true;
+}
 
 //============================================================
 LogoState Logo_State(uint16_t(5000));
-
+DisplayMessageState Display_Message_State(3000,0);
 
 bool StateFactory::init() {
 	return true;
@@ -90,8 +118,10 @@ StateBase *StateFactory::getLogoState(uint16_t timeToDisplay) {
 
 StateBase *StateFactory::getDisplayMessageState(StateBase *bm,
 		const char *message, uint16_t timeToDisplay) {
-
-	return 0;
+	Display_Message_State.setMessage(message);
+	Display_Message_State.setNextState(bm);
+	Display_Message_State.setTimeInLogo(timeToDisplay);
+	return &Display_Message_State;
 }
 
 StateBase* StateFactory::getMenuState() {
