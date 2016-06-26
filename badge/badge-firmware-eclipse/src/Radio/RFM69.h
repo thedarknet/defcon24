@@ -110,6 +110,9 @@ class RFM69 {
     virtual void send(uint8_t toAddress, const void* buffer, uint8_t bufferSize, bool requestACK=false);
     virtual bool sendWithRetry(uint8_t toAddress, const void* buffer, uint8_t bufferSize, uint8_t retries=2, uint8_t retryWaitTime=40); // 40ms roundtrip req for 61byte packets
     virtual bool receiveDone();
+    uint8_t getCurrentGain();
+    uint8_t getImpedenceLevel();
+    uint8_t getRSSIThreshHold();
     bool ACKReceived(uint8_t fromNodeID);
     bool ACKRequested();
     virtual void sendACK(const void* buffer = "", uint8_t bufferSize=0);

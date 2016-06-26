@@ -48,11 +48,9 @@ void stopUARTIR() {
 
 uint32_t nextStateSwitchTime = 0;
 
-void startBadge() {
+void initFlash() {
 #if ONE_TIME==1
 	HAL_FLASH_Unlock();
-	//FLASH_PageErase(START_STORAGE_LOCATION);
-	//HAL_FLASH_PageErase(START_STORAGE_LOCATION);
 	HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD, START_STORAGE_LOCATION,
 			0xDCDC);
 	//private key loc
@@ -66,70 +64,58 @@ void startBadge() {
 	}
 	HAL_FLASH_Lock();
 #endif
-	gui_init();
-	//Radio.init();
-	//Radio.setHeaderFrom(1);
-	//Radio.setHeaderTo(2);
-	//Radio.setHeaderId(0);
+}
 
-#if 0
-	Radio.initialize(RF69_915MHZ,1);
+uint32_t startBadge() {
+	uint32_t retVal = 0;
+	initFlash();
+
+	GUI_ListItemData items[4];
+	GUI_ListData DrawList((const char *)"Self Check", (GUI_ListItemData**)items, uint8_t(0),uint8_t(0),uint8_t(128),uint8_t(64),uint8_t(0),uint8_t(0));
+	//DO SELF CHECK
+	if(gui_init()) {
+		items[0].set(0,"OLED_INIT");
+		DrawList.ItemsCount++;
+		retVal|=COMPONENTS_ITEMS::OLED;
+		gui_set_curList(&DrawList);
+	}
+	gui_draw();
+#if 1
 #define INITIAL_STATE 6
+	if(Radio.initialize(RF69_915MHZ,1)) {
 #elif 0
-	Radio.initialize(RF69_915MHZ, 2);
-	#define INITIAL_STATE 7
+#define INITIAL_STATE 7
+	if(Radio.initialize(RF69_915MHZ, 2)) {
 #else
 #define INITIAL_STATE 1
 #endif
-	Radio.setPowerLevel(31);
-	char buf[16] = { 0 };
-	int result = MyContacts.init();
-	sprintf(&buf[0], "Flash init: %d", result);
-	gui_text(&buf[0], 0, 40, 0);
-	gui_draw();
-#if ONE_TIME==1
-	if (MyContacts.getRecordInfo().getNumRecords() == 0) {
-		tmp++;
+		items[1].set(1,"RADIO INIT");
+		Radio.setPowerLevel(31);
+		retVal|=COMPONENTS_ITEMS::RADIO;
+	} else {
+		items[1].set(1,"RADIO FAILED");
 	}
-	MyContacts.getMyInfo().setUniqueID(1);
-	if (MyContacts.getMyInfo().getUniqueID() == 1) {
-		tmp++;
-	}
-	MyContacts.getMyInfo().setAgentname("Demetrius");
-	if (0
-			== memcmp(MyContacts.getMyInfo().getAgentName(), "Demetrius",
-					strlen("Demetrius"))) {
-		tmp++;
-	}
-	uint8_t pubkey[ContactStore::PUBLIC_KEY_LENGTH] = { 0 };
-	MyContacts.getMyInfo().setPublicKey(pubkey);
-	uint8_t *readPrivKey = MyContacts.getMyInfo().getPrivateKey();
-
-	sprintf(&buf[0], "K(priv): %u%u%u%u%u%u%u%u%u%u%u%u", privKey[0],
-			privKey[1], privKey[2], privKey[3], privKey[4], privKey[5],
-			privKey[6], privKey[7], privKey[8], privKey[9], privKey[10],
-			privKey[11]);
-	gui_text(&buf[0], 0, 40, 0);
+	DrawList.ItemsCount++;
 	gui_draw();
 
-#endif
+	if(MyContacts.init()) {
+		items[2].set(2,"Flash mem INIT");
+		retVal|=COMPONENTS_ITEMS::FLASH_MEM;
+	} else {
+		items[2].set(2,"Flash mem FAILED");
+	}
+	//test for IR??
+	DrawList.ItemsCount++;
+	gui_draw();
 
-	//Radio.send((const uint8_t*)"HI",strlen("HI"));
-	//Radio.setModeIdle();
-	//Radio.send(2,"hi",2,true);
-	//printf("Here");
-	//gui_ticker(&td);
-	//td.bg
-	uint32_t f = Radio.getFrequency();
-	sprintf(&buf[0], "Fre:  %d", f);
-	gui_text(&buf[0], 0, 20, 0);
-	//Radio.readAllRegs();
-	sprintf(&buf[0], "rssi: %d", Radio.readRSSI(false));
+	//remove nextStateswitch
 	nextStateSwitchTime = HAL_GetTick() + 5000;
+	//move to use of IR
 	initUARTIR();
 
 	////////
 	state = INITIAL_STATE;
+	return true;
 }
 
 int counter = 0;
@@ -142,6 +128,25 @@ void checkStateTimer(int nextState, int timeToNextSwitch) {
 }
 
 uint32_t lastSendTime = 0;
+
+enum STATES {
+	DISPLAY_LOGO,
+	MENU,
+	SETTINGS,
+	IR_PAIR,
+	ADDRESS_BOOK,
+	SEND_MESSAGE,
+	CHALLENGES,
+	SERIAL,
+	SECRET,
+	INFO
+};
+
+enum SETTING_SUB {
+	SET_AGENT_NAME,
+	SET_SCREEN_SAVER1,
+	SET_SLEEP_TIME
+};
 
 void loopBadge() {
 	char buf[128];
@@ -263,7 +268,22 @@ void loopBadge() {
 		HAL_GetDEVID();
 		HAL_GetREVID();
 		HAL_GetHalVersion();
-	}
+		}
+		break;
+	case 11: {
+		Radio.getCurrentGain();
+		Radio.getFrequency();
+		Radio.getImpedenceLevel();
+		/*
+		 *
+		 * uint32_t f = Radio.getFrequency();
+	sprintf(&buf[0], "Fre:  %d", f);
+	gui_text(&buf[0], 0, 20, 0);
+	//Radio.readAllRegs();
+	sprintf(&buf[0], "rssi: %d", Radio.readRSSI(false));
+
+		 */
+		}
 		break;
 	}
 

@@ -755,6 +755,7 @@
 #define RF_LNA_LOWPOWER_ON            0x40
 
 #define RF_LNA_CURRENTGAIN            0x08
+#define RF_LNA_CURRENTGAIN_MASK		  0x38
 
 #define RF_LNA_GAINSELECT_AUTO        0x00  // Default
 #define RF_LNA_GAINSELECT_MAX         0x01

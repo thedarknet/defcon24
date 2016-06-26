@@ -13,10 +13,10 @@ void (*GUI_curapp_draw)();
 uint8_t (*GUI_curapp_input)(uint8_t);
 
 
-void gui_init()
+bool gui_init()
 {
-	SSD1306_Init();
 	gui_CurList = 0;
+	return SSD1306_Init();
 }
 
 void gui_text(const char* txt, uint8_t x, uint8_t y, uint8_t col)
@@ -122,60 +122,6 @@ void gui_removeTicker(GUI_TickerData *dt)
 	free(dt);
 }
 
-
-GUI_ListData* gui_create_list(char* header, uint16_t count, GUI_ListItemData** items, uint8_t x, uint8_t y, uint8_t w, uint8_t h, 
-	void (*onClick)(uint16_t, uint32_t, uint8_t eventType), void (*onFocus)(uint16_t, uint32_t, uint8_t eventType), void (*onDeFocus)(uint16_t, uint32_t, uint8_t eventType))
-{
-	GUI_ListData *ld = (GUI_ListData*)malloc(sizeof(GUI_ListData));
-	ld->header = header;
-	ld->x = x;
-	ld->y = y;
-	ld->w = w;
-	ld->h = h;
-	ld->selectedItem = 0;
-	ld->ItemsCount = count;
-	
-	ld->ClickHandler = onClick;
-	ld->FocusHandler = onFocus;
-	ld->DeFocusHandler = onDeFocus;
-	
-	uint16_t i;
-	for(i = 0; i < count; i++)
-	{
-		items[i]->id = i;
-	}
-
-	
-	ld->items = items;
-	
-	return ld;
-}
-void gui_remove_list(GUI_ListData* list)
-{
-	free(list->header);
-	uint16_t i;
-	for(i = 0; i < list->ItemsCount; i++)
-	{
-		gui_remove_listItem(list->items[i]);
-	}
-	free(list);
-}
-GUI_ListItemData* gui_create_listItem(char* text, uint32_t arg,
-	void (*onClick)(uint16_t, uint32_t, uint8_t eventType), void (*onFocus)(uint16_t, uint32_t, uint8_t eventType), void (*onDeFocus)(uint16_t, uint32_t, uint8_t eventType))
-{
-	GUI_ListItemData *dt = (GUI_ListItemData*)malloc(sizeof(GUI_ListItemData));
-	dt->text = text;
-	dt->arg = arg;
-	dt->ClickHandler = onClick;
-	dt->FocusHandler = onFocus;
-	dt->DeFocusHandler = onDeFocus;
-	return dt;
-}
-void gui_remove_listItem(GUI_ListItemData *ld)
-{
-	free(ld->text);
-	free(ld);
-}
 void gui_set_curList(GUI_ListData* list)
 {
 	gui_CurList = list;
