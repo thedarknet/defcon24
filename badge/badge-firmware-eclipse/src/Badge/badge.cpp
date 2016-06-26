@@ -1,14 +1,13 @@
 #include "badge.h"
 #include "stdint.h"
 #include "gui.h"
-//#include <RH_RF69.h>
+#include "menus.h"
 #include <RFM69.h>
 #include <Keyboard.h>
 #include <KeyStore.h>
 #include <tim.h>
 #include <usart.h>
 
-GUI_TickerData td("HI FROM STM32", 0, 0, 120, 10);
 char sendingBuf[64] = { '\0' };
 char receivingBuf[64] = { '\0' };
 
@@ -46,6 +45,10 @@ void stopUARTIR() {
 	HAL_TIM_OC_Stop(&htim2, TIM_CHANNEL_2);
 }
 
+const char *ErrorType::getMessage() {
+	return "TODO";
+}
+
 uint32_t nextStateSwitchTime = 0;
 
 void initFlash() {
@@ -71,38 +74,40 @@ uint32_t startBadge() {
 	initFlash();
 
 	GUI_ListItemData items[4];
-	GUI_ListData DrawList((const char *)"Self Check", (GUI_ListItemData**)items, uint8_t(0),uint8_t(0),uint8_t(128),uint8_t(64),uint8_t(0),uint8_t(0));
+	GUI_ListData DrawList((const char *) "Self Check",
+			(GUI_ListItemData**) items, uint8_t(0), uint8_t(0), uint8_t(128),
+			uint8_t(64), uint8_t(0), uint8_t(0));
 	//DO SELF CHECK
-	if(gui_init()) {
-		items[0].set(0,"OLED_INIT");
+	if (gui_init()) {
+		items[0].set(0, "OLED_INIT");
 		DrawList.ItemsCount++;
-		retVal|=COMPONENTS_ITEMS::OLED;
+		retVal |= COMPONENTS_ITEMS::OLED;
 		gui_set_curList(&DrawList);
 	}
 	gui_draw();
 #if 1
 #define INITIAL_STATE 6
-	if(Radio.initialize(RF69_915MHZ,1)) {
+	if (Radio.initialize(RF69_915MHZ, 1)) {
 #elif 0
 #define INITIAL_STATE 7
-	if(Radio.initialize(RF69_915MHZ, 2)) {
+		if(Radio.initialize(RF69_915MHZ, 2)) {
 #else
 #define INITIAL_STATE 1
 #endif
-		items[1].set(1,"RADIO INIT");
+		items[1].set(1, "RADIO INIT");
 		Radio.setPowerLevel(31);
-		retVal|=COMPONENTS_ITEMS::RADIO;
+		retVal |= COMPONENTS_ITEMS::RADIO;
 	} else {
-		items[1].set(1,"RADIO FAILED");
+		items[1].set(1, "RADIO FAILED");
 	}
 	DrawList.ItemsCount++;
 	gui_draw();
 
-	if(MyContacts.init()) {
-		items[2].set(2,"Flash mem INIT");
-		retVal|=COMPONENTS_ITEMS::FLASH_MEM;
+	if (MyContacts.init()) {
+		items[2].set(2, "Flash mem INIT");
+		retVal |= COMPONENTS_ITEMS::FLASH_MEM;
 	} else {
-		items[2].set(2,"Flash mem FAILED");
+		items[2].set(2, "Flash mem FAILED");
 	}
 	//test for IR??
 	DrawList.ItemsCount++;
@@ -115,6 +120,7 @@ uint32_t startBadge() {
 
 	////////
 	state = INITIAL_STATE;
+	gui_set_curList(0);
 	return true;
 }
 
@@ -143,12 +149,15 @@ enum STATES {
 };
 
 enum SETTING_SUB {
-	SET_AGENT_NAME,
-	SET_SCREEN_SAVER1,
-	SET_SLEEP_TIME
+	SET_AGENT_NAME, SET_SCREEN_SAVER1, SET_SLEEP_TIME
 };
 
+StateBase *CurrentState = StateFactory::getLogoState(3000);
+
 void loopBadge() {
+
+
+
 	char buf[128];
 
 	//gui_text(&sendingBuf[0],0,20,0);
@@ -157,10 +166,6 @@ void loopBadge() {
 
 	switch (state) {
 	case 0: {
-		gui_ticker(&td);
-		td.x++;
-		if (td.x > 127)
-			td.x = 0;
 		checkStateTimer(1, 2000);
 	}
 		break;
@@ -206,11 +211,11 @@ void loopBadge() {
 		state = 6;
 		break;
 	case 7: {
-		if(HAL_GetTick() - lastSendTime > 1000) {
+		if (HAL_GetTick() - lastSendTime > 1000) {
 			sprintf(receivingBuf, "Receiving for %d time", counter++);
 			lastSendTime = HAL_GetTick();
-			gui_lable_multiline(receivingBuf, 0, 20, 120, 50, SSD1306_COLOR_BLACK,
-					0);
+			gui_lable_multiline(receivingBuf, 0, 20, 120, 50,
+					SSD1306_COLOR_BLACK, 0);
 			if (Radio.receiveDone()) {
 				memset(&receivingBuf[0], 0, sizeof(receivingBuf));
 				//Radio.recv((uint8_t*)&receivingBuf[0],&bufSize);
@@ -268,7 +273,7 @@ void loopBadge() {
 		HAL_GetDEVID();
 		HAL_GetREVID();
 		HAL_GetHalVersion();
-		}
+	}
 		break;
 	case 11: {
 		Radio.getCurrentGain();
@@ -277,13 +282,13 @@ void loopBadge() {
 		/*
 		 *
 		 * uint32_t f = Radio.getFrequency();
-	sprintf(&buf[0], "Fre:  %d", f);
-	gui_text(&buf[0], 0, 20, 0);
-	//Radio.readAllRegs();
-	sprintf(&buf[0], "rssi: %d", Radio.readRSSI(false));
+		 sprintf(&buf[0], "Fre:  %d", f);
+		 gui_text(&buf[0], 0, 20, 0);
+		 //Radio.readAllRegs();
+		 sprintf(&buf[0], "rssi: %d", Radio.readRSSI(false));
 
 		 */
-		}
+	}
 		break;
 	}
 

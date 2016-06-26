@@ -89,10 +89,17 @@ int main(void)
   MX_USB_DEVICE_Init();
 
   /* USER CODE BEGIN 2 */
-	startBadge();
-	//HAL_TIM_OC_Start(&htim2,TIM_CHANNEL_2);
-	//delay(3000);
-	//HAL_TIM_OC_Stop(&htim2,TIM_CHANNEL_2);
+  const uint32_t retStart = startBadge();
+  if((retStart&COMPONENTS_ITEMS::OLED)==0) {
+	  // oled did not initialize
+	  //so we'll let the agent know via LED
+	  while(1) {
+		  HAL_GPIO_WritePin(LED_IR_STATUS_GPIO_Port,LED_IR_STATUS_Pin,GPIO_PIN_SET);
+		  delay(200);
+		  HAL_GPIO_WritePin(LED_IR_STATUS_GPIO_Port,LED_IR_STATUS_Pin,GPIO_PIN_RESET);
+		  delay(400);
+	  }
+  }
   /* USER CODE END 2 */
 
   /* Infinite loop */
