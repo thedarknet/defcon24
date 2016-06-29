@@ -4,6 +4,10 @@
 
 #include <stdint.h>
 
+class ContactStore;
+
+ContactStore &getContactStore();
+
 class ErrorType {
 public:
 	enum ERROR_ENUM {

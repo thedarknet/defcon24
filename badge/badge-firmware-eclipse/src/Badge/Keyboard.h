@@ -21,6 +21,7 @@ class QKeyboard {
 		uint8_t getLastPinPushed();
 		//last button pushed and held for at least TIMES_BUTTON_MUST_BE_HELD
 		uint8_t getLastPinSeleted();
+		char getLetter();
 	private:
 		PinConfig YPins[3];
 		PinConfig XPins[4];

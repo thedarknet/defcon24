@@ -33,6 +33,10 @@ RFM69 Radio;
 static const uint32_t START_STORAGE_LOCATION = 0x800d400; //0x800B000;
 ContactStore MyContacts(START_STORAGE_LOCATION, 0x2710); //0x4E00);
 
+ContactStore &getContactStore() {
+	return MyContacts;
+}
+
 void delay(uint32_t time) {
 	HAL_Delay(time);
 }
@@ -68,6 +72,8 @@ void initFlash() {
 	HAL_FLASH_Lock();
 #endif
 }
+
+StateBase *CurrentState = 0;
 
 uint32_t startBadge() {
 	uint32_t retVal = 0;
@@ -121,6 +127,7 @@ uint32_t startBadge() {
 	////////
 	state = INITIAL_STATE;
 	gui_set_curList(0);
+	CurrentState = StateFactory::getLogoState(3000);
 	return true;
 }
 
@@ -152,16 +159,18 @@ enum SETTING_SUB {
 	SET_AGENT_NAME, SET_SCREEN_SAVER1, SET_SLEEP_TIME
 };
 
-StateBase *CurrentState = StateFactory::getLogoState(3000);
 
 void loopBadge() {
 
 
-	ReturnStateContext rsc = CurrentState->run();
+	ReturnStateContext rsc = CurrentState->run(KB);
 
 	if(rsc.Err.ok()) {
 		CurrentState = rsc.NextMenuToRun;
 	}
+	gui_draw();
+
+/*
 
 	char buf[128];
 
@@ -292,13 +301,13 @@ void loopBadge() {
 		 //Radio.readAllRegs();
 		 sprintf(&buf[0], "rssi: %d", Radio.readRSSI(false));
 
-		 */
+
 	}
 		break;
 	}
-
+*/
 	//const char * str = "HI STM32";
 	//gui_text(str,10,10,SSD1306_COLOR_WHITE);
-	gui_draw();
+	//gui_draw();
 }
 

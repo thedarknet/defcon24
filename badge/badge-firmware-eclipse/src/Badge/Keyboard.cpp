@@ -57,6 +57,10 @@ void QKeyboard::scan() {
 	//lightRow = lightRow % 4;
 }
 
+char QKeyboard::getLetter() {
+	return 'A';
+}
+
 uint8_t QKeyboard::getLastPinPushed() {
 	return LastSelectedPin;
 }
