@@ -61,6 +61,10 @@ char QKeyboard::getLetter() {
 	return 'A';
 }
 
+uint8_t QKeyboard::getNumber() {
+	return 0;
+}
+
 uint8_t QKeyboard::getLastPinPushed() {
 	return LastSelectedPin;
 }

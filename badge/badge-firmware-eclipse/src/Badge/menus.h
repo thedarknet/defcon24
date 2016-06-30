@@ -82,8 +82,8 @@ protected:
 	virtual ReturnStateContext onRun(QKeyboard &kb);
 	virtual ErrorType onShutdown();
 private:
-	GUI_ListData SettingList;
-	GUI_ListItemData Items[6];
+	GUI_ListData MenuList;
+	GUI_ListItemData Items[7];
 	/*
 	 * SETTINGS,
 		IR_PAIR,
@@ -173,21 +173,23 @@ protected:
 private:
 	StateBase *NextState;
 };
+*/
 
 class BadgeInfoState : public StateBase {
 public:
-	BadgeInfoState(StateBase *nextState);
+	BadgeInfoState();
 	virtual ~BadgeInfoState();
-	void setNextState(StateBase *b) {NextState = b;}
-	StateBase *getNextState() {return NextState;}
 protected:
 	virtual ErrorType onInit();
 	virtual ReturnStateContext onRun(QKeyboard &kb);
 	virtual ErrorType onShutdown();
 private:
-	StateBase *NextState;
+	GUI_ListData BadgeInfoList;
+	GUI_ListItemData Items[6];
+	char ListBuffer[20][6];
 };
 
+/*
 class RadioInfoState : public StateBase {
 public:
 	RadioInfoState(StateBase *nextState);
@@ -209,8 +211,16 @@ public:
 	static bool init();
 	static StateBase *getDisplayMessageState(StateBase *bm,
 			const char *message, uint16_t timeToDisplay);
-	static StateBase* getMenuState();
-	static StateBase* getLogoState(uint16_t timeToDisplay);
+	static StateBase *getMenuState();
+	static StateBase *getLogoState(uint16_t timeToDisplay);
+	static StateBase *getSettingState();
+	static StateBase *getIRPairingState();
+	static StateBase *getAddressBookState();
+	static StateBase *getSendMessageState() ;
+	static StateBase *getEnigmaState();
+	static StateBase *getBadgeInfoState();
+	static StateBase *getRadioInfoState();
+
 };
 
 #endif
