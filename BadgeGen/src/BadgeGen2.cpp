@@ -1,0 +1,218 @@
+//============================================================================
+// Name        : BadgeGen2.cpp
+// Author      : CmdC0de
+// Version     :
+// Copyright   : DCDarkNet Industries LLC  all right reserved
+// Description : Hello World in C++, Ansi-style
+//============================================================================
+
+#include <iostream>
+#include <iomanip>
+#include <sstream>
+#include <fstream>
+#include "sha256.h"
+#include <uECC.h>
+#include <memory.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+
+using namespace std;
+
+#if 1
+
+uECC_Curve theCurve = uECC_secp192r1();
+
+bool makeKey(uint8_t privKey[24], uint8_t pubKey[48], uint8_t compressPub[25]) {
+	if (uECC_make_key(pubKey, privKey, theCurve) == 1) {
+
+		uECC_compress(pubKey, compressPub, theCurve);
+
+		if (uECC_valid_public_key(pubKey, theCurve) == 1) {
+			return true;
+		}
+	}
+	return false;
+}
+
+void printKeys(uint8_t privKey[24], uint8_t pubKey[25]) {
+	cout << "PrivateKey:" << endl;
+	cout << "\t";
+	for (int i = 0; i < 24; i++) {
+		if (i != 0) {
+			cout << ":";
+		}
+		cout << setfill('0') << setw(2) << hex << (int) privKey[i] << dec;
+	}
+	cout << endl;
+	cout << "PublicKey:" << endl;
+	cout << "\t";
+	for (int i = 0; i < 25; i++) {
+		if (i != 0) {
+			cout << ":";
+		}
+		cout << setfill('0') << setw(2) << hex << (int) pubKey[i] << dec;
+	}
+	cout << endl;
+}
+
+bool exists(const std::string& name) {
+	struct stat buffer;
+	return (stat(name.c_str(), &buffer) == 0);
+}
+
+int main(int argc, char *argv[]) {
+	char create = 0, generate = 0;
+
+	uint8_t privateKey[24];
+	uint8_t unCompressPubKey[48];
+	uint8_t compressPubKey[25];
+	uint8_t RadioID[3];
+	uint8_t Signature[48];
+
+	int ch = 0;
+	int numberToGen = 0;
+
+	while ((ch = getopt(argc, argv, "cn:")) != -1) {
+		switch (ch) {
+		case 'c':
+			create = 1;
+			break;
+		case 'n':
+			numberToGen = atoi(optarg);
+			generate = 1;
+			break;
+		case '?':
+		default:
+			//usage();
+			return -1;
+			break;
+		}
+	}
+
+	if (1 == create) {
+		if (makeKey(privateKey, unCompressPubKey, compressPubKey)) {
+			printKeys(privateKey, compressPubKey);
+		} else {
+			cerr << "Error generating key" << endl;
+		}
+	} else if (1 == generate) {
+		for (int i = 0; i < numberToGen; i++) {
+			if (makeKey(privateKey, unCompressPubKey, compressPubKey)) {
+				uECC_RNG_Function f = uECC_get_rng();
+				f(&RadioID[0], 3);
+				//RadioID[0] = RadioID[0]%6;
+				cout << "RadioID: " << endl;
+				cout << "\t" << setfill('0') << setw(2) << hex
+						<< (int) RadioID[0] << dec << ":";
+				cout << setfill('0') << setw(2) << hex << (int) RadioID[1]
+						<< dec << ":";
+				cout << setfill('0') << setw(2) << hex << (int) RadioID[2]
+						<< dec << endl;
+				printKeys(privateKey, compressPubKey);
+				cout << endl;
+				cout << endl;
+				ostringstream oss;
+				oss << setfill('0') << setw(2) << hex << (int) RadioID[0]
+						<< (int) RadioID[1] << ends;
+				std::string fileName = oss.str();
+				if (!exists("./keys")) {
+					mkdir("./keys", 0700);
+				}
+				std::string fullFileName = "./keys/" + fileName;
+				if (exists (fullFileName)) {
+					numberToGen++;
+				} else {
+					ofstream of(fullFileName.c_str());
+					of.write((const char *)&RadioID[0], 3);
+					of.write((const char *)&privateKey[0], sizeof(privateKey));
+					of.write((const char *)&compressPubKey[0], sizeof(compressPubKey));
+					of.flush();
+				}
+			}
+		}
+	}
+	return 0;
+}
+#else
+
+int main() {
+	cout << "uECC_secp160r1" << endl;
+	cout << uECC_curve_private_key_size(uECC_secp160r1()) << endl;
+	cout << uECC_curve_public_key_size(uECC_secp160r1()) << endl;
+	cout << "uECC_secp192r1" << endl;
+	cout << uECC_curve_private_key_size(uECC_secp192r1()) << endl;
+	cout << uECC_curve_public_key_size(uECC_secp192r1()) << endl;
+	cout << "uECC_secp224r1" << endl;
+	cout << uECC_curve_private_key_size(uECC_secp224r1()) << endl;
+	cout << uECC_curve_public_key_size(uECC_secp224r1()) << endl;
+
+	cout << "gen key pair" << endl;
+#if 1
+	uECC_Curve theCurve = uECC_secp192r1();
+#else
+	uECC_Curve theCurve = uECC_secp160r1();
+#endif
+
+	int pubKeyBufSize = uECC_curve_public_key_size(theCurve) * 2;
+	int privKeyBufSize = uECC_curve_private_key_size(theCurve);
+	uint8_t *pubKey = new unsigned char[pubKeyBufSize];
+	memset(pubKey, 0, pubKeyBufSize);
+	uint8_t *privKey = new uint8_t[privKeyBufSize];
+	memset(privKey, 0, privKeyBufSize);
+	int pubKeyCompressSize = privKeyBufSize + 1;
+	uint8_t *comPubKey = new uint8_t[pubKeyCompressSize];
+
+	if (uECC_make_key(pubKey, privKey, theCurve) == 1) {
+		for (int i = 0; i < pubKeyBufSize; i++) {
+			cout << hex << (int) pubKey[i] << " ";
+		}
+		cout << endl;
+
+		uECC_compress(pubKey, comPubKey, theCurve);
+		for (int i = 0; i < pubKeyCompressSize; i++) {
+			cout << hex << (int) comPubKey[i] << " ";
+		}
+		cout << endl;
+
+		if (uECC_valid_public_key(pubKey, theCurve) == 1) {
+			cout << "valid pub key" << endl;
+		}
+
+		ShaOBJ shaCtx;
+		sha256_init(&shaCtx);
+		const char *msg = "this is my message";
+		sha256_add(&shaCtx,(const uint8_t *)msg,strlen(msg));
+		uint8_t digest[32];
+		sha256_digest(&shaCtx,digest);
+
+		int signatureSize = privKeyBufSize*2;
+		uint8_t *signature = new uint8_t[signatureSize];
+		memset(signature,0,signatureSize);
+
+		if(uECC_sign(privKey,&digest[0],sizeof(digest),signature,theCurve)==1) {
+			for(int i=0;i<signatureSize;i++) {
+				cout << hex << (int)signature[i];
+			}
+			cout << dec << endl;
+			if(uECC_verify(pubKey,&digest[0],sizeof(digest),signature,theCurve)==1) {
+				cout << "signature check!" << endl;
+			}
+		}
+		printf("Private Key Size: %u\n",privKeyBufSize);
+		printf("Compressed pub key size: %u\n",privKeyBufSize+1);
+		printf("Signature: %u\n",signatureSize);
+		int total = privKeyBufSize+1+2+signatureSize+12;
+		printf("total for pairing: %u\n",total);
+		int canFit = (1024*10)/total;
+		printf("Can fit: %u\n",canFit);
+		int canFitSmallerSig = (1024*10)/(privKeyBufSize+1+2+16+12);
+		cout << "Can fit smaller sig: " << canFitSmallerSig << endl;
+
+	} else {
+		cout << "keygen failed" << endl;
+	}
+	return 0;
+}
+#endif
