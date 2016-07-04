@@ -98,16 +98,13 @@ private:
 
 class SettingState : public StateBase {
 public:
-	SettingState(StateBase *nextState);
+	SettingState();
 	virtual ~SettingState();
-	void setNextState(StateBase *b) {NextState = b;}
-	StateBase *getNextState() {return NextState;}
 protected:
 	virtual ErrorType onInit();
 	virtual ReturnStateContext onRun(QKeyboard &kb);
 	virtual ErrorType onShutdown();
 private:
-	StateBase *NextState;
 	GUI_ListData SettingList;
 	GUI_ListItemData Items[4]; //set agent name,
 	char AgentName[ContactStore::AGENT_NAME_LENGTH];
@@ -115,37 +112,35 @@ private:
 	uint8_t SubState;
 };
 
-/*
+
 class IRState : public StateBase {
 public:
-	IRState(StateBase *ns);
+	IRState();
 	virtual ~IRState();
-	void setNextState(StateBase *b) {NextState = b;}
-	StateBase *getNextState() {return NextState;}
 protected:
 	virtual ErrorType onInit();
 	virtual ReturnStateContext onRun(QKeyboard &kb);
 	virtual ErrorType onShutdown();
 private:
-	StateBase *NextState;
+	uint16_t TimeoutOnSync;
 };
+
 
 class AddressState : public StateBase {
 public:
-	AddressState(StateBase *nextState);
+	AddressState();
 	virtual ~AddressState();
-	void setNextState(StateBase *b) {NextState = b;}
-	StateBase *getNextState() {return NextState;}
 protected:
 	virtual ErrorType onInit();
 	virtual ReturnStateContext onRun(QKeyboard &kb);
 	virtual ErrorType onShutdown();
 private:
-	StateBase *NextState;
-	GUI_ListData SettingList;
-	GUI_ListItemData Items[4]; //set agent name,
+	GUI_ListData AddressList;
+	GUI_ListItemData Items[4];
+	uint8_t ContactIndex;
 };
 
+/*
 class SendMsgState : public StateBase {
 public:
 	SendMsgState(StateBase *nextState);

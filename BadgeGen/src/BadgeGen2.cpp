@@ -24,7 +24,10 @@ using namespace std;
 
 uECC_Curve theCurve = uECC_secp192r1();
 
-bool makeKey(uint8_t privKey[24], uint8_t pubKey[48], uint8_t compressPub[25]) {
+bool makeKey(uint8_t privKey[24], uint8_t pubKey[48], uint8_t compressPub[26]) {
+	memset(&privKey[0],0,24);
+	memset(&pubKey[0],0,48);
+	memset(&compressPub[0],0,26);
 	if (uECC_make_key(pubKey, privKey, theCurve) == 1) {
 
 		uECC_compress(pubKey, compressPub, theCurve);
@@ -36,7 +39,7 @@ bool makeKey(uint8_t privKey[24], uint8_t pubKey[48], uint8_t compressPub[25]) {
 	return false;
 }
 
-void printKeys(uint8_t privKey[24], uint8_t pubKey[25]) {
+void printKeys(uint8_t privKey[24], uint8_t pubKey[26]) {
 	cout << "PrivateKey:" << endl;
 	cout << "\t";
 	for (int i = 0; i < 24; i++) {
@@ -48,7 +51,7 @@ void printKeys(uint8_t privKey[24], uint8_t pubKey[25]) {
 	cout << endl;
 	cout << "PublicKey:" << endl;
 	cout << "\t";
-	for (int i = 0; i < 25; i++) {
+	for (int i = 0; i < 26; i++) {
 		if (i != 0) {
 			cout << ":";
 		}
@@ -62,19 +65,23 @@ bool exists(const std::string& name) {
 	return (stat(name.c_str(), &buffer) == 0);
 }
 
-int main(int argc, char *argv[]) {
-	char create = 0, generate = 0;
+void usage() {
+	cout << "BadgeGen -u <make uber init file> -c <create daemon keys> -n <number of badge keys to generate>" << endl;
+}
 
-	uint8_t privateKey[24];
-	uint8_t unCompressPubKey[48];
-	uint8_t compressPubKey[25];
-	uint8_t RadioID[3];
+int main(int argc, char *argv[]) {
+	char create = 0, generate = 0, makeUber = 0;
+
+	uint8_t privateKey[24] = {0x00};
+	uint8_t unCompressPubKey[48] = {0x00};
+	uint8_t compressPubKey[26] = {0x00}; //only need 25
+	uint8_t RadioID[4];
 	uint8_t Signature[48];
 
 	int ch = 0;
 	int numberToGen = 0;
 
-	while ((ch = getopt(argc, argv, "cn:")) != -1) {
+	while ((ch = getopt(argc, argv, "ucn:")) != -1) {
 		switch (ch) {
 		case 'c':
 			create = 1;
@@ -83,9 +90,12 @@ int main(int argc, char *argv[]) {
 			numberToGen = atoi(optarg);
 			generate = 1;
 			break;
+		case 'u':
+			makeUber = 1;
+			break;
 		case '?':
 		default:
-			//usage();
+			usage();
 			return -1;
 			break;
 		}
@@ -101,14 +111,15 @@ int main(int argc, char *argv[]) {
 		for (int i = 0; i < numberToGen; i++) {
 			if (makeKey(privateKey, unCompressPubKey, compressPubKey)) {
 				uECC_RNG_Function f = uECC_get_rng();
-				f(&RadioID[0], 3);
-				//RadioID[0] = RadioID[0]%6;
+				f(&RadioID[0], 4);
 				cout << "RadioID: " << endl;
 				cout << "\t" << setfill('0') << setw(2) << hex
 						<< (int) RadioID[0] << dec << ":";
 				cout << setfill('0') << setw(2) << hex << (int) RadioID[1]
 						<< dec << ":";
 				cout << setfill('0') << setw(2) << hex << (int) RadioID[2]
+						<< dec << ":";
+				cout << setfill('0') << setw(2) << hex << (int) RadioID[3]
 						<< dec << endl;
 				printKeys(privateKey, compressPubKey);
 				cout << endl;
@@ -124,10 +135,19 @@ int main(int argc, char *argv[]) {
 				if (exists (fullFileName)) {
 					numberToGen++;
 				} else {
+					//see keystore.h for format
+					static const unsigned int defaults1 = 0b00100001; //screen saver type = 1 sleep time = 2
+					static const unsigned int defaults2 = 0b00000001; //screen saver time = 1
+					unsigned char reserveFlags = makeUber==1 ? 0x1 : 0x0;
+					char agentName[12] = {'\0'};
 					ofstream of(fullFileName.c_str());
-					of.write((const char *)&RadioID[0], 3);
-					of.write((const char *)&privateKey[0], sizeof(privateKey));
+					//                   			magic 	magic	reserved	Num Contacts 		settings 1		Settings 2
+					const unsigned char magic[6] = {0xDC, 0xDC,	reserveFlags,		0x0,			defaults1,		defaults2};
+					of.write((const char *)&magic[0],sizeof(magic));
+					of.write((const char *)&RadioID[0], 4);
 					of.write((const char *)&compressPubKey[0], sizeof(compressPubKey));
+					of.write((const char *)&privateKey[0], sizeof(privateKey));
+					of.write(&agentName[0],sizeof(agentName));  //just zero-ing out memory
 					of.flush();
 				}
 			}

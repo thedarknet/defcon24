@@ -16,6 +16,7 @@ public:
 		, RADIO_INIT_ERROR
 		, IR_INIT_ERROR
 		, FLASH_MEM_ERROR
+		, TIMER_ERROR
 	};
 public:
 	ErrorType(uint8_t e) : Error(e) {}

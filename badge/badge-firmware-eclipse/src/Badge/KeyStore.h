@@ -5,8 +5,8 @@
 
 class ContactStore {
 public:
-	static const uint8_t PUBLIC_KEY_LENGTH = 24;
-	static const uint8_t PRIVATE_KEY_LENGTH = 12;
+	static const uint8_t PUBLIC_KEY_LENGTH = 26; //really only 25
+	static const uint8_t PRIVATE_KEY_LENGTH = 24;
 	static const uint8_t DaemonPublic[PUBLIC_KEY_LENGTH];
 	static const uint8_t AGENT_NAME_LENGTH = 12;
 	static const uint8_t SIGNATURE_LENGTH = 20;
@@ -30,7 +30,7 @@ public:
 	//start Address[8-31] = badge owner public key
 	//start Address[32-43] = badge owner private key
 	//start Address[44-55] = badge owner agent name
-	//[ my info ]
+	//[ address book ]
 	//start address[56-94] = Contact0
 	//				[56-57] unique id
 	//				[58-81] public key

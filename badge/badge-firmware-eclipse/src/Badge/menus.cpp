@@ -1,4 +1,6 @@
+#include "stm32f1xx_hal.h"
 #include "menus.h"
+#include <tim.h>
 
 StateBase::StateBase() :
 		StateData(0), StateStartTime(0) {
@@ -9,8 +11,8 @@ ReturnStateContext StateBase::run(QKeyboard &kb) {
 	if (!hasBeenInitialized()) {
 		ErrorType et = init();
 		if (!et.ok()) {
-			sr.NextMenuToRun = StateFactory::getDisplayMessageState(
-					StateFactory::getMenuState(), et.getMessage(), 10000);
+			sr.NextMenuToRun = StateFactory::getDisplayMessageState(StateFactory::getMenuState(), et.getMessage(),
+					10000);
 		} else {
 			StateData |= INIT_BIT;
 		}
@@ -60,7 +62,7 @@ ReturnStateContext LogoState::onRun(QKeyboard &kb) {
 	td.x++;
 	if (td.x > 127)
 		td.x = 0;
-	if (timeInState() > TimeInLogoState) {
+	if (timeInState() > TimeInLogoState || kb.getLastPinSeleted()!=QKeyboard::NO_PIN_SELECTED) {
 		return ReturnStateContext(StateFactory::getMenuState());
 	} else {
 		return ReturnStateContext(this);
@@ -74,8 +76,7 @@ ErrorType LogoState::onShutdown() {
 LogoState::~LogoState() {
 }
 
-DisplayMessageState::DisplayMessageState(uint16_t timeInState,
-		StateBase *nextState) :
+DisplayMessageState::DisplayMessageState(uint16_t timeInState, StateBase *nextState) :
 		TimeInState(timeInState), NextState(nextState) {
 }
 
@@ -91,13 +92,11 @@ void DisplayMessageState::setMessage(const char *msg) {
 }
 
 ReturnStateContext DisplayMessageState::onRun(QKeyboard &kb) {
-	gui_lable_multiline(&this->Message[0], 0, 10, 120, 50, SSD1306_COLOR_BLACK,
-			0);
-	if (timeInState() > TimeInState) {
+	gui_lable_multiline(&this->Message[0], 0, 10, 120, 50, SSD1306_COLOR_BLACK, 0);
+	if (timeInState() > TimeInState || kb.getLastPinSeleted()!=QKeyboard::NO_PIN_SELECTED) {
 		return ReturnStateContext(StateFactory::getMenuState());
-	} else {
-		return ReturnStateContext(this);
 	}
+	return ReturnStateContext(this);
 }
 
 ErrorType DisplayMessageState::onShutdown() {
@@ -105,8 +104,8 @@ ErrorType DisplayMessageState::onShutdown() {
 }
 
 MenuState::MenuState() :
-		StateBase(), MenuList("Main Menu", (GUI_ListItemData**) Items, 0, 10,
-				128, 64, 0, (sizeof(Items) / sizeof(Items[0]))) {
+		StateBase(), MenuList("Main Menu", (GUI_ListItemData**) Items, 0, 10, 128, 64, 0,
+				(sizeof(Items) / sizeof(Items[0]))) {
 	Items[0].id = 0;
 	Items[0].text = (const char *) "Settings";
 	Items[1].id = 1;
@@ -137,16 +136,19 @@ ReturnStateContext MenuState::onRun(QKeyboard &kb) {
 	StateBase *nextState = this;
 	switch (key) {
 	case 1: {
-		MenuList.selectedItem =
-				MenuList.selectedItem == 0 ?
-						sizeof(Items) / sizeof(Items[0]) - 1 :
-						MenuList.selectedItem--;
+		if (MenuList.selectedItem == 0) {
+			MenuList.selectedItem = sizeof(Items) / sizeof(Items[0]) - 1;
+		} else {
+			MenuList.selectedItem--;
+		}
 		break;
 	}
 	case 7: {
-		MenuList.selectedItem =
-				MenuList.selectedItem == sizeof(Items) / sizeof(Items[0]) - 1 ?
-						0 : MenuList.selectedItem++;
+		if (MenuList.selectedItem == (sizeof(Items) / sizeof(Items[0]) - 1)) {
+			MenuList.selectedItem = 0;
+		} else {
+			MenuList.selectedItem++;
+		}
 		break;
 	}
 	case 9: {
@@ -189,10 +191,9 @@ ErrorType MenuState::onShutdown() {
 	return ErrorType();
 }
 
-SettingState::SettingState(StateBase * nextState) :
-		StateBase(), NextState(nextState), SettingList((const char *) "MENU",
-				(GUI_ListItemData**) &Items, 0, 0, 128, 64, 0,
-				sizeof(Items) / sizeof(Items[0])), InputPos(0), SubState(0) {
+SettingState::SettingState() :
+		StateBase(), SettingList((const char *) "MENU", (GUI_ListItemData**) &Items, 0, 0, 128,
+				64, 0, sizeof(Items) / sizeof(Items[0])), InputPos(0), SubState(0) {
 
 	memset(&AgentName[0], 0, sizeof(AgentName));
 	Items[0].id = 0;
@@ -203,6 +204,10 @@ SettingState::SettingState(StateBase * nextState) :
 	Items[2].text = (const char *) "Set Sleep Time";
 	Items[3].id = 3;
 	Items[3].text = (const char *) "UNKNOWN";
+}
+
+SettingState::~SettingState() {
+
 }
 
 ErrorType SettingState::onInit() {
@@ -218,21 +223,23 @@ ReturnStateContext SettingState::onRun(QKeyboard & kb) {
 	case 0:
 		switch (key) {
 		case 1: {
-			SettingList.selectedItem =
-					SettingList.selectedItem == 0 ?
-							sizeof(Items) / sizeof(Items[0]) - 1 :
-							SettingList.selectedItem--;
+			if (SettingList.selectedItem == 0) {
+				SettingList.selectedItem = sizeof(Items) / sizeof(Items[0]) - 1;
+			} else {
+				SettingList.selectedItem--;
+			}
 			break;
 		}
 		case 7: {
-			SettingList.selectedItem =
-					SettingList.selectedItem
-							== sizeof(Items) / sizeof(Items[0]) - 1 ?
-							0 : SettingList.selectedItem++;
+			if (SettingList.selectedItem == (sizeof(Items) / sizeof(Items[0]) - 1)) {
+				SettingList.selectedItem = 0;
+			} else {
+				SettingList.selectedItem++;
+			}
 			break;
 		}
 		case 9: {
-			nextState = this->getNextState();
+			nextState = StateFactory::getMenuState();
 		}
 			break;
 		case 11: {
@@ -244,13 +251,12 @@ ReturnStateContext SettingState::onRun(QKeyboard & kb) {
 		}
 		break;
 	case 100: {
-		gui_lable((const char*) "Enter you're agent name:", 0, 10, 128, 64, 0,
-				0);
+		gui_lable((const char*) "Enter you're agent name:", 0, 10, 128, 64, 0, 0);
 		char letter = kb.getLetter();
 		if (letter == 127) {
 			AgentName[InputPos] = '\0';
 			InputPos--;
-		} else if (letter == 254) {
+		} else if (letter == 126) {
 			//done
 			getContactStore().getMyInfo().setAgentname(&AgentName[0]);
 			gui_lable((const char *) "Saving ...", 0, 30, 128, 64, 0, 0);
@@ -262,8 +268,7 @@ ReturnStateContext SettingState::onRun(QKeyboard & kb) {
 		break;
 	}
 	case 101: {
-		gui_lable((const char*) "Choose Number of Screen Saver:", 0, 10, 128,
-				64, 0, 0);
+		gui_lable((const char*) "Choose Number of Screen Saver:", 0, 10, 128, 64, 0, 0);
 		gui_lable((const char*) "1: Game of Life", 0, 20, 128, 64, 0, 0);
 		uint8_t ss = kb.getLastPinSeleted();
 		if (ss == 1) {
@@ -272,8 +277,7 @@ ReturnStateContext SettingState::onRun(QKeyboard & kb) {
 		break;
 	}
 	case 102:
-		gui_lable((const char*) "Time until badge goes to sleep:", 0, 10, 128,
-				64, 0, 0);
+		gui_lable((const char*) "Time until badge goes to sleep:", 0, 10, 128, 64, 0, 0);
 		if (kb.getLastPinSeleted() == 9) {
 			AgentName[InputPos] = '\0';
 			InputPos--;
@@ -300,43 +304,116 @@ ErrorType SettingState::onShutdown() {
 	return ErrorType();
 }
 
-class IRState: public StateBase {
-public:
-	IRState(StateBase *ns);
-	virtual ~IRState();
-	void setNextState(StateBase *b) {
-		NextState = b;
-	}
-	StateBase *getNextState() {
-		return NextState;
-	}
-protected:
-	virtual ErrorType onInit();
-	virtual ReturnStateContext onRun(QKeyboard &kb);
-	virtual ErrorType onShutdown();
-private:
-	StateBase *NextState;
-};
+IRState::IRState() :
+		TimeoutOnSync(10000) {
 
-class AddressState: public StateBase {
-public:
-	AddressState(StateBase *nextState);
-	virtual ~AddressState();
-	void setNextState(StateBase *b) {
-		NextState = b;
+}
+
+IRState::~IRState() {
+
+}
+
+ErrorType IRState::onInit() {
+	HAL_StatusTypeDef status = HAL_TIM_OC_Start(&htim2, TIM_CHANNEL_2);
+	if (HAL_OK == status) {
+		return ErrorType();
 	}
-	StateBase *getNextState() {
-		return NextState;
+	return ErrorType(ErrorType::TIMER_ERROR);
+}
+
+ReturnStateContext IRState::onRun(QKeyboard &kb) {
+	gui_lable_multiline("not implemented yet", 0, 20, 120, 50, SSD1306_COLOR_BLACK, 0);
+	gui_lable_multiline("press a key to return", 0, 30, 120, 50, SSD1306_COLOR_BLACK, 0);
+	if (kb.getLastPinSeleted() == QKeyboard::NO_PIN_SELECTED) {
+		return ReturnStateContext(this);
+	} else {
+		return ReturnStateContext(StateFactory::getMenuState());
 	}
-protected:
-	virtual ErrorType onInit();
-	virtual ReturnStateContext onRun(QKeyboard &kb);
-	virtual ErrorType onShutdown();
-private:
-	StateBase *NextState;
-	GUI_ListData SettingList;
-	GUI_ListItemData Items[4]; //set agent name,
-};
+#if 0
+	gui_lable_multiline("receiver", 0, 10, 120, 50, SSD1306_COLOR_BLACK, 0);
+	HAL_StatusTypeDef status;
+	char receiveBuf[64] = {'\0'};
+	status = HAL_UART_Receive(&huart2, (uint8_t *) &receiveBuf[0],
+			sizeof(receiveBuf) - 1, 5000);
+	if (status == HAL_OK
+			|| (status == HAL_TIMEOUT
+					&& huart2.RxXferCount != huart2.RxXferSize)) {
+		//Error_Handler();
+		sprintf(&buf[0], "UART:  %s", &receiveBuf[0]);
+		gui_lable_multiline(&buf[0], 0, 30, 120, 50, SSD1306_COLOR_BLACK,
+				0);
+	}
+}
+break;
+case 9: {
+	gui_lable_multiline("transmitter", 0, 10, 120, 50, SSD1306_COLOR_BLACK,
+			0);
+	if (KB.getLastPinSeleted() != QKeyboard::NO_PIN_SELECTED) {
+		state = 9;
+	}
+	char transbuf[64] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+	//strcpy(&transbuf[0], "AAAAAAAA");
+	HAL_StatusTypeDef status;
+	status = HAL_UART_Transmit(&huart2, (uint8_t*) &transbuf[0], 10, 5000);
+	if (HAL_OK == status) {
+		gui_lable_multiline("sent ok", 0, 10, 120, 50, SSD1306_COLOR_BLACK,
+				0);
+#endif
+}
+
+ErrorType IRState::onShutdown() {
+	HAL_StatusTypeDef status = HAL_TIM_OC_Stop(&htim2, TIM_CHANNEL_2);
+	if (HAL_OK == status) {
+		return ErrorType();
+	}
+	return ErrorType(ErrorType::TIMER_ERROR);
+}
+
+////////////////////////////////////////////////
+AddressState::AddressState() : StateBase(), AddressList((const char *) "Address Book", (GUI_ListItemData**) &Items, 0, 0, 128,
+		64, 0, sizeof(Items) / sizeof(Items[0])), ContactIndex(0) {
+
+}
+
+AddressState::~AddressState() {
+
+}
+
+ErrorType AddressState::onInit() {
+	gui_set_curList(&AddressList);
+	uint8_t num = getContactStore().getRecordInfo().getNumContacts();
+	for(int i=0;i<num && i<4;i++) {
+		ContactStore::Contact c(0);
+		getContactStore().getRecordInfo().getContactAt(i,c);
+		Items[i%4].id = c.getUniqueID();
+		Items[i%4].text = c.getAgentName();
+	}
+	return ErrorType();
+}
+
+ReturnStateContext AddressState::onRun(QKeyboard &kb) {
+	uint8_t pin = kb.getLastPinSeleted();
+	StateBase *nextState = this;
+	switch(pin) {
+	case 1:
+		break;
+	case 7:
+		break;
+	case 9:
+		nextState = StateFactory::getMenuState();
+		break;
+	case 11:
+		nextState = StateFactory::getSendMessageState();
+		break;
+	}
+	return ReturnStateContext(nextState);
+}
+
+ErrorType AddressState::onShutdown() {
+	return ErrorType();
+}
+
+
 
 class SendMsgState: public StateBase {
 public:
@@ -375,10 +452,10 @@ private:
 };
 
 BadgeInfoState::BadgeInfoState() :
-		StateBase(), BadgeInfoList("Badge Info:", (GUI_ListItemData**) Items, 0,
-				0, 128, 64, 0, (sizeof(Items) / sizeof(Items[0]))) {
+		StateBase(), BadgeInfoList("Badge Info:", (GUI_ListItemData**) Items, 0, 0, 128, 64, 0,
+				(sizeof(Items) / sizeof(Items[0]))) {
 
-	for (int i = 0; i < (sizeof(Items) / sizeof(Items[0])); i++) {
+	for (uint32_t i = 0; i < (sizeof(Items) / sizeof(Items[0])); i++) {
 		Items[i].id = i;
 	}
 	//char ListBuffer[20][6];
@@ -392,13 +469,11 @@ ErrorType BadgeInfoState::onInit() {
 	gui_set_curList(&BadgeInfoList);
 	memset(&ListBuffer[0], 0, sizeof(ListBuffer));
 	sprintf(&ListBuffer[0][0], "SW Version: %s", "1.0.0");
-	sprintf(&ListBuffer[0][1], "DEVID: %u", HAL_GetDEVID());
-	sprintf(&ListBuffer[0][2], "REVID: %u", HAL_GetREVID());
-	sprintf(&ListBuffer[0][3], "HAL Version: %u", HAL_GetHalVersion());
-	sprintf(&ListBuffer[0][4], "UID: %u",
-			getContactStore().getMyInfo().getUniqueID());
-	sprintf(&ListBuffer[0][5], "Num contacts: %u",
-			getContactStore().getRecordInfo().getNumContacts());
+	sprintf(&ListBuffer[0][1], "DEVID: %lu", HAL_GetDEVID());
+	sprintf(&ListBuffer[0][2], "REVID: %lu", HAL_GetREVID());
+	sprintf(&ListBuffer[0][3], "HAL Version: %lu", HAL_GetHalVersion());
+	sprintf(&ListBuffer[0][4], "UID: %u", getContactStore().getMyInfo().getUniqueID());
+	sprintf(&ListBuffer[0][5], "Num contacts: %u", getContactStore().getRecordInfo().getNumContacts());
 	for (uint32_t i = 0; i < (sizeof(Items) / sizeof(Items[0])); i++) {
 		Items[i].text = &ListBuffer[0][i];
 	}
@@ -410,17 +485,19 @@ ReturnStateContext BadgeInfoState::onRun(QKeyboard &kb) {
 	StateBase *nextState = this;
 	switch (key) {
 	case 1: {
-		BadgeInfoList.selectedItem =
-				BadgeInfoList.selectedItem == 0 ?
-						sizeof(Items) / sizeof(Items[0]) - 1 :
-						BadgeInfoList.selectedItem--;
+		if (BadgeInfoList.selectedItem == 0) {
+			BadgeInfoList.selectedItem = sizeof(Items) / sizeof(Items[0]) - 1;
+		} else {
+			BadgeInfoList.selectedItem--;
+		}
 		break;
 	}
 	case 7: {
-		BadgeInfoList.selectedItem =
-				BadgeInfoList.selectedItem
-						== sizeof(Items) / sizeof(Items[0]) - 1 ?
-						0 : BadgeInfoList.selectedItem++;
+		if (BadgeInfoList.selectedItem == (sizeof(Items) / sizeof(Items[0]) - 1)) {
+			BadgeInfoList.selectedItem = 0;
+		} else {
+			BadgeInfoList.selectedItem++;
+		}
 		break;
 	}
 	case 9: {
@@ -458,6 +535,9 @@ private:
 LogoState Logo_State(uint16_t(5000));
 DisplayMessageState Display_Message_State(3000, 0);
 MenuState MenuState;
+IRState TheIRPairingState;
+SettingState TheSettingState;
+BadgeInfoState TheBadgeInfoState;
 
 bool StateFactory::init() {
 	return true;
@@ -468,8 +548,7 @@ StateBase *StateFactory::getLogoState(uint16_t timeToDisplay) {
 	return &Logo_State;
 }
 
-StateBase *StateFactory::getDisplayMessageState(StateBase *bm,
-		const char *message, uint16_t timeToDisplay) {
+StateBase *StateFactory::getDisplayMessageState(StateBase *bm, const char *message, uint16_t timeToDisplay) {
 	Display_Message_State.setMessage(message);
 	Display_Message_State.setNextState(bm);
 	Display_Message_State.setTimeInState(timeToDisplay);
@@ -481,11 +560,11 @@ StateBase * StateFactory::getMenuState() {
 }
 
 StateBase *StateFactory::getSettingState() {
-	return 0;
+	return &TheSettingState;
 }
 
 StateBase *StateFactory::getIRPairingState() {
-	return 0;
+	return &TheIRPairingState;
 }
 
 StateBase *StateFactory::getAddressBookState() {
@@ -501,7 +580,7 @@ StateBase*StateFactory::getEnigmaState() {
 }
 
 StateBase* StateFactory::getBadgeInfoState() {
-	return 0;
+	return &TheBadgeInfoState;
 }
 
 StateBase* StateFactory::getRadioInfoState() {
