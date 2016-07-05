@@ -43,6 +43,7 @@
 							<option id="ilg.gnuarmeclipse.managedbuild.cross.option.command.rm.1345103838" name="Remove command" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.command.rm" value="rm" valueType="string"/>
 							<option id="ilg.gnuarmeclipse.managedbuild.cross.option.addtools.createflash.567701940" name="Create flash image" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.addtools.createflash" value="true" valueType="boolean"/>
 							<option id="ilg.gnuarmeclipse.managedbuild.cross.option.addtools.printsize.570962046" name="Print size" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.addtools.printsize" value="true" valueType="boolean"/>
+							<option id="ilg.gnuarmeclipse.managedbuild.cross.option.optimization.spconstant.565465175" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.optimization.spconstant" value="true" valueType="boolean"/>
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="ilg.gnuarmeclipse.managedbuild.cross.targetPlatform.1226682229" isAbstract="false" osList="all" superClass="ilg.gnuarmeclipse.managedbuild.cross.targetPlatform"/>
 							<builder buildPath="${workspace_loc:/badge1}/Debug" id="ilg.gnuarmeclipse.managedbuild.cross.builder.1811914330" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" superClass="ilg.gnuarmeclipse.managedbuild.cross.builder"/>
 							<tool id="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler.1057603791" name="Cross ARM GNU Assembler" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler">
@@ -55,6 +56,8 @@
 									<listOptionValue builtIn="false" value="&quot;../system/include/cmsis/device&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../Middlewares/ST/STM32_USB_Device_Library/Core/Inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/src/crypto}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/src/crypto/micro-ecc}&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.defs.403339569" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.defs" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="DEBUG"/>
@@ -76,6 +79,8 @@
 									<listOptionValue builtIn="false" value="&quot;../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Badge}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Radio}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/src/crypto}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/src/crypto/micro-ecc}&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs.1484968343" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="DEBUG"/>
@@ -97,6 +102,8 @@
 									<listOptionValue builtIn="false" value="&quot;../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Badge}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/Radio}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/src/crypto}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/src/crypto/micro-ecc}&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.noexceptions.1497239819" name="Do not use exceptions (-fno-exceptions)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.noexceptions" useByScannerDiscovery="true" value="true" valueType="boolean"/>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.nortti.643717371" name="Do not use RTTI (-fno-rtti)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.nortti" useByScannerDiscovery="true" value="true" valueType="boolean"/>
@@ -218,6 +225,8 @@
 									<listOptionValue builtIn="false" value="&quot;../system/include/cmsis/device&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../Middlewares/ST/STM32_USB_Device_Library/Core/Inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/src/crypto}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/src/crypto/micro-ecc}&quot;"/>
 								</option>
 								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler.input.55177825" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler.input"/>
 							</tool>
@@ -230,6 +239,8 @@
 									<listOptionValue builtIn="false" value="&quot;../system/include/cmsis/device&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../Middlewares/ST/STM32_USB_Device_Library/Core/Inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/src/crypto}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/src/crypto/micro-ecc}&quot;"/>
 								</option>
 								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input.1094889560" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input"/>
 							</tool>
@@ -242,6 +253,8 @@
 									<listOptionValue builtIn="false" value="&quot;../system/include/cmsis/device&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../Middlewares/ST/STM32_USB_Device_Library/Core/Inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/src/crypto}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/src/crypto/micro-ecc}&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.noexceptions.1734925364" name="Do not use exceptions (-fno-exceptions)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.noexceptions" useByScannerDiscovery="true" value="true" valueType="boolean"/>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.nortti.1378163636" name="Do not use RTTI (-fno-rtti)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.nortti" useByScannerDiscovery="true" value="true" valueType="boolean"/>

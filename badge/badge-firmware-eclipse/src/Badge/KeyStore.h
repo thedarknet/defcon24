@@ -5,17 +5,19 @@
 
 class ContactStore {
 public:
-	static const uint8_t PUBLIC_KEY_LENGTH = 26; //really only 25
+#define THE_CURVE uECC_secp192r1()
+	//should trait this in the future for different curves
+	static const uint8_t PUBLIC_KEY_LENGTH = 48; //uncompressed size
+	static const uint8_t PUBLIC_KEY_COMPRESSED_LENGTH = 25; //compressed size
 	static const uint8_t PRIVATE_KEY_LENGTH = 24;
 	static const uint8_t DaemonPublic[PUBLIC_KEY_LENGTH];
+	static const uint8_t SIGNATURE_LENGTH = 48;
+	static const uint8_t SIGNATURE_BYTES_USED = 16;
+
 	static const uint8_t AGENT_NAME_LENGTH = 12;
-	static const uint8_t SIGNATURE_LENGTH = 20;
-	static const uint8_t VersionOffset = 0;
-	static const uint8_t NumRecordsOffset = 1;
-	static const uint8_t ReseveOffset1 = 3;
 	static const uint8_t CURRENT_VERSION = 0xDC;
 
-	static const uint8_t MAX_CONTACTS = 176; //10K/58 bytes
+	static const uint8_t MAX_CONTACTS = 68; //6K/88 bytes
 	/////////////////////////////
 	//start Address[0-1] = Version byte
 	//  	Address[2-3] = 	byte 2: ? - use for uber badge?
@@ -27,23 +29,20 @@ public:
 	//					byte 2: bits 4-7: ?
 	//[ my info ]
 	//start Address[6-7] = radio unique id
-	//start Address[8-31] = badge owner public key
-	//start Address[32-43] = badge owner private key
-	//start Address[44-55] = badge owner agent name
+	//start Address[8-31] = badge owner private key
+	//start Address[32-43] = badge owner agent name
 	//[ address book ]
-	//start address[56-94] = Contact0
-	//				[56-57] unique id
-	//				[58-81] public key
-	//				[82-101 ] Signature (contact signs you're id+public key)
-	//				[102-113] Agent name
-	//start address[(every 58 bytes)] = Contact1
-	//start address[] - Contact N
+	//start address[44-132] = Contact0
+	//				[0-1] unique id
+	//				[2-27] public key (compressed version - 25 (26) bytes)
+	//				[28-75] Signature (contact signs you're id+public key)
+	//				[76-87] Agent name
+	//start address[(every 46 bytes)] = Contact1
 	/////////////////////////////
 
 	class Contact {
 	public:
-		static const uint8_t SIZE = sizeof(uint16_t) + PUBLIC_KEY_LENGTH
-				+ SIGNATURE_LENGTH + AGENT_NAME_LENGTH;
+		static const uint8_t SIZE = sizeof(uint16_t) + PUBLIC_KEY_LENGTH + SIGNATURE_LENGTH + AGENT_NAME_LENGTH;
 
 		uint16_t getUniqueID();
 		const char *getAgentName();
@@ -94,8 +93,7 @@ public:
 
 	class MyInfo {
 	public:
-		static const uint8_t SIZE = sizeof(uint16_t) + PUBLIC_KEY_LENGTH
-				+ PRIVATE_KEY_LENGTH + AGENT_NAME_LENGTH;
+		static const uint8_t SIZE = sizeof(uint16_t) + PUBLIC_KEY_LENGTH + PRIVATE_KEY_LENGTH + AGENT_NAME_LENGTH;
 	public:
 		uint16_t getUniqueID();
 		const char *getAgentName();
@@ -112,8 +110,8 @@ public:
 	MyInfo &getMyInfo();
 	RecordInfo &getRecordInfo();
 	bool init();
-	bool addContact(uint16_t uid, char agentName[AGENT_NAME_LENGTH],
-			uint8_t key[PUBLIC_KEY_LENGTH], uint8_t sig[SIGNATURE_LENGTH]);
+	bool addContact(uint16_t uid, char agentName[AGENT_NAME_LENGTH], uint8_t key[PUBLIC_KEY_LENGTH],
+			uint8_t sig[SIGNATURE_LENGTH]);
 	uint8_t getNumContactsThatCanBeStored();
 private:
 	uint32_t StartAddress;
