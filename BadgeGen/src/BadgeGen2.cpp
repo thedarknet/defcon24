@@ -23,6 +23,11 @@ using namespace std;
 #if 1
 
 uECC_Curve theCurve = uECC_secp192r1();
+#define PRIVATE_KEY_SIZE = 24;
+#define PUBLIC_KEY = 48;
+#define COMPRESSED_PUBLIC_KEY = 25;
+#define SIGNATURE_SIZE = 48;
+#define BYTES_OF_SIGNATURE_TO_USE = 16;
 
 bool makeKey(uint8_t privKey[24], uint8_t pubKey[48], uint8_t compressPub[26]) {
 	memset(&privKey[0],0,24);
@@ -75,7 +80,7 @@ int main(int argc, char *argv[]) {
 	uint8_t privateKey[24] = {0x00};
 	uint8_t unCompressPubKey[48] = {0x00};
 	uint8_t compressPubKey[26] = {0x00}; //only need 25
-	uint8_t RadioID[4];
+	uint8_t RadioID[2];
 	uint8_t Signature[48];
 
 	int ch = 0;
@@ -111,15 +116,11 @@ int main(int argc, char *argv[]) {
 		for (int i = 0; i < numberToGen; i++) {
 			if (makeKey(privateKey, unCompressPubKey, compressPubKey)) {
 				uECC_RNG_Function f = uECC_get_rng();
-				f(&RadioID[0], 4);
+				f(&RadioID[0], 2);
 				cout << "RadioID: " << endl;
 				cout << "\t" << setfill('0') << setw(2) << hex
 						<< (int) RadioID[0] << dec << ":";
 				cout << setfill('0') << setw(2) << hex << (int) RadioID[1]
-						<< dec << ":";
-				cout << setfill('0') << setw(2) << hex << (int) RadioID[2]
-						<< dec << ":";
-				cout << setfill('0') << setw(2) << hex << (int) RadioID[3]
 						<< dec << endl;
 				printKeys(privateKey, compressPubKey);
 				cout << endl;
@@ -144,8 +145,8 @@ int main(int argc, char *argv[]) {
 					//                   			magic 	magic	reserved	Num Contacts 		settings 1		Settings 2
 					const unsigned char magic[6] = {0xDC, 0xDC,	reserveFlags,		0x0,			defaults1,		defaults2};
 					of.write((const char *)&magic[0],sizeof(magic));
-					of.write((const char *)&RadioID[0], 4);
-					of.write((const char *)&compressPubKey[0], sizeof(compressPubKey));
+					of.write((const char *)&RadioID[0], sizeof(RadioID));
+					//of.write((const char *)&compressPubKey[0], sizeof(compressPubKey));
 					of.write((const char *)&privateKey[0], sizeof(privateKey));
 					of.write(&agentName[0],sizeof(agentName));  //just zero-ing out memory
 					of.flush();
