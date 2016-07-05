@@ -26,16 +26,26 @@ public:
 	uint32_t timeInState();
 	virtual ~StateBase();
 protected:
+	static const uint32_t INIT_BIT = 0x01;
+	static const uint32_t DONT_RESET = 0x02;
 	ErrorType init();
 	ErrorType shutdown();
 	virtual ErrorType onInit()=0;
 	virtual ReturnStateContext onRun(QKeyboard &kb)=0;
 	virtual ErrorType onShutdown()=0;
-	static const uint32_t INIT_BIT = 0x01;
-private:
+	void setState(uint32_t n) {
+		StateData |= n;
+	}
+	void clearState(uint32_t n) {
+		StateData = (StateData & ~n);
+	}
 	bool hasBeenInitialized() {
 		return (StateData & INIT_BIT) != 0;
 	}
+	bool shouldReset() {
+		return (StateData & DONT_RESET) == 0;
+	}
+private:
 	uint32_t StateData;
 	uint32_t StateStartTime;
 };
@@ -44,7 +54,9 @@ class LogoState: public StateBase {
 public:
 	LogoState(uint16_t timeInState);
 	virtual ~LogoState();
-	void setTimeInLogo(uint16_t t) {TimeInLogoState = t;}
+	void setTimeInLogo(uint16_t t) {
+		TimeInLogoState = t;
+	}
 protected:
 	virtual ErrorType onInit();
 	virtual ReturnStateContext onRun(QKeyboard &kb);
@@ -55,14 +67,20 @@ private:
 	uint16_t TimeInLogoState;
 };
 
-class DisplayMessageState : public StateBase {
+class DisplayMessageState: public StateBase {
 public:
 	DisplayMessageState(uint16_t timeInState, StateBase *nextState);
 	virtual ~DisplayMessageState();
 	void setMessage(const char *msg);
-	void setTimeInState(uint16_t t) {TimeInState = t;}
-	void setNextState(StateBase *b) {NextState = b;}
-	StateBase *getNextState() {return NextState;}
+	void setTimeInState(uint16_t t) {
+		TimeInState = t;
+	}
+	void setNextState(StateBase *b) {
+		NextState = b;
+	}
+	StateBase *getNextState() {
+		return NextState;
+	}
 protected:
 	virtual ErrorType onInit();
 	virtual ReturnStateContext onRun(QKeyboard &kb);
@@ -73,7 +91,7 @@ private:
 	StateBase *NextState;
 };
 
-class MenuState : public StateBase {
+class MenuState: public StateBase {
 public:
 	MenuState();
 	virtual ~MenuState();
@@ -86,17 +104,16 @@ private:
 	GUI_ListItemData Items[7];
 	/*
 	 * SETTINGS,
-		IR_PAIR,
-		ADDRESS_BOOK,
-		SEND_MESSAGE,
-		CHALLENGES
-		Badge Info
-		Radio Info
+	 IR_PAIR,
+	 ADDRESS_BOOK,
+	 SEND_MESSAGE,
+	 CHALLENGES
+	 Badge Info
+	 Radio Info
 	 */
 };
 
-
-class SettingState : public StateBase {
+class SettingState: public StateBase {
 public:
 	SettingState();
 	virtual ~SettingState();
@@ -112,8 +129,7 @@ private:
 	uint8_t SubState;
 };
 
-
-class IRState : public StateBase {
+class IRState: public StateBase {
 public:
 	IRState();
 	virtual ~IRState();
@@ -125,8 +141,7 @@ private:
 	uint16_t TimeoutOnSync;
 };
 
-
-class AddressState : public StateBase {
+class AddressState: public StateBase {
 public:
 	AddressState();
 	virtual ~AddressState();
@@ -134,43 +149,52 @@ protected:
 	virtual ErrorType onInit();
 	virtual ReturnStateContext onRun(QKeyboard &kb);
 	virtual ErrorType onShutdown();
+	void setNext4Items(uint16_t startAt);
 private:
 	GUI_ListData AddressList;
 	GUI_ListItemData Items[4];
 	uint8_t ContactIndex;
 };
 
-/*
-class SendMsgState : public StateBase {
+class SendMsgState: public StateBase {
 public:
-	SendMsgState(StateBase *nextState);
+	static const int16_t NO_CONTACT = -1;
+	enum INTERNAL_STATE {
+		TYPE_MESSAGE, CONFIRM_SEND, SENDING
+	};
+	SendMsgState();
 	virtual ~SendMsgState();
-	void setNextState(StateBase *b) {NextState = b;}
-	StateBase *getNextState() {return NextState;}
+	void setContactToMessage(const uint8_t &cid);
 protected:
 	virtual ErrorType onInit();
 	virtual ReturnStateContext onRun(QKeyboard &kb);
 	virtual ErrorType onShutdown();
 private:
-	StateBase *NextState;
+	int16_t ContactID;
+	char MsgBuffer[60];
+	uint16_t InputPos;
+	INTERNAL_STATE InternalState;
+
 };
 
-class EngimaState : public StateBase {
+class EngimaState: public StateBase {
 public:
-	EngimaState(StateBase *nextState);
+	EngimaState();
+	enum INTERNAL_STATE {
+		SET_WHEELS, ENTER_MESSAGE
+	};
 	virtual ~EngimaState();
-	void setNextState(StateBase *b) {NextState = b;}
-	StateBase *getNextState() {return NextState;}
 protected:
 	virtual ErrorType onInit();
 	virtual ReturnStateContext onRun(QKeyboard &kb);
 	virtual ErrorType onShutdown();
 private:
-	StateBase *NextState;
+	INTERNAL_STATE InternalState;
+	char EntryBuffer[64];
+	char Wheels[3];
 };
-*/
 
-class BadgeInfoState : public StateBase {
+class BadgeInfoState: public StateBase {
 public:
 	BadgeInfoState();
 	virtual ~BadgeInfoState();
@@ -181,37 +205,34 @@ protected:
 private:
 	GUI_ListData BadgeInfoList;
 	GUI_ListItemData Items[6];
-	char ListBuffer[20][6];
+	char ListBuffer[6][20]; //height then width
 };
 
-/*
-class RadioInfoState : public StateBase {
+class RadioInfoState: public StateBase {
 public:
-	RadioInfoState(StateBase *nextState);
+	RadioInfoState();
 	virtual ~RadioInfoState();
-	void setNextState(StateBase *b) {NextState = b;}
-	StateBase *getNextState() {return NextState;}
 protected:
 	virtual ErrorType onInit();
 	virtual ReturnStateContext onRun(QKeyboard &kb);
 	virtual ErrorType onShutdown();
 private:
-	StateBase *NextState;
+	GUI_ListData RadioInfoList;
+	GUI_ListItemData Items[4];
+	char ListBuffer[4][20];
 };
 
-*/
 //=============================
 class StateFactory {
 public:
 	static bool init();
-	static StateBase *getDisplayMessageState(StateBase *bm,
-			const char *message, uint16_t timeToDisplay);
+	static StateBase *getDisplayMessageState(StateBase *bm, const char *message, uint16_t timeToDisplay);
 	static StateBase *getMenuState();
 	static StateBase *getLogoState(uint16_t timeToDisplay);
 	static StateBase *getSettingState();
 	static StateBase *getIRPairingState();
 	static StateBase *getAddressBookState();
-	static StateBase *getSendMessageState() ;
+	static StateBase *getSendMessageState();
 	static StateBase *getEnigmaState();
 	static StateBase *getBadgeInfoState();
 	static StateBase *getRadioInfoState();

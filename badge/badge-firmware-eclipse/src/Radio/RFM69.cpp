@@ -133,6 +133,10 @@ bool RFM69::initialize(uint8_t freqBand, uint8_t nodeID, uint8_t networkID)
   return true;
 }
 
+RFM69::~RFM69() {
+
+}
+
 uint8_t RFM69::getCurrentGain() {
 	return readReg(REG_LNA)&RF_LNA_CURRENTGAIN_MASK;
 }

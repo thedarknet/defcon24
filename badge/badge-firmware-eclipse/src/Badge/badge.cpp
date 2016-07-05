@@ -37,17 +37,14 @@ ContactStore &getContactStore() {
 	return MyContacts;
 }
 
+RFM69 &getRadio() {
+	return Radio;
+}
+
 void delay(uint32_t time) {
 	HAL_Delay(time);
 }
 
-void initUARTIR() {
-	HAL_TIM_OC_Start(&htim2, TIM_CHANNEL_2);
-}
-
-void stopUARTIR() {
-	HAL_TIM_OC_Stop(&htim2, TIM_CHANNEL_2);
-}
 
 const char *ErrorType::getMessage() {
 	return "TODO";
@@ -164,13 +161,6 @@ void checkStateTimer(int nextState, int timeToNextSwitch) {
 
 uint32_t lastSendTime = 0;
 
-enum STATES {
-	DISPLAY_LOGO, MENU, SETTINGS, IR_PAIR, ADDRESS_BOOK, SEND_MESSAGE, CHALLENGES, SERIAL, SECRET, INFO
-};
-
-enum SETTING_SUB {
-	SET_AGENT_NAME, SET_SCREEN_SAVER1, SET_SLEEP_TIME
-};
 
 void loopBadge() {
 

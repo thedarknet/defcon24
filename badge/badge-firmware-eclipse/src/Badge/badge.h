@@ -5,8 +5,10 @@
 #include <stdint.h>
 
 class ContactStore;
+class RFM69;
 
 ContactStore &getContactStore();
+RFM69 &getRadio();
 
 class ErrorType {
 public:
