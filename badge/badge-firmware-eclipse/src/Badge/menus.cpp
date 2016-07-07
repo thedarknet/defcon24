@@ -105,7 +105,7 @@ ErrorType DisplayMessageState::onShutdown() {
 }
 
 MenuState::MenuState() :
-		StateBase(), MenuList("Main Menu", (GUI_ListItemData**) Items, 0, 10, 128, 64, 0,
+		StateBase(), MenuList("Main Menu",  Items, 0, 10, 128, 64, 0,
 				(sizeof(Items) / sizeof(Items[0]))) {
 	Items[0].id = 0;
 	Items[0].text = (const char *) "Settings";
@@ -193,7 +193,7 @@ ErrorType MenuState::onShutdown() {
 }
 
 SettingState::SettingState() :
-		StateBase(), SettingList((const char *) "MENU", (GUI_ListItemData**) &Items, 0, 0, 128, 64, 0,
+		StateBase(), SettingList((const char *) "MENU", Items, 0, 0, 128, 64, 0,
 				sizeof(Items) / sizeof(Items[0])), InputPos(0), SubState(0) {
 
 	memset(&AgentName[0], 0, sizeof(AgentName));
@@ -400,7 +400,7 @@ ErrorType IRState::onShutdown() {
 
 ////////////////////////////////////////////////
 AddressState::AddressState() :
-		StateBase(), AddressList((const char *) "Address Book", (GUI_ListItemData**) &Items, 0, 0, 128, 64, 0,
+		StateBase(), AddressList((const char *) "Address Book", Items, 0, 0, 128, 64, 0,
 				sizeof(Items) / sizeof(Items[0])), ContactIndex(0) {
 
 }
@@ -591,7 +591,7 @@ ErrorType EngimaState::onShutdown() {
 //////////////////////////////////////////////////////////////
 
 BadgeInfoState::BadgeInfoState() :
-		StateBase(), BadgeInfoList("Badge Info:", (GUI_ListItemData**) Items, 0, 0, 128, 64, 0,
+		StateBase(), BadgeInfoList("Badge Info:", Items, 0, 0, 128, 64, 0,
 				(sizeof(Items) / sizeof(Items[0]))) {
 
 	for (uint32_t i = 0; i < (sizeof(Items) / sizeof(Items[0])); i++) {
@@ -655,7 +655,7 @@ ErrorType BadgeInfoState::onShutdown() {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 RadioInfoState::RadioInfoState() :
-		StateBase(), RadioInfoList("Radio Info:", (GUI_ListItemData**) Items, 0, 0, 128, 64, 0,
+		StateBase(), RadioInfoList("Radio Info:", Items, 0, 0, 128, 64, 0,
 				(sizeof(Items) / sizeof(Items[0]))), Items(), ListBuffer() {
 
 }

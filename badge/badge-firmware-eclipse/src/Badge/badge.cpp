@@ -32,6 +32,7 @@ RFM69 Radio;
 //start at 55K for 10
 //start at 58K for 6k
 static const uint32_t START_STORAGE_LOCATION = 0x800e290; //0x800d400; //0x800B000;
+//static const uint32_t START_STORAGE_LOCATION = 0x800d400; //0x800B000;
 ContactStore MyContacts(START_STORAGE_LOCATION, 0x1770); //0x2710); //0x4E00);
 
 ContactStore &getContactStore() {
@@ -51,14 +52,13 @@ const char *ErrorType::getMessage() {
 	return "TODO";
 }
 
-uint32_t nextStateSwitchTime = 0;
-
 void initFlash() {
 #if ONE_TIME==1
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 
-	HAL_FLASH_Unlock();
+	HAL_StatusTypeDef s = HAL_FLASH_Unlock();
+	//assert(s==HAL_OK);
 	uint16_t loc = 0;
 	HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD, START_STORAGE_LOCATION, 0xDCDC);
 	loc += 2;
@@ -96,7 +96,7 @@ uint32_t startBadge() {
 	initFlash();
 
 	GUI_ListItemData items[4];
-	GUI_ListData DrawList((const char *) "Self Check", (GUI_ListItemData**) items, uint8_t(0), uint8_t(0), uint8_t(128),
+	GUI_ListData DrawList((const char *) "Self Check", items, uint8_t(0), uint8_t(0), uint8_t(128),
 			uint8_t(64), uint8_t(0), uint8_t(0));
 	//DO SELF CHECK
 	if (gui_init()) {
@@ -136,7 +136,7 @@ uint32_t startBadge() {
 
 
 	//remove nextStateswitch
-	nextStateSwitchTime = HAL_GetTick() + 5000;
+	//nextStateSwitchTime = HAL_GetTick() + 5000;
 	//move to use of IR
 	//initUARTIR();
 
@@ -148,13 +148,6 @@ uint32_t startBadge() {
 }
 
 int counter = 0;
-
-void checkStateTimer(int nextState, int timeToNextSwitch) {
-	if (nextStateSwitchTime < HAL_GetTick()) {
-		state = nextState;
-		nextStateSwitchTime = HAL_GetTick() + timeToNextSwitch;
-	}
-}
 
 uint32_t lastSendTime = 0;
 

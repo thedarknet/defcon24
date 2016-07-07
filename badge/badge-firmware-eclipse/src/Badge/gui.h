@@ -123,7 +123,7 @@ struct GUI_ListItemData {
 };
 
 struct GUI_ListData {
-	GUI_ListData(const char *h, GUI_ListItemData **is, uint8_t x, uint8_t y, uint8_t w, uint8_t height, uint8_t si, uint8_t ic) {
+	GUI_ListData(const char *h, GUI_ListItemData *is, uint8_t x, uint8_t y, uint8_t w, uint8_t height, uint8_t si, uint8_t ic) {
 		header = h;
 		items = is;
 		this->x = x;
@@ -137,7 +137,7 @@ struct GUI_ListData {
 		DeFocusHandler = 0;
 	}
 	const char* header;  /*!< Header*/
-	GUI_ListItemData **items;  /*!< Item's array*/
+	GUI_ListItemData *items;  /*!< Item's array*/
 	uint16_t ItemsCount; /*!< Item's array*/
 	uint8_t x, y, w, h;
 	uint16_t selectedItem;
@@ -163,23 +163,12 @@ void gui_set_curList(GUI_ListData* list);
  * @retval None
  */
 uint8_t gui_draw_list(void);
-/**
- * @brief  draw current GUI_List
- * @note   DO NOT USE IT BY YOURSELF! DO NOT FORGET gui_set_curList(data) first!
- * @param  ld: GUI_ListItemData
- * @retval None
- */
-uint8_t gui_input_list(int8_t key);
 
 
 void gui_showMessage(char* text);
 void gui_showCustomMessage(void (*drawmsg)(), uint8_t (*msginput)(uint8_t));
 void gui_closeMessage(void);
 uint8_t gui_draw_message(void);
-uint8_t gui_input_message(uint8_t key);
-
-
-void gui_input(int8_t key);
 
 void gui_draw(void);
 #endif

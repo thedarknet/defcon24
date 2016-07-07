@@ -148,9 +148,9 @@ uint8_t gui_draw_list()
 		for(i = 0; i < gui_CurList->ItemsCount; i++)
 		{
 			if(i != gui_CurList->selectedItem)
-				gui_lable(gui_CurList->items[i]->text, gui_CurList->x + 1, ry + i*GUI_DefFont.FontHeight, gui_CurList->w - 3, GUI_DefFont.FontHeight, 0, 0);
+				gui_lable(gui_CurList->items[i].text, gui_CurList->x + 1, ry + i*GUI_DefFont.FontHeight, gui_CurList->w - 3, GUI_DefFont.FontHeight, 0, 0);
 			else
-				gui_lable(gui_CurList->items[i]->text, gui_CurList->x +1 , ry + i*GUI_DefFont.FontHeight, gui_CurList->w - 3, GUI_DefFont.FontHeight, 1, 0);
+				gui_lable(gui_CurList->items[i].text, gui_CurList->x +1 , ry + i*GUI_DefFont.FontHeight, gui_CurList->w - 3, GUI_DefFont.FontHeight, 1, 0);
 		}
 	}
 	else
@@ -160,9 +160,9 @@ uint8_t gui_draw_list()
 			for(i = gui_CurList->ItemsCount - maxC; i < gui_CurList->ItemsCount; i++)
 			{
 				if(i != gui_CurList->selectedItem)
-					gui_lable(gui_CurList->items[i]->text, gui_CurList->x + 1, ry + (i - gui_CurList->ItemsCount + maxC)*GUI_DefFont.FontHeight, gui_CurList->w - 3, GUI_DefFont.FontHeight, 0, 0);
+					gui_lable(gui_CurList->items[i].text, gui_CurList->x + 1, ry + (i - gui_CurList->ItemsCount + maxC)*GUI_DefFont.FontHeight, gui_CurList->w - 3, GUI_DefFont.FontHeight, 0, 0);
 				else
-					gui_lable(gui_CurList->items[i]->text, gui_CurList->x + 1, ry + (i - gui_CurList->ItemsCount + maxC)*GUI_DefFont.FontHeight, gui_CurList->w - 3, GUI_DefFont.FontHeight, 1, 0);
+					gui_lable(gui_CurList->items[i].text, gui_CurList->x + 1, ry + (i - gui_CurList->ItemsCount + maxC)*GUI_DefFont.FontHeight, gui_CurList->w - 3, GUI_DefFont.FontHeight, 1, 0);
 			}
 		}
 		else if(gui_CurList->selectedItem < maxC / 2)
@@ -170,9 +170,9 @@ uint8_t gui_draw_list()
 			for(i = 0; i < maxC; i++)
 			{
 				if(i != gui_CurList->selectedItem)
-					gui_lable(gui_CurList->items[i]->text, gui_CurList->x + 1, ry + i*GUI_DefFont.FontHeight, gui_CurList->w - 3, GUI_DefFont.FontHeight, 0, 0);
+					gui_lable(gui_CurList->items[i].text, gui_CurList->x + 1, ry + i*GUI_DefFont.FontHeight, gui_CurList->w - 3, GUI_DefFont.FontHeight, 0, 0);
 				else
-					gui_lable(gui_CurList->items[i]->text, gui_CurList->x + 1, ry + i*GUI_DefFont.FontHeight, gui_CurList->w - 3, GUI_DefFont.FontHeight, 1, 0);
+					gui_lable(gui_CurList->items[i].text, gui_CurList->x + 1, ry + i*GUI_DefFont.FontHeight, gui_CurList->w - 3, GUI_DefFont.FontHeight, 1, 0);
 			}
 		}
 		else
@@ -180,9 +180,9 @@ uint8_t gui_draw_list()
 			for(i = gui_CurList->selectedItem - maxC/2; i < gui_CurList->selectedItem - maxC/2 + maxC; i++)
 			{
 				if(i != gui_CurList->selectedItem)
-					gui_lable(gui_CurList->items[i]->text, gui_CurList->x + 1, ry + (i - gui_CurList->selectedItem + maxC/2)*GUI_DefFont.FontHeight, gui_CurList->w - 3, GUI_DefFont.FontHeight, 0, 0);
+					gui_lable(gui_CurList->items[i].text, gui_CurList->x + 1, ry + (i - gui_CurList->selectedItem + maxC/2)*GUI_DefFont.FontHeight, gui_CurList->w - 3, GUI_DefFont.FontHeight, 0, 0);
 				else
-					gui_lable(gui_CurList->items[i]->text, gui_CurList->x + 1, ry + (i - gui_CurList->selectedItem + maxC/2)*GUI_DefFont.FontHeight, gui_CurList->w - 3, GUI_DefFont.FontHeight, 1, 0);
+					gui_lable(gui_CurList->items[i].text, gui_CurList->x + 1, ry + (i - gui_CurList->selectedItem + maxC/2)*GUI_DefFont.FontHeight, gui_CurList->w - 3, GUI_DefFont.FontHeight, 1, 0);
 			}
 		}
 	}
@@ -195,74 +195,6 @@ uint8_t gui_draw_list()
 	return 0;
 }
 
-uint8_t gui_input_list(int8_t key)
-{
-	if(gui_CurList == 0)
-		return 0;
-	if(key == 2)  //KEY UP
-	{
-		if(gui_CurList->items[gui_CurList->selectedItem]->DeFocusHandler != 0) //event handler
-		{
-			gui_CurList->items[gui_CurList->selectedItem]->DeFocusHandler(gui_CurList->selectedItem, gui_CurList->items[gui_CurList->selectedItem]->arg, GUI_event_defocus);
-		}
-		else if(gui_CurList->DeFocusHandler != 0) //event handler
-		{
-			gui_CurList->DeFocusHandler(gui_CurList->selectedItem, gui_CurList->items[gui_CurList->selectedItem]->arg, GUI_event_defocus);
-		}
-		
-		if(gui_CurList->selectedItem != 0)
-			gui_CurList->selectedItem --;
-		else
-			gui_CurList->selectedItem = gui_CurList->ItemsCount - 1;
-		
-		if(gui_CurList->items[gui_CurList->selectedItem]->FocusHandler != 0) //event handler
-		{
-			gui_CurList->items[gui_CurList->selectedItem]->FocusHandler(gui_CurList->selectedItem, gui_CurList->items[gui_CurList->selectedItem]->arg, GUI_event_focus);
-		}
-		else if(gui_CurList->FocusHandler != 0) //event handler
-		{
-			gui_CurList->FocusHandler(gui_CurList->selectedItem, gui_CurList->items[gui_CurList->selectedItem]->arg, GUI_event_focus);
-		}		
-		return 1;
-	}
-	if(key == 8) //KEY DOWN
-	{
-		if(gui_CurList->items[gui_CurList->selectedItem]->DeFocusHandler != 0) //event handler
-		{
-			gui_CurList->items[gui_CurList->selectedItem]->DeFocusHandler(gui_CurList->selectedItem, gui_CurList->items[gui_CurList->selectedItem]->arg, GUI_event_defocus);
-		}
-		else if(gui_CurList->DeFocusHandler != 0) //event handler
-		{
-			gui_CurList->DeFocusHandler(gui_CurList->selectedItem, gui_CurList->items[gui_CurList->selectedItem]->arg, GUI_event_defocus);
-		}
-		if(gui_CurList->selectedItem != gui_CurList->ItemsCount - 1)
-			gui_CurList->selectedItem ++;
-		else
-			gui_CurList->selectedItem = 0;
-		
-		if(gui_CurList->items[gui_CurList->selectedItem]->FocusHandler != 0) //event handler
-		{
-			gui_CurList->items[gui_CurList->selectedItem]->FocusHandler(gui_CurList->selectedItem, gui_CurList->items[gui_CurList->selectedItem]->arg, GUI_event_focus);
-		}
-		else if(gui_CurList->FocusHandler != 0) //event handler
-		{
-			gui_CurList->FocusHandler(gui_CurList->selectedItem, gui_CurList->items[gui_CurList->selectedItem]->arg, GUI_event_focus);
-		}		
-		return 1;
-	}
-	if(key == 0) //KEY OK
-	{
-		if(gui_CurList->items[gui_CurList->selectedItem]->ClickHandler != 0) //event handler
-		{
-			gui_CurList->items[gui_CurList->selectedItem]->ClickHandler(gui_CurList->selectedItem, gui_CurList->items[gui_CurList->selectedItem]->arg, GUI_event_click);
-		}
-		else if(gui_CurList->ClickHandler != 0) //event handler
-		{
-			gui_CurList->ClickHandler(gui_CurList->selectedItem, gui_CurList->items[gui_CurList->selectedItem]->arg, GUI_event_click);
-		}
-	}
-	return 0;
-}
 
 void gui_showMessage(char* text)
 {
@@ -312,15 +244,6 @@ uint8_t gui_input_message(uint8_t key)
 	return 1;
 }
 
-void gui_input(int8_t key)
-{
-	if(gui_input_message(key))
-		return;
-	if(gui_input_list(key))
-		return;
-	if(GUI_curapp_input != 0)
-		GUI_curapp_input(key);
-}
 void gui_upd_display()
 {
 	SSD1306_UpdateScreen();
