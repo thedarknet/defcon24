@@ -49,7 +49,11 @@ void delay(uint32_t time) {
 
 
 const char *ErrorType::getMessage() {
-	return "TODO";
+	return "ErrorType:  TODO";
+}
+
+ErrorType::ErrorType(const ErrorType &r) {
+	this->Error = r.Error;
 }
 
 void initFlash() {
@@ -154,6 +158,7 @@ uint32_t lastSendTime = 0;
 
 void loopBadge() {
 
+	KB.scan();
 	ReturnStateContext rsc = CurrentState->run(KB);
 
 	if (rsc.Err.ok()) {

@@ -23,6 +23,7 @@ public:
 public:
 	ErrorType(uint8_t e) : Error(e) {}
 	ErrorType() : Error(NO_ERROR) {}
+	ErrorType(const ErrorType &r);
 	bool ok() {return Error==NO_ERROR;}
 	uint8_t getError() {return Error;}
 	const char *getMessage();

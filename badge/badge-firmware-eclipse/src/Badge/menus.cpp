@@ -34,9 +34,8 @@ ErrorType StateBase::init() {
 	if (et.ok()) {
 		setState(INIT_BIT);
 		StateStartTime = HAL_GetTick();
-		return true;
 	}
-	return false;
+	return et;
 }
 ErrorType StateBase::shutdown() {
 	ErrorType et = onShutdown();
