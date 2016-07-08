@@ -30,9 +30,9 @@ uECC_Curve theCurve = uECC_secp192r1();
 #define BYTES_OF_SIGNATURE_TO_USE = 16;
 
 bool makeKey(uint8_t privKey[24], uint8_t pubKey[48], uint8_t compressPub[26]) {
-	memset(&privKey[0],0,24);
-	memset(&pubKey[0],0,48);
-	memset(&compressPub[0],0,26);
+	memset(&privKey[0], 0, 24);
+	memset(&pubKey[0], 0, 48);
+	memset(&compressPub[0], 0, 26);
 	if (uECC_make_key(pubKey, privKey, theCurve) == 1) {
 
 		uECC_compress(pubKey, compressPub, theCurve);
@@ -71,22 +71,81 @@ bool exists(const std::string& name) {
 }
 
 void usage() {
-	cout << "BadgeGen -u <make uber init file> -c <create daemon keys> -n <number of badge keys to generate>" << endl;
+	cout << "BadgeGen -u <make uber init file> -c <create daemon keys> -n <number of badge keys to generate> -w <3 letter string to set wheels> -m <message to encrypt/decrypt>" << endl;
+}
+
+const char alpha[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const char rotors[3][27] = { "EKMFLGDQVZNTOWYHXUSPAIBRCJ", "AJDKSIRUXBLHWTMCQGZNPYFVOE", "BDFHJLCPRTXVZNYEIWGAKMUSQO" };
+const char reflector[] = "YRUHQSLDPXNGOKMIEBFZCWVJAT";
+
+long mod26(long a) {
+	return (a % 26 + 26) % 26;
+}
+
+int li(char l) {
+	// Letter index
+	return l - 'A';
+}
+
+int indexof(const char* array, int find) {
+	return strchr(array, find) - array;
+}
+
+char EncryptResult[24];
+
+const char* crypt(char *Wheels, const char *ct) {
+	// Sets initial permutation
+	int L = li(toupper(Wheels[0]));
+	int M = li(toupper(Wheels[1]));
+	int R = li(toupper(Wheels[2]));
+
+	memset(&EncryptResult[0], 0, sizeof(EncryptResult));
+	char *outPtr = &EncryptResult[0];
+
+	for (uint16_t x = 0; x < strlen(ct) && x < sizeof(EncryptResult); x++) {
+		if (isspace(ct[x]))
+			continue;
+
+		int ct_letter = li(toupper(ct[x]));
+
+		// Step right rotor on every iteration
+		R = mod26(R + 1);
+
+		// Pass through rotors
+		char a = rotors[2][mod26(R + ct_letter)];
+		char b = rotors[1][mod26(M + li(a) - R)];
+		char c = rotors[0][mod26(L + li(b) - M)];
+
+		// Pass through reflector
+		char ref = reflector[mod26(li(c) - L)];
+
+		// Inverse rotor pass
+		int d = mod26(indexof(rotors[0], alpha[mod26(li(ref) + L)]) - L);
+		int e = mod26(indexof(rotors[1], alpha[mod26(d + M)]) - M);
+		char f = alpha[mod26(indexof(rotors[2], alpha[mod26(e + R)]) - R)];
+
+		*outPtr = f;
+		outPtr++;
+	}
+
+	return &EncryptResult[0];
 }
 
 int main(int argc, char *argv[]) {
 	char create = 0, generate = 0, makeUber = 0;
 
-	uint8_t privateKey[24] = {0x00};
-	uint8_t unCompressPubKey[48] = {0x00};
-	uint8_t compressPubKey[26] = {0x00}; //only need 25
+	uint8_t privateKey[24] = { 0x00 };
+	uint8_t unCompressPubKey[48] = { 0x00 };
+	uint8_t compressPubKey[26] = { 0x00 }; //only need 25
 	uint8_t RadioID[2];
 	uint8_t Signature[48];
+	char *wheels = 0;
+	char *msg = 0;
 
 	int ch = 0;
 	int numberToGen = 0;
 
-	while ((ch = getopt(argc, argv, "ucn:")) != -1) {
+	while ((ch = getopt(argc, argv, "ucn:w:m:")) != -1) {
 		switch (ch) {
 		case 'c':
 			create = 1;
@@ -97,6 +156,12 @@ int main(int argc, char *argv[]) {
 			break;
 		case 'u':
 			makeUber = 1;
+			break;
+		case 'w':
+			wheels = optarg;
+			break;
+		case 'm':
+			msg = optarg;
 			break;
 		case '?':
 		default:
@@ -118,41 +183,40 @@ int main(int argc, char *argv[]) {
 				uECC_RNG_Function f = uECC_get_rng();
 				f(&RadioID[0], 2);
 				cout << "RadioID: " << endl;
-				cout << "\t" << setfill('0') << setw(2) << hex
-						<< (int) RadioID[0] << dec << ":";
-				cout << setfill('0') << setw(2) << hex << (int) RadioID[1]
-						<< dec << endl;
+				cout << "\t" << setfill('0') << setw(2) << hex << (int) RadioID[0] << dec << ":";
+				cout << setfill('0') << setw(2) << hex << (int) RadioID[1] << dec << endl;
 				printKeys(privateKey, compressPubKey);
 				cout << endl;
 				cout << endl;
 				ostringstream oss;
-				oss << setfill('0') << setw(2) << hex << (int) RadioID[0]
-						<< (int) RadioID[1] << ends;
+				oss << setfill('0') << setw(2) << hex << (int) RadioID[0] << (int) RadioID[1] << ends;
 				std::string fileName = oss.str();
 				if (!exists("./keys")) {
 					mkdir("./keys", 0700);
 				}
 				std::string fullFileName = "./keys/" + fileName;
-				if (exists (fullFileName)) {
+				if (exists(fullFileName)) {
 					numberToGen++;
 				} else {
 					//see keystore.h for format
 					static const unsigned int defaults1 = 0b00100001; //screen saver type = 1 sleep time = 2
 					static const unsigned int defaults2 = 0b00000001; //screen saver time = 1
-					unsigned char reserveFlags = makeUber==1 ? 0x1 : 0x0;
-					char agentName[12] = {'\0'};
+					unsigned char reserveFlags = makeUber == 1 ? 0x1 : 0x0;
+					char agentName[12] = { '\0' };
 					ofstream of(fullFileName.c_str());
 					//                   			magic 	magic	reserved	Num Contacts 		settings 1		Settings 2
-					const unsigned char magic[6] = {0xDC, 0xDC,	reserveFlags,		0x0,			defaults1,		defaults2};
-					of.write((const char *)&magic[0],sizeof(magic));
-					of.write((const char *)&RadioID[0], sizeof(RadioID));
+					const unsigned char magic[6] = { 0xDC, 0xDC, reserveFlags, 0x0, defaults1, defaults2 };
+					of.write((const char *) &magic[0], sizeof(magic));
+					of.write((const char *) &RadioID[0], sizeof(RadioID));
 					//of.write((const char *)&compressPubKey[0], sizeof(compressPubKey));
-					of.write((const char *)&privateKey[0], sizeof(privateKey));
-					of.write(&agentName[0],sizeof(agentName));  //just zero-ing out memory
+					of.write((const char *) &privateKey[0], sizeof(privateKey));
+					of.write(&agentName[0], sizeof(agentName));  //just zero-ing out memory
 					of.flush();
 				}
 			}
 		}
+	} else if (wheels != 0) {
+		cout << crypt(wheels, msg) << endl;
 	}
 	return 0;
 }

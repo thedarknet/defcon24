@@ -3,15 +3,6 @@
 //current list element
 GUI_ListData *gui_CurList;
 
-//global vars for message
-char *GUI_MessageText;
-void (*GUI_MessageDraw)();
-uint8_t (*GUI_MessageInput)(uint8_t);
-
-//current app 
-void (*GUI_curapp_draw)();
-uint8_t (*GUI_curapp_input)(uint8_t);
-
 
 bool gui_init()
 {
@@ -23,12 +14,6 @@ void gui_text(const char* txt, uint8_t x, uint8_t y, uint8_t col)
 {
 	SSD1306_GotoXY(x, y + 1);
 	SSD1306_Puts(txt, &GUI_DefFont, col);
-}
-
-void gui_set_cur_app(void (*appDraw)(), uint8_t (*appInput)(uint8_t))
-{
-	GUI_curapp_draw = appDraw;
-	GUI_curapp_input = appInput;
 }
 
 void gui_lable(const char* txt, uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t bg, uint8_t border)
@@ -103,29 +88,12 @@ void gui_ticker(GUI_TickerData *dt)
 	}
 	gui_lable(dt->text + shift, dt->x, dt->y, dt->w, dt->h, dt->bg, dt->border);
 }
-GUI_TickerData* gui_ticker_create(char *text, uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t bg, uint8_t border)
-{
-	GUI_TickerData *data = (GUI_TickerData*)malloc(sizeof(GUI_TickerData));
-	data->text = text;
-	data->x = x;
-	data->y = y;
-	data->w = w;
-	data->h = h;
-	data->bg = bg;
-	data->border = border;
-	data->startTick = 0;
-	return data;
-}
-void gui_removeTicker(GUI_TickerData *dt)
-{
-//	free(dt->text);
-	free(dt);
-}
 
 void gui_set_curList(GUI_ListData* list)
 {
 	gui_CurList = list;
 }
+
 uint8_t gui_draw_list()
 {
 	if(gui_CurList == 0)
@@ -196,54 +164,6 @@ uint8_t gui_draw_list()
 }
 
 
-void gui_showMessage(char* text)
-{
-	if(GUI_MessageText != 0)
-		free(GUI_MessageText);
-	GUI_MessageText = text;
-	GUI_MessageDraw = 0;
-	GUI_MessageInput = 0;
-}
-void gui_showCustomMessage(void (*drawmsg)(), uint8_t (*msginput)(uint8_t))
-{
-	GUI_MessageText = 0;
-	GUI_MessageDraw = drawmsg;
-	GUI_MessageInput = msginput;
-}
-void gui_closeMessage(void)
-{
-	GUI_MessageText = 0;
-	GUI_MessageDraw = 0;
-	GUI_MessageInput = 0;
-}
-uint8_t gui_draw_message()
-{
-	if(GUI_MessageText == 0 && GUI_MessageInput == 0 && GUI_MessageDraw == 0)
-		return 0;
-	if(GUI_MessageDraw != 0)
-	{
-		GUI_MessageDraw();
-		return 1;
-	}
-	SSD1306_DrawRectangle(0, 0, 126, 64, 1);
-	gui_lable_multiline(GUI_MessageText, 2, 2, 122, 60, 0, 1);
-	return 1;
-}
-uint8_t gui_input_message(uint8_t key)
-{
-	if(GUI_MessageText == 0 && GUI_MessageInput == 0 && GUI_MessageDraw == 0)
-		return 0;
-	if(GUI_MessageInput != 0)
-	{
-		if(GUI_MessageInput(key))
-		{
-			return 1;
-		}
-	}
-	gui_closeMessage();
-	return 1;
-}
-
 void gui_upd_display()
 {
 	SSD1306_UpdateScreen();
@@ -251,13 +171,6 @@ void gui_upd_display()
 }
 void gui_draw(void)
 {
-	if(gui_draw_message())
-	{
-		gui_upd_display();
-		return;
-	}
-	if(GUI_curapp_draw != 0)
-		GUI_curapp_draw();
 	gui_draw_list();
 	gui_upd_display();
 }

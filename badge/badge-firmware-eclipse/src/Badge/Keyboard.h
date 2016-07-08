@@ -12,6 +12,7 @@ class QKeyboard {
 			PinConfig(GPIO_TypeDef *port, uint16_t pin) : Port(port), Pin(pin) {}
 		};
 		static const uint8_t NO_PIN_SELECTED = 0xFF;
+		static const uint8_t NOT_A_NUMBER = 0xFF;
 		static const uint8_t TIMES_BUTTON_MUST_BE_HELD = 3;
 	public:
 		QKeyboard(PinConfig Y1Pin, PinConfig Y2Pin, PinConfig Y3Pin, PinConfig X1Pin
@@ -23,11 +24,14 @@ class QKeyboard {
 		uint8_t getLastPinSeleted();
 		char getLetter();
 		uint8_t getNumber();
+	protected:
+		void setLetter();
 	private:
 		PinConfig YPins[3];
 		PinConfig XPins[4];
 		uint8_t LastSelectedPin;
 		uint8_t TimesLastPinSelected;
+		char CurrentLetter;
 };
 
 #endif

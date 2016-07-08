@@ -188,10 +188,17 @@ protected:
 	virtual ErrorType onInit();
 	virtual ReturnStateContext onRun(QKeyboard &kb);
 	virtual ErrorType onShutdown();
+protected:
+	long mod26(long a);
+	int li(char l);
+	int indexof (const char* array, int find);
+	const char* crypt (const char *ct);
 private:
+	static const uint16_t MAX_ENCRYPTED_LENGTH = 24;
 	INTERNAL_STATE InternalState;
-	char EntryBuffer[64];
+	char EntryBuffer[MAX_ENCRYPTED_LENGTH];
 	char Wheels[3];
+	char EncryptResult[MAX_ENCRYPTED_LENGTH];
 };
 
 class BadgeInfoState: public StateBase {

@@ -83,10 +83,11 @@
 
 class RFM69 {
   public:
+	typedef uint16_t RadioAddrType;
     static volatile uint8_t DATA[RF69_MAX_DATA_LEN]; // recv/xmit buf, including header & crc bytes
     static volatile uint8_t DATALEN;
-    static volatile uint8_t SENDERID;
-    static volatile uint8_t TARGETID; // should match _address
+    static volatile RadioAddrType SENDERID;
+    static volatile RadioAddrType TARGETID; // should match _address
     static volatile uint8_t PAYLOADLEN;
     static volatile uint8_t ACK_REQUESTED;
     static volatile uint8_t ACK_RECEIVED; // should be polled immediately after sending a packet with ACK request
@@ -103,17 +104,18 @@ class RFM69 {
       _isRFM69HW = isRFM69HW;
     }
 
-    bool initialize(uint8_t freqBand, uint8_t ID, uint8_t networkID=1);
-    void setAddress(uint8_t addr);
+    bool initialize(uint8_t freqBand, RadioAddrType ID, uint8_t networkID=1);
+    //this is to use the radio's address filtering
+    //void setAddress(uint8_t addr);
     void setNetwork(uint8_t networkID);
     bool canSend();
-    virtual void send(uint8_t toAddress, const void* buffer, uint8_t bufferSize, bool requestACK=false);
-    virtual bool sendWithRetry(uint8_t toAddress, const void* buffer, uint8_t bufferSize, uint8_t retries=2, uint8_t retryWaitTime=40); // 40ms roundtrip req for 61byte packets
+    virtual void send(RadioAddrType toAddress, const void* buffer, uint8_t bufferSize, bool requestACK=false);
+    virtual bool sendWithRetry(RadioAddrType toAddress, const void* buffer, uint8_t bufferSize, uint8_t retries=2, uint8_t retryWaitTime=40); // 40ms roundtrip req for 61byte packets
     virtual bool receiveDone();
     uint8_t getCurrentGain();
     uint8_t getImpedenceLevel();
     uint8_t getRSSIThreshHold();
-    bool ACKReceived(uint8_t fromNodeID);
+    bool ACKReceived(RadioAddrType fromNodeID);
     bool ACKRequested();
     virtual void sendACK(const void* buffer = "", uint8_t bufferSize=0);
     uint32_t getFrequency();
@@ -136,15 +138,15 @@ class RFM69 {
   protected:
     static void isr0();
     void virtual interruptHandler();
-    virtual void interruptHook(uint8_t CTLbyte) {};
+    virtual void interruptHook(uint8_t CTLbyte);
     static volatile bool _inISR;
-    virtual void sendFrame(uint8_t toAddress, const void* buffer, uint8_t size, bool requestACK=false, bool sendACK=false);
+    virtual void sendFrame(RadioAddrType toAddress, const void* buffer, uint8_t size, bool requestACK=false, bool sendACK=false);
 
     static RFM69* selfPointer;
     uint8_t _slaveSelectPin;
     uint8_t _interruptPin;
     uint8_t _interruptNum;
-    uint8_t _address;
+    RadioAddrType _address;
     bool _promiscuousMode;
     uint8_t _powerLevel;
     bool _isRFM69HW;
