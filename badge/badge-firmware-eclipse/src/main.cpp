@@ -142,7 +142,7 @@ void SystemClock_Config(void)
   HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
 
   /* SysTick_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
+  HAL_NVIC_SetPriority((IRQn_Type)SysTick_IRQn, uint32_t(0), uint32_t(0));
 }
 
 /* USER CODE BEGIN 4 */
