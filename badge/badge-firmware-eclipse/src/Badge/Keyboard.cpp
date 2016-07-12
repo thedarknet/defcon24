@@ -61,7 +61,7 @@ void QKeyboard::setLetter() {
 	int letterSelection = 0;
 	switch (getLastPinSeleted()) {
 	case 0:
-		static const char *zero = "ABC1";
+		static const char *zero = ".,?";//ABC1";
 		CurrentLetter = zero[letterSelection];
 		break;
 	case 1:

@@ -80,11 +80,11 @@ void initFlash() {
 	loc += 2;
 	uint8_t privateKey[ContactStore::PRIVATE_KEY_LENGTH] = { 0xab, 0x34, 0x4e, 0x58, 0x3f, 0x2a, 0x56, 0x39, 0x17, 0xef, 0x5c, 0xff, 0x8b,
 			0xf8, 0x72, 0xe8, 0x87, 0x65, 0xd5, 0x11, 0x26, 0x58, 0x14, 0xb4};
-	for (int i = 0; i < ContactStore::PRIVATE_KEY_LENGTH; i++, loc += 2) {
+	for (int i = 0; i < ContactStore::PRIVATE_KEY_LENGTH/2; i++, loc += 2) {
 		HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD, START_STORAGE_LOCATION + loc, *((uint16_t*) &privateKey[i]));
 	}
 	uint8_t agentName[ContactStore::AGENT_NAME_LENGTH] = { 0x0 };
-	for (int i = 0; i < ContactStore::AGENT_NAME_LENGTH; i++, loc += 2) {
+	for (int i = 0; i < ContactStore::AGENT_NAME_LENGTH/2; i++, loc += 2) {
 		HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD, START_STORAGE_LOCATION + loc, *((uint16_t*) &agentName[i]));
 	}
 
