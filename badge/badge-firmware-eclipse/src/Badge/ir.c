@@ -10,12 +10,13 @@
 
 typedef enum {
   IR_RX_IDLE = 0,
-  IR_RX_START,
-  IR_RX_MARK_START,
-  IR_RX_MARK,
-  IR_RX_SPACE,
-  IR_RX_DONE,
-  IR_RX_ERR
+  IR_RX_START = 1,
+  IR_RX_MARK_START = 2,
+  IR_RX_MARK = 3,
+  IR_RX_SPACE = 4,
+  IR_RX_DONE = 5,
+  IR_RX_ERR = -1,
+  IR_RX_ERR_TIMEOUT = -2
 } IRState_t;
 
 static IRState_t IRState;
@@ -72,8 +73,8 @@ void stopIRPulseTimer() {
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
   if (htim == &htim3) {
       stopIRPulseTimer();
-      // Check to see what we have received here
-      IRState = IR_RX_DONE;
+      // Timed out :(
+      IRState = IR_RX_ERR_TIMEOUT;
   }
 }
 
@@ -118,6 +119,13 @@ void IRStart(void) {
   wait_cycles(37895); // 30 cycles
 }
 
+void IRStop(void) {
+  HAL_GPIO_WritePin(IR_UART2_TX_GPIO_Port, IR_UART2_TX_Pin, GPIO_PIN_SET);
+  wait_cycles(37895); // 30 cycles
+  HAL_GPIO_WritePin(IR_UART2_TX_GPIO_Port, IR_UART2_TX_Pin, GPIO_PIN_RESET);
+  wait_cycles(37895); // 30 cycles
+}
+
 // Transmit a zero
 void IRZero(void) {
   HAL_GPIO_WritePin(IR_UART2_TX_GPIO_Port, IR_UART2_TX_Pin, GPIO_PIN_SET);
@@ -151,6 +159,7 @@ void IRTxBuff(uint8_t *buff, size_t len) {
   for(uint8_t byte = 0; byte < len; byte++) {
       IRTxByte(buff[byte]);
   }
+  IRStop();
 }
 
 // Shift bits into rx buffer
@@ -174,6 +183,10 @@ int32_t IRBytesAvailable() {
 void IRStartRx() {
   irRxBits = 0;
   IRState = IR_RX_IDLE;
+}
+
+int32_t IRGetState() {
+  return IRState;
 }
 
 bool IRDataReady() {
@@ -229,7 +242,14 @@ void IRStateMachine() {
     }
 
     case IR_RX_MARK: {
-      if((pinState == 1) && (count > MARK_TICKS)) {
+      if(pinState == 0) {
+        IRState = IR_RX_ERR;
+        break;
+      }
+
+      if(count > START_TICKS) {
+          IRState = IR_RX_DONE;
+      } else if(count > MARK_TICKS) {
           startIRPulseTimer(); // Start timing space
           IRState = IR_RX_SPACE;
         } else {
@@ -267,7 +287,7 @@ void IRStateMachine() {
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-  if( GPIO_Pin & IR_UART2_RX_Pin) {
+  if(GPIO_Pin & IR_UART2_RX_Pin) {
       IRStateMachine();
   }
 }
