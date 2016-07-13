@@ -9,6 +9,8 @@
 
 #define ONE_TIME 0
 
+#define IR_TX 1 // Set to 1 for transmitter, 0 for receiver
+
 int state = 0;
 int tmp = 0;
 
@@ -30,6 +32,9 @@ void stopUARTIR() {
 
 uint32_t nextStateSwitchTime = 0;
 
+#define LED_BLINK_PERIOD (500)
+uint32_t ledTimer;
+
 void ledInit() {
   GPIO_InitTypeDef GPIO_InitStruct;
   GPIO_InitStruct.Pin = GPIO_PIN_13;
@@ -38,8 +43,12 @@ void ledInit() {
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
+
+  ledTimer = HAL_GetTick() + LED_BLINK_PERIOD;
 }
 
+#define IR_MESSAGE_PERIOD (1000)
+uint32_t irMessageTimer;
 void startBadge() {
 
   initUARTIR();
@@ -53,6 +62,7 @@ void startBadge() {
   IRStartRx();
 #endif
 
+  irMessageTimer = HAL_GetTick() + IR_MESSAGE_PERIOD;
 }
 
 int counter = 0;
@@ -66,15 +76,23 @@ void checkStateTimer(int nextState, int timeToNextSwitch) {
 
 uint32_t lastSendTime = 0;
 uint32_t txCount = 0;
+
 void loopBadge() {
-  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
-  HAL_Delay(500);
+
+  if (HAL_GetTick() > ledTimer) {
+      ledTimer += LED_BLINK_PERIOD;
+      HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+  }
 
 #if IR_TX
-  uint8_t buff[128];
-  snprintf((char *)buff, sizeof(buff), "DCDN! %ld", txCount++);
-  IRTxBuff(buff, strlen((const char *)buff));
-  uartPrint((const char *)buff);
+  if (HAL_GetTick() > irMessageTimer) {
+      irMessageTimer += IR_MESSAGE_PERIOD;
+    uint8_t buff[128];
+    snprintf((char *)buff, sizeof(buff), "DCDN! %ld", txCount++);
+    IRTxBuff(buff, strlen((const char *)buff));
+    uartPrint((const char *)buff);
+    uartPrint("\n");
+  }
 #else // IR_RX
   uint8_t buff[128];
   if(IRDataReady() == true) {
@@ -84,8 +102,6 @@ void loopBadge() {
       IRStartRx(); // Prepare for next RX
   }
 #endif
-
-  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
-  HAL_Delay(500);
+  __WFI();
 }
 

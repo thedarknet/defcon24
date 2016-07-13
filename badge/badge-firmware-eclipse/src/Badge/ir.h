@@ -8,8 +8,6 @@
 
 #include <stdbool.h>
 
-#define IR_TX 0
-
 #define CYCLES_PER_LOOP 5
 
 inline void wait_cycles( uint32_t n ) {
@@ -30,6 +28,7 @@ int32_t IRBytesAvailable();
 uint8_t *IRGetBuff();
 bool IRDataReady();
 void IRStartRx();
+int32_t IRGetState();
 
 #ifdef __cplusplus
 }
