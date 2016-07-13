@@ -65,18 +65,19 @@ void checkStateTimer(int nextState, int timeToNextSwitch) {
 }
 
 uint32_t lastSendTime = 0;
-
+uint32_t txCount = 0;
 void loopBadge() {
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
   HAL_Delay(500);
 
 #if IR_TX
-  uint8_t str[] = "DCDN!\n";
-  IRTxBuff(str, strlen((const char *)str));
-  uartPrint((const char *)str);
+  uint8_t buff[128];
+  snprintf((char *)buff, sizeof(buff), "DCDN! %ld", txCount++);
+  IRTxBuff(buff, strlen((const char *)buff));
+  uartPrint((const char *)buff);
 #else // IR_RX
+  uint8_t buff[128];
   if(IRDataReady() == true) {
-      uint8_t buff[128];
       snprintf((char *)buff, sizeof(buff), "Data Received! %ld \"%s\"\n", IRBytesAvailable(), IRGetBuff());
       uartPrint((const char *)buff);
 
