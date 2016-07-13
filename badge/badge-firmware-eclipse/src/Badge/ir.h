@@ -6,6 +6,8 @@
  extern "C" {
 #endif
 
+#include <stdbool.h>
+
 #define IR_TX 0
 
 #define CYCLES_PER_LOOP 5
@@ -21,6 +23,13 @@ void IRZero(void);
 void IROne(void);
 void IRTxByte(uint8_t byte);
 void IRTxBuff(uint8_t *buff, size_t len);
+
+void IRRXThing();
+
+int32_t IRBytesAvailable();
+uint8_t *IRGetBuff();
+bool IRDataReady();
+void IRStartRx();
 
 #ifdef __cplusplus
 }

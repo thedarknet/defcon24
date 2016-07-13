@@ -5,6 +5,7 @@
 #include <tim.h>
 #include <usart.h>
 #include <string.h>
+#include <stdio.h>
 
 #define ONE_TIME 0
 
@@ -49,6 +50,7 @@ void startBadge() {
   uartPrint("Transmit Mode!\n");
 #else
   uartPrint("Receive Mode!\n");
+  IRStartRx();
 #endif
 
 }
@@ -65,8 +67,6 @@ void checkStateTimer(int nextState, int timeToNextSwitch) {
 uint32_t lastSendTime = 0;
 
 void loopBadge() {
-  char buf[128];
-
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
   HAL_Delay(500);
 
@@ -75,7 +75,13 @@ void loopBadge() {
   IRTxBuff(str, strlen((const char *)str));
   uartPrint((const char *)str);
 #else // IR_RX
+  if(IRDataReady() == true) {
+      uint8_t buff[128];
+      snprintf((char *)buff, sizeof(buff), "Data Received! %ld \"%s\"\n", IRBytesAvailable(), IRGetBuff());
+      uartPrint((const char *)buff);
 
+      IRStartRx(); // Prepare for next RX
+  }
 #endif
 
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
