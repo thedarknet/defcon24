@@ -16,13 +16,7 @@ inline void wait_cycles( uint32_t n ) {
 }
 
 void IRInit(void);
-void IRStart(void);
-void IRZero(void);
-void IROne(void);
-void IRTxByte(uint8_t byte);
 void IRTxBuff(uint8_t *buff, size_t len);
-
-void IRRXThing();
 
 int32_t IRBytesAvailable();
 uint8_t *IRGetBuff();
