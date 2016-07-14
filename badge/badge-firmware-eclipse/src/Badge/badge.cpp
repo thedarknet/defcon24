@@ -97,7 +97,9 @@ void loopBadge() {
   uint8_t buff[128];
   int32_t rxLen = IRRxBlocking(5000);
   if(rxLen > 0) {
-      snprintf((char *)buff, sizeof(buff), "Data Received! %ld \"%s\"\n", IRBytesAvailable(), IRGetBuff());
+      uint8_t *rxBuff = IRGetBuff();
+      rxBuff[IRBytesAvailable()] = 0; // Make sure we have a null terminated string
+      snprintf((char *)buff, sizeof(buff), "Data Received! %ld \"%s\"\n", IRBytesAvailable(), rxBuff);
       uartPrint((const char *)buff);
   } else {
     snprintf((char *)buff, sizeof(buff), "Timeout :(\n");
