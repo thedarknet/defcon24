@@ -9,7 +9,7 @@
 
 #define ONE_TIME 0
 
-#define IR_TX 1 // Set to 1 for transmitter, 0 for receiver
+#define IR_TX 0 // Set to 1 for transmitter, 0 for receiver
 
 int state = 0;
 int tmp = 0;
@@ -95,11 +95,13 @@ void loopBadge() {
   }
 #else // IR_RX
   uint8_t buff[128];
-  if(IRDataReady() == true) {
+  int32_t rxLen = IRRxBlocking(5000);
+  if(rxLen > 0) {
       snprintf((char *)buff, sizeof(buff), "Data Received! %ld \"%s\"\n", IRBytesAvailable(), IRGetBuff());
       uartPrint((const char *)buff);
-
-      IRStartRx(); // Prepare for next RX
+  } else {
+    snprintf((char *)buff, sizeof(buff), "Timeout :(\n");
+    uartPrint((const char *)buff);
   }
 #endif
   __WFI();

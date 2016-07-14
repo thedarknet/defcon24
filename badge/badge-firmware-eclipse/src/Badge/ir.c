@@ -185,6 +185,24 @@ void IRStartRx() {
   IRState = IR_RX_IDLE;
 }
 
+int32_t IRRxBlocking(uint32_t timeout_ms) {
+  uint32_t timeout = HAL_GetTick() + timeout_ms;
+  IRStartRx();
+  while((IRState != IR_RX_DONE) && (HAL_GetTick() < timeout)) {
+      // Error condition
+      if(IRState < 0) {
+          return IRState;
+      }
+      __WFI();
+  }
+
+  if (HAL_GetTick() >= timeout) {
+      return IR_RX_ERR_TIMEOUT;
+  } else {
+      return IRBytesAvailable();
+  }
+}
+
 int32_t IRGetState() {
   return IRState;
 }
