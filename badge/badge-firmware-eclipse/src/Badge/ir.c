@@ -19,17 +19,28 @@ typedef enum {
   IR_RX_ERR_TIMEOUT = -2
 } IRState_t;
 
+typedef enum {
+ IR_RX = 0,
+ IR_TX
+} IRMode_t;
+
 static volatile IRState_t IRState;
-static uint8_t irRxBuff[128];
-static uint32_t irRxBits;
+static volatile IRMode_t IRMode;
+static volatile uint8_t irRxBuff[128];
+static volatile uint32_t irRxBits;
 
 TIM_HandleTypeDef htim3;
 
-// Minimum number of TIM3 ticks before classifying a mark/space/start pulse
-#define MARK_TICKS 400
-#define START_TICKS 800
-#define SPACE_ZERO_TICKS 300
-#define SPACE_ONE_TICKS 1000
+// Number of TIM3 ticks for mark/space/start pulses
+#define TICK_BASE (400)
+#define MARK_TICKS (TICK_BASE)
+#define START_TICKS (TICK_BASE * 2)
+#define SPACE_ZERO_TICKS (TICK_BASE)
+#define SPACE_ONE_TICKS (TICK_BASE * 3)
+
+// Margin to account for time delay in measuring input pulses during receive
+// I tried 50 which didn't always work, 100 seems pretty stable
+#define RX_MARGIN 100
 
 //
 // Configure timer 3 to measure incoming IR pulse widths
@@ -58,6 +69,19 @@ void TIM3_Init() {
   HAL_NVIC_EnableIRQ(TIM3_IRQn);
 }
 
+void delayTicks(uint32_t ticks) {
+  IRMode = IR_TX;
+  HAL_TIM_Base_Stop_IT(&htim3);
+  TIM3->CNT = 0;
+  TIM3->ARR = ticks;
+  __HAL_TIM_CLEAR_FLAG(&htim3, TIM_SR_UIF);
+  HAL_TIM_Base_Start_IT(&htim3);
+
+  while(IRMode == IR_TX) {
+      __WFI();
+  }
+}
+
 void startIRPulseTimer() {
   TIM3->CNT = 0;
   __HAL_TIM_CLEAR_FLAG(&htim3, TIM_SR_UIF);
@@ -71,8 +95,12 @@ void stopIRPulseTimer() {
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
   if (htim == &htim3) {
       stopIRPulseTimer();
-      // Timed out :(
-      IRState = IR_RX_ERR_TIMEOUT;
+      if(IRMode == IR_RX) {
+        // Timed out :(
+        IRState = IR_RX_ERR_TIMEOUT;
+      } else if (IRMode == IR_TX) {
+          IRMode = IR_RX;
+      }
   }
 }
 
@@ -99,41 +127,38 @@ void IRInit(void) {
 
   // Pulse measuring timer for receive
   TIM3_Init();
-}
 
-// TODO - change wait_cycles to use TIM3 so tx and rx use the same time ref
+}
 
 // Transmit start pulse
 void IRStart(void) {
   HAL_GPIO_WritePin(IR_UART2_TX_GPIO_Port, IR_UART2_TX_Pin, GPIO_PIN_SET);
-  wait_cycles(37895); // 30 cycles
+  delayTicks(START_TICKS);
   HAL_GPIO_WritePin(IR_UART2_TX_GPIO_Port, IR_UART2_TX_Pin, GPIO_PIN_RESET);
-  wait_cycles(37895); // 30 cycles
+  delayTicks(START_TICKS);
 }
 
 void IRStop(void) {
   HAL_GPIO_WritePin(IR_UART2_TX_GPIO_Port, IR_UART2_TX_Pin, GPIO_PIN_SET);
-  wait_cycles(37895); // 30 cycles
+  delayTicks(START_TICKS);
   HAL_GPIO_WritePin(IR_UART2_TX_GPIO_Port, IR_UART2_TX_Pin, GPIO_PIN_RESET);
-  wait_cycles(37895); // 30 cycles
+  delayTicks(START_TICKS);
 }
 
 // Transmit a zero
 void IRZero(void) {
   HAL_GPIO_WritePin(IR_UART2_TX_GPIO_Port, IR_UART2_TX_Pin, GPIO_PIN_SET);
-  wait_cycles(18947); // 15 cycles
+  delayTicks(MARK_TICKS);
   HAL_GPIO_WritePin(IR_UART2_TX_GPIO_Port, IR_UART2_TX_Pin, GPIO_PIN_RESET);
-  wait_cycles(18947); // 15 cycles
+  delayTicks(SPACE_ZERO_TICKS);
 }
 
 // Transmit a one
 void IROne(void) {
   HAL_GPIO_WritePin(IR_UART2_TX_GPIO_Port, IR_UART2_TX_Pin, GPIO_PIN_SET);
-  wait_cycles(18947); // 15 cycles
+  delayTicks(MARK_TICKS);
   HAL_GPIO_WritePin(IR_UART2_TX_GPIO_Port, IR_UART2_TX_Pin, GPIO_PIN_RESET);
-  wait_cycles(18947); // 15 cycles
-  wait_cycles(18947); // 15 cycles
-  wait_cycles(18947); // 15 cycles
+  delayTicks(SPACE_ONE_TICKS);
 }
 
 void IRTxByte(uint8_t byte) {
@@ -210,7 +235,7 @@ bool IRDataReady() {
 }
 
 uint8_t *IRGetBuff() {
-  return irRxBuff;
+  return (uint8_t *)irRxBuff;
 }
 
 // Receive GPIO state machine
@@ -218,7 +243,11 @@ void IRStateMachine() {
   uint32_t count = TIM3->CNT; // Save timer value as soon as possible
   uint32_t pinState = HAL_GPIO_ReadPin(IR_UART2_RX_GPIO_Port, IR_UART2_RX_Pin);
 
+  // Stop timer to prevent overflow
   stopIRPulseTimer();
+
+  // Add margin to account for measurement delays (interrupt latency, etc)
+  count += RX_MARGIN;
 
   switch(IRState) {
     // Idle, waiting for a start pulse
@@ -292,7 +321,7 @@ void IRStateMachine() {
       break;
     }
 
-    case IR_RX_ERR: {
+    default: {
       break;
     }
   }
