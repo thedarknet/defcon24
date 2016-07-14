@@ -19,7 +19,7 @@ typedef enum {
   IR_RX_ERR_TIMEOUT = -2
 } IRState_t;
 
-static IRState_t IRState;
+static volatile IRState_t IRState;
 static uint8_t irRxBuff[128];
 static uint32_t irRxBits;
 
@@ -52,8 +52,6 @@ void TIM3_Init() {
   sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
   HAL_TIM_ConfigClockSource(&htim3, &sClockSourceConfig);
 
-//  HAL_TIM_Base_Start_IT(&htim3);
-
   __HAL_TIM_CLEAR_FLAG(&htim3, TIM_SR_UIF);
 
   HAL_NVIC_SetPriority(TIM3_IRQn, 0, 0);
@@ -78,12 +76,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
   }
 }
 
-void IRRXThing() {
-//  if (TIM3->CNT > 50000) {
-//      HAL_TIM_Base_Stop_IT(&htim3);
-//  }
-}
-
 void IRInit(void) {
   // IR Transmit GPIO configuration
   GPIO_InitTypeDef GPIO_InitStruct;
@@ -103,7 +95,7 @@ void IRInit(void) {
 
   // Receive interrupt
   HAL_NVIC_SetPriority(EXTI3_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(EXTI3_IRQn);
+  HAL_NVIC_DisableIRQ(EXTI3_IRQn);
 
   // Pulse measuring timer for receive
   TIM3_Init();
@@ -183,12 +175,14 @@ int32_t IRBytesAvailable() {
 void IRStartRx() {
   irRxBits = 0;
   IRState = IR_RX_IDLE;
+  __HAL_GPIO_EXTI_CLEAR_IT(IR_UART2_RX_Pin);
+  HAL_NVIC_EnableIRQ(EXTI3_IRQn);
 }
 
 int32_t IRRxBlocking(uint32_t timeout_ms) {
   uint32_t timeout = HAL_GetTick() + timeout_ms;
   IRStartRx();
-  while((IRState != IR_RX_DONE) && (HAL_GetTick() < timeout)) {
+  while((IRState != IR_RX_DONE) && !(IRState < 0) && (HAL_GetTick() < timeout)) {
       // Error condition
       if(IRState < 0) {
           return IRState;
@@ -267,6 +261,7 @@ void IRStateMachine() {
 
       if(count > START_TICKS) {
           IRState = IR_RX_DONE;
+          HAL_NVIC_DisableIRQ(EXTI3_IRQn);
       } else if(count > MARK_TICKS) {
           startIRPulseTimer(); // Start timing space
           IRState = IR_RX_SPACE;
@@ -300,6 +295,11 @@ void IRStateMachine() {
     case IR_RX_ERR: {
       break;
     }
+  }
+
+  // Disable interrupts if an error occurred (until user resets it)
+  if (IRState < 0) {
+    HAL_NVIC_DisableIRQ(EXTI3_IRQn);
   }
 }
 
