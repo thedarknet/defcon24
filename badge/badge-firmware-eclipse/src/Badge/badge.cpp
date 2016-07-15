@@ -75,7 +75,7 @@ void startBadge() {
 #if 0
 	Radio.initialize(RF69_915MHZ,1);
 #define INITIAL_STATE 6
-#elif 0
+#elif 1
 	Radio.initialize(RF69_915MHZ, 2);
 	#define INITIAL_STATE 7
 #else
@@ -217,7 +217,7 @@ void loopBadge() {
 				if (nextStateSwitchTime < HAL_GetTick()) {
 					state = 7;
 					nextStateSwitchTime = HAL_GetTick() + 2000;
-					gui_lable_multiline("timeout", 0, 30, 120, 50,
+					gui_lable_multiline("timeout", 0, 40, 120, 50,
 							SSD1306_COLOR_BLACK, 0);
 				}
 			}
