@@ -357,36 +357,6 @@ ReturnStateContext IRState::onRun(QKeyboard &kb) {
 	} else {
 		return ReturnStateContext(StateFactory::getMenuState());
 	}
-#if 0
-	gui_lable_multiline("receiver", 0, 10, 120, 50, SSD1306_COLOR_BLACK, 0);
-	HAL_StatusTypeDef status;
-	char receiveBuf[64] = {'\0'};
-	status = HAL_UART_Receive(&huart2, (uint8_t *) &receiveBuf[0],
-			sizeof(receiveBuf) - 1, 5000);
-	if (status == HAL_OK
-			|| (status == HAL_TIMEOUT
-					&& huart2.RxXferCount != huart2.RxXferSize)) {
-		//Error_Handler();
-		sprintf(&buf[0], "UART:  %s", &receiveBuf[0]);
-		gui_lable_multiline(&buf[0], 0, 30, 120, 50, SSD1306_COLOR_BLACK,
-				0);
-	}
-}
-break;
-case 9: {
-	gui_lable_multiline("transmitter", 0, 10, 120, 50, SSD1306_COLOR_BLACK,
-			0);
-	if (KB.getLastPinSeleted() != QKeyboard::NO_PIN_SELECTED) {
-		state = 9;
-	}
-	char transbuf[64] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
-	//strcpy(&transbuf[0], "AAAAAAAA");
-	HAL_StatusTypeDef status;
-	status = HAL_UART_Transmit(&huart2, (uint8_t*) &transbuf[0], 10, 5000);
-	if (HAL_OK == status) {
-		gui_lable_multiline("sent ok", 0, 10, 120, 50, SSD1306_COLOR_BLACK,
-				0);
-#endif
 }
 
 ErrorType IRState::onShutdown() {
