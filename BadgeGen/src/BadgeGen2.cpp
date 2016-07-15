@@ -91,7 +91,7 @@ int indexof(const char* array, int find) {
 	return strchr(array, find) - array;
 }
 
-char EncryptResult[24];
+char EncryptResult[256];
 
 const char* crypt(char *Wheels, const char *ct) {
 	// Sets initial permutation
@@ -217,6 +217,8 @@ int main(int argc, char *argv[]) {
 		}
 	} else if (wheels != 0) {
 		cout << crypt(wheels, msg) << endl;
+	} else {
+		usage();
 	}
 	return 0;
 }

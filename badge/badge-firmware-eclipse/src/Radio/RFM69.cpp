@@ -110,12 +110,16 @@ bool RFM69::initialize(uint8_t freqBand, RadioAddrType nodeID, uint8_t networkID
 			/* 0x29 */{ REG_RSSITHRESH, 190 }, // default test values
 			/* 0x3c */{ REG_FIFOTHRESH, 0x8F }, //
 			/* 0x6f */{ REG_TESTDAGC, 0x30 }, //
+			{REG_LNA,RF_LNA_GAINSELECT_MAXMINUS48}, //we are not using AGC so let's set the gain
 			//SHOULD WE USE ADDRESS FILTERING???
 			/* 0x39 */// NO FOR NOW{ REG_NODEADRS, nodeID },
 			{ 255, 0 } };
 
 	//digitalWrite(_slaveSelectPin, HIGH);
 	HAL_GPIO_WritePin(GPIOA, RFM69_SPI_NSS_Pin, GPIO_PIN_SET);
+	if(readReg(REG_VERSION)!=0x24) {
+		return false;
+	}
 	//pinMode(_slaveSelectPin, OUTPUT);
 	SPI.begin();
 	unsigned long start = millis();

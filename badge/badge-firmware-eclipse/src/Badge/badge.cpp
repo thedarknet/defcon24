@@ -25,8 +25,8 @@ QKeyboard KB(QKeyboard::PinConfig(KEYBOARD_Y1_GPIO_Port, KEYBOARD_Y1_Pin),
 		QKeyboard::PinConfig(KEYBOARD_X3_GPIO_Port, KEYBOARD_X3_Pin),
 		QKeyboard::PinConfig(KEYBOARD_X4_GPIO_Port, KEYBOARD_X4_Pin));
 
-//RH_RF69 Radio(RFM69_SPI_NSS_Pin, RFM69_Interrupt_DIO0_Pin);
-RFM69 Radio;
+RFM69 Radio(RFM69_SPI_NSS_Pin, RFM69_Interrupt_DIO0_Pin,true);
+//RFM69 Radio;
 
 //start at 45K for 19K
 //start at 55K for 10
