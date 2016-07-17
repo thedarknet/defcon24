@@ -71,12 +71,18 @@ bool exists(const std::string& name) {
 }
 
 void usage() {
-	cout << "BadgeGen -u <make uber init file> -c <create daemon keys> -n <number of badge keys to generate> -w <3 letter string to set wheels> -m <message to encrypt/decrypt>" << endl;
+	cout
+			<< "BadgeGen -u <make uber init file> -c <create daemon keys> -n <number of badge keys to generate> -w <3 letter string to set wheels> -m <message to encrypt/decrypt>"
+			<< endl;
 }
 
 const char alpha[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-const char rotors[3][27] = { "EKMFLGDQVZNTOWYHXUSPAIBRCJ", "AJDKSIRUXBLHWTMCQGZNPYFVOE", "BDFHJLCPRTXVZNYEIWGAKMUSQO" };
-const char reflector[] = "YRUHQSLDPXNGOKMIEBFZCWVJAT";
+static const uint32_t NUM_ROTORS = 13;
+const char rotors[NUM_ROTORS][27] = { "DVOARQWTUZJCNFLSPMBHEYIGKX", "GHQZUJFWLVMTKOPIRSDEACXYBN",
+		"AKUOCLVJYIXMQPERBWSNGFZHTD", "BKLOSUDPJIRHZEXCGQMNVYFATW", "LICFJPORWQVHANKEBUDYMGZXTS",
+		"CAWFYLKXSZTGHPINMDREUQBJVO", "PYVREUXHKIWDNQAZTLSMBOJGFC", "LQRHNSTPAFIVJYMDGUOZKECWXB",
+		"JAUMCWHXTIZDYORQNSKBEFGLPV", "VRKNGZQOUXTMDIECJYPFSAWBLH", "LUHMZRVEGYSPJFADQCWTKBNXIO",
+		"SDIJUOBALVMYRNGWKHPQCXTFZE", "LIVPNYCUGSRFBXKQHMOEWZTDAJ" };
 
 long mod26(long a) {
 	return (a % 26 + 26) % 26;
@@ -91,16 +97,41 @@ int indexof(const char* array, int find) {
 	return strchr(array, find) - array;
 }
 
-char EncryptResult[256];
+void doPlug(char *r, const char *swapChars, int s) {
+	for (int l = 0; l < s; l += 2) {
+		int first = strchr(r, swapChars[l]) - r;
+		int second = strchr(r, swapChars[l + 1]) - r;
+		char tmp = r[first];
+		r[first] = r[second];
+		r[second] = tmp;
+	}
+}
 
-const char* crypt(char *Wheels, const char *ct) {
+char EncryptResult[200];
+
+const char* crypt(char *Wheels, const char *plugBoard, int plugBoardSize, const char *ct) {
+	static const char reflector[] = "YRUHQSLDPXNGOKMIEBFZCWVJAT";
 	// Sets initial permutation
-	int L = li(toupper(Wheels[0]));
-	int M = li(toupper(Wheels[1]));
-	int R = li(toupper(Wheels[2]));
+	int L = li(toupper(Wheels[1]));
+	int M = li(toupper(Wheels[3]));
+	int R = li(toupper(Wheels[5]));
 
 	memset(&EncryptResult[0], 0, sizeof(EncryptResult));
 	char *outPtr = &EncryptResult[0];
+
+	int rotorIdx0 = li(toupper(Wheels[0])) % NUM_ROTORS;
+	int rotorIdx1 = li(toupper(Wheels[2])) % NUM_ROTORS;
+	int rotorIdx2 = li(toupper(Wheels[4])) % NUM_ROTORS;
+
+	char r0[27] = { '\0' };
+	strcpy(&r0[0], rotors[rotorIdx0]);
+	doPlug(&r0[0], plugBoard, plugBoardSize);
+	char r1[27] = { '\0' };
+	strcpy(&r1[0], rotors[rotorIdx1]);
+	doPlug(&r1[0], plugBoard, plugBoardSize);
+	char r2[27] = { '\0' };
+	strcpy(&r2[0], rotors[rotorIdx2]);
+	doPlug(&r2[0], plugBoard, plugBoardSize);
 
 	for (uint16_t x = 0; x < strlen(ct) && x < sizeof(EncryptResult); x++) {
 		if (isspace(ct[x]))
@@ -112,17 +143,17 @@ const char* crypt(char *Wheels, const char *ct) {
 		R = mod26(R + 1);
 
 		// Pass through rotors
-		char a = rotors[2][mod26(R + ct_letter)];
-		char b = rotors[1][mod26(M + li(a) - R)];
-		char c = rotors[0][mod26(L + li(b) - M)];
+		char a = r2[mod26(R + ct_letter)];
+		char b = r1[mod26(M + li(a) - R)];
+		char c = r0[mod26(L + li(b) - M)];
 
 		// Pass through reflector
 		char ref = reflector[mod26(li(c) - L)];
 
 		// Inverse rotor pass
-		int d = mod26(indexof(rotors[0], alpha[mod26(li(ref) + L)]) - L);
-		int e = mod26(indexof(rotors[1], alpha[mod26(d + M)]) - M);
-		char f = alpha[mod26(indexof(rotors[2], alpha[mod26(e + R)]) - R)];
+		int d = mod26(indexof(&r0[0], alpha[mod26(li(ref) + L)]) - L);
+		int e = mod26(indexof(&r1[0], alpha[mod26(d + M)]) - M);
+		char f = alpha[mod26(indexof(&r2[0], alpha[mod26(e + R)]) - R)];
 
 		*outPtr = f;
 		outPtr++;
@@ -141,11 +172,12 @@ int main(int argc, char *argv[]) {
 	uint8_t Signature[48];
 	char *wheels = 0;
 	char *msg = 0;
+	char *plugBoard = 0;
 
 	int ch = 0;
 	int numberToGen = 0;
 
-	while ((ch = getopt(argc, argv, "ucn:w:m:")) != -1) {
+	while ((ch = getopt(argc, argv, "eucn:w:m:p:")) != -1) {
 		switch (ch) {
 		case 'c':
 			create = 1;
@@ -154,11 +186,22 @@ int main(int argc, char *argv[]) {
 			numberToGen = atoi(optarg);
 			generate = 1;
 			break;
+		case 'p':
+			plugBoard = optarg;
+			if (strlen(plugBoard) % 2 != 0) {
+				usage();
+				return -1;
+			}
+			break;
 		case 'u':
 			makeUber = 1;
 			break;
 		case 'w':
 			wheels = optarg;
+			if (strlen(wheels) != 6) {
+				usage();
+				return -1;
+			}
 			break;
 		case 'm':
 			msg = optarg;
@@ -216,7 +259,7 @@ int main(int argc, char *argv[]) {
 			}
 		}
 	} else if (wheels != 0) {
-		cout << crypt(wheels, msg) << endl;
+		cout << crypt(wheels, plugBoard, strlen(plugBoard), msg) << endl;
 	} else {
 		usage();
 	}

@@ -50,23 +50,6 @@ private:
 	uint32_t StateStartTime;
 };
 
-class LogoState: public StateBase {
-public:
-	LogoState(uint16_t timeInState);
-	virtual ~LogoState();
-	void setTimeInLogo(uint16_t t) {
-		TimeInLogoState = t;
-	}
-protected:
-	virtual ErrorType onInit();
-	virtual ReturnStateContext onRun(QKeyboard &kb);
-	virtual ErrorType onShutdown();
-
-private:
-	GUI_TickerData td;
-	uint16_t TimeInLogoState;
-};
-
 class DisplayMessageState: public StateBase {
 public:
 	DisplayMessageState(uint16_t timeInState, StateBase *nextState);
@@ -192,9 +175,10 @@ protected:
 	long mod26(long a);
 	int li(char l);
 	int indexof (const char* array, int find);
-	const char* crypt (const char *ct);
+	const char* crypt(char *Wheels, const char *plugBoard, int plugBoardSize, const char *ct);
+	void doPlug(char *r, const char *swapChars, int s);
 private:
-	static const uint16_t MAX_ENCRYPTED_LENGTH = 24;
+	static const uint16_t MAX_ENCRYPTED_LENGTH = 200;
 	INTERNAL_STATE InternalState;
 	char EntryBuffer[MAX_ENCRYPTED_LENGTH];
 	char Wheels[3];
@@ -235,7 +219,6 @@ public:
 	static bool init();
 	static StateBase *getDisplayMessageState(StateBase *bm, const char *message, uint16_t timeToDisplay);
 	static StateBase *getMenuState();
-	static StateBase *getLogoState(uint16_t timeToDisplay);
 	static StateBase *getSettingState();
 	static StateBase *getIRPairingState();
 	static StateBase *getAddressBookState();

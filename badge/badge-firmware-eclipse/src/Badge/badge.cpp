@@ -147,7 +147,7 @@ uint32_t startBadge() {
 	////////
 	state = INITIAL_STATE;
 	gui_set_curList(0);
-	CurrentState = StateFactory::getLogoState(3000);
+	CurrentState = StateFactory::getMenuState();
 	return true;
 }
 
