@@ -246,89 +246,6 @@
 <wire x1="1.524" y1="-0.762" x2="1.524" y2="0.762" width="0.127" layer="21"/>
 <wire x1="-1.524" y1="0.762" x2="1.524" y2="0.762" width="0.127" layer="21"/>
 </package>
-<package name="IR-MODULE">
-<wire x1="0" y1="-3.175" x2="-1.905" y2="-1.905" width="0.2032" layer="21" curve="-66"/>
-<wire x1="1.905" y1="-1.905" x2="0" y2="-3.175" width="0.2032" layer="21" curve="-66"/>
-<pad name="1" x="-2.54" y="0" drill="0.8128" diameter="1.8796" rot="R180"/>
-<pad name="2" x="0" y="0" drill="0.8128" diameter="1.8796" rot="R270"/>
-<pad name="3" x="2.54" y="0" drill="0.8128" diameter="1.8796" rot="R180"/>
-<text x="-3.175" y="-1.905" size="0.4064" layer="25" ratio="10" rot="R180">&gt;NAME</text>
-<text x="-3.175" y="1.905" size="0.4064" layer="27" ratio="10" rot="R180">&gt;VALUE</text>
-<wire x1="2.8575" y1="1.5875" x2="-2.8575" y2="1.5875" width="0.254" layer="21"/>
-<wire x1="2.8575" y1="-1.905" x2="3.175" y2="0" width="0.254" layer="21"/>
-<wire x1="3.175" y1="0" x2="2.8575" y2="1.5875" width="0.254" layer="21"/>
-<wire x1="-2.8575" y1="-1.905" x2="-3.175" y2="0" width="0.254" layer="21"/>
-<wire x1="-3.175" y1="0" x2="-2.8575" y2="1.5875" width="0.254" layer="21"/>
-<wire x1="1.905" y1="-1.905" x2="2.8575" y2="-1.905" width="0.254" layer="21"/>
-<wire x1="-1.905" y1="-1.905" x2="-2.8575" y2="-1.905" width="0.254" layer="21"/>
-<wire x1="1.905" y1="-1.905" x2="-1.905" y2="-1.905" width="0.254" layer="21"/>
-</package>
-<package name="STM32_DEV_BOARD">
-<pad name="B12" x="0" y="0" drill="1" diameter="1.6764" shape="square"/>
-<pad name="B13" x="0" y="-2.54" drill="1" diameter="1.6764" shape="square"/>
-<pad name="B14" x="0" y="-5.08" drill="1" diameter="1.6764" shape="square"/>
-<pad name="B15" x="0" y="-7.62" drill="1" diameter="1.6764" shape="square"/>
-<pad name="A8" x="0" y="-10.16" drill="1" diameter="1.6764" shape="square"/>
-<pad name="A9" x="0" y="-12.7" drill="1" diameter="1.6764" shape="square"/>
-<pad name="A10" x="0" y="-15.24" drill="1" diameter="1.6764" shape="square"/>
-<pad name="A11" x="0" y="-17.78" drill="1" diameter="1.6764" shape="square"/>
-<pad name="A12" x="0" y="-20.32" drill="1" diameter="1.6764" shape="square"/>
-<pad name="A15" x="0" y="-22.86" drill="1" diameter="1.6764" shape="square"/>
-<pad name="B3" x="0" y="-25.4" drill="1" diameter="1.6764" shape="square"/>
-<pad name="B4" x="0" y="-27.94" drill="1" diameter="1.6764" shape="square"/>
-<pad name="B5" x="0" y="-30.48" drill="1" diameter="1.6764" shape="square"/>
-<pad name="B6" x="0" y="-33.02" drill="1" diameter="1.6764" shape="square"/>
-<pad name="B7" x="0" y="-35.56" drill="1" diameter="1.6764" shape="square"/>
-<pad name="B8" x="0" y="-38.1" drill="1" diameter="1.6764" shape="square"/>
-<pad name="B9" x="0" y="-40.64" drill="1" diameter="1.6764" shape="square"/>
-<pad name="5V" x="0" y="-43.18" drill="1" diameter="1.6764" shape="square"/>
-<pad name="GND3" x="0" y="-45.72" drill="1" diameter="1.6764" shape="square"/>
-<pad name="3.3V2" x="0" y="-48.26" drill="1" diameter="1.6764" shape="square"/>
-<pad name="GND1" x="15.24" y="0" drill="1" diameter="1.6764" shape="square"/>
-<pad name="GND2" x="15.24" y="-2.54" drill="1" diameter="1.6764" shape="square"/>
-<pad name="3.3V" x="15.24" y="-5.08" drill="1" diameter="1.6764" shape="square"/>
-<pad name="RST" x="15.24" y="-7.62" drill="1" diameter="1.6764" shape="square"/>
-<pad name="B11" x="15.24" y="-10.16" drill="1" diameter="1.6764" shape="square"/>
-<pad name="B10" x="15.24" y="-12.7" drill="1" diameter="1.6764" shape="square"/>
-<pad name="B1" x="15.24" y="-15.24" drill="1" diameter="1.6764" shape="square"/>
-<pad name="B0" x="15.24" y="-17.78" drill="1" diameter="1.6764" shape="square"/>
-<pad name="A7" x="15.24" y="-20.32" drill="1" diameter="1.6764" shape="square"/>
-<pad name="A6" x="15.24" y="-22.86" drill="1" diameter="1.6764" shape="square"/>
-<pad name="A5" x="15.24" y="-25.4" drill="1" diameter="1.6764" shape="square"/>
-<pad name="A4" x="15.24" y="-27.94" drill="1" diameter="1.6764" shape="square"/>
-<pad name="A3" x="15.24" y="-30.48" drill="1" diameter="1.6764" shape="square"/>
-<pad name="A2" x="15.24" y="-33.02" drill="1" diameter="1.6764" shape="square"/>
-<pad name="A1" x="15.24" y="-35.56" drill="1" diameter="1.6764" shape="square"/>
-<pad name="A0" x="15.24" y="-38.1" drill="1" diameter="1.6764" shape="square"/>
-<pad name="C15" x="15.24" y="-40.64" drill="1" diameter="1.6764" shape="square"/>
-<pad name="C14" x="15.24" y="-43.18" drill="1" diameter="1.6764" shape="square"/>
-<pad name="C13" x="15.24" y="-45.72" drill="1" diameter="1.6764" shape="square"/>
-<pad name="VB" x="15.24" y="-48.26" drill="1" diameter="1.6764" shape="square"/>
-<wire x1="19.05" y1="2.54" x2="10.795" y2="2.54" width="0.127" layer="21"/>
-<wire x1="10.795" y1="2.54" x2="4.445" y2="2.54" width="0.127" layer="21"/>
-<wire x1="4.445" y1="2.54" x2="-3.81" y2="2.54" width="0.127" layer="21"/>
-<wire x1="19.05" y1="2.54" x2="19.05" y2="-50.8" width="0.127" layer="21"/>
-<wire x1="19.05" y1="-50.8" x2="12.7" y2="-50.8" width="0.127" layer="21"/>
-<wire x1="2.54" y1="-50.8" x2="-3.81" y2="-50.8" width="0.127" layer="21"/>
-<wire x1="-3.81" y1="-50.8" x2="-3.81" y2="2.54" width="0.127" layer="21"/>
-<wire x1="2.54" y1="-54.61" x2="12.7" y2="-54.61" width="0.127" layer="21"/>
-<wire x1="12.7" y1="-54.61" x2="12.7" y2="-50.8" width="0.127" layer="21"/>
-<wire x1="12.7" y1="-50.8" x2="2.54" y2="-50.8" width="0.127" layer="21"/>
-<wire x1="2.54" y1="-50.8" x2="2.54" y2="-54.61" width="0.127" layer="21"/>
-<wire x1="2.54" y1="-24.13" x2="7.62" y2="-19.05" width="0.127" layer="21"/>
-<wire x1="7.62" y1="-19.05" x2="12.7" y2="-24.13" width="0.127" layer="21"/>
-<wire x1="12.7" y1="-24.13" x2="7.62" y2="-29.21" width="0.127" layer="21"/>
-<wire x1="7.62" y1="-29.21" x2="2.54" y2="-24.13" width="0.127" layer="21"/>
-<text x="7.62" y="-24.13" size="1.27" layer="21" align="center">STM32</text>
-<text x="7.62" y="0" size="1.27" layer="21" align="bottom-center">USB</text>
-<wire x1="12.7" y1="-7.62" x2="6.985" y2="-7.62" width="0.127" layer="21"/>
-<wire x1="12.7" y1="-7.62" x2="12.7" y2="-16.51" width="0.127" layer="21"/>
-<wire x1="12.7" y1="-16.51" x2="6.985" y2="-16.51" width="0.127" layer="21"/>
-<wire x1="6.985" y1="-16.51" x2="6.985" y2="-7.62" width="0.127" layer="21"/>
-<wire x1="10.795" y1="2.54" x2="10.795" y2="1.905" width="0.127" layer="21"/>
-<wire x1="10.795" y1="1.905" x2="4.445" y2="1.905" width="0.127" layer="21"/>
-<wire x1="4.445" y1="1.905" x2="4.445" y2="2.54" width="0.127" layer="21"/>
-</package>
 <package name="16PIN-PCB-SMD">
 <wire x1="-8" y1="8" x2="8" y2="8" width="0.127" layer="21"/>
 <wire x1="-8" y1="-8" x2="8" y2="-8" width="0.127" layer="21"/>
@@ -761,22 +678,6 @@ Commonly used for 1/4W through-hole resistors. 0.3" pitch between holes.&lt;br&g
 <vertex x="-3.3681" y="-0.0101" curve="-90.012967"/>
 </polygon>
 </package>
-<package name="AAA_BATTERY_CLIP">
-<pad name="VCC1" x="0" y="0" drill="1.8542" diameter="3.81"/>
-<pad name="VCC2" x="7.62" y="0" drill="1.8542" diameter="3.81"/>
-<pad name="GND1" x="35.052" y="0" drill="1.8542" diameter="3.81"/>
-<pad name="GND2" x="42.672" y="0" drill="1.8542" diameter="3.81"/>
-<wire x1="-1.9558" y1="-5.715" x2="-1.9558" y2="-1.8542" width="0.127" layer="21"/>
-<wire x1="-1.9558" y1="1.905" x2="-1.9558" y2="5.715" width="0.127" layer="21"/>
-<wire x1="44.6532" y1="-5.715" x2="44.6532" y2="-1.8542" width="0.127" layer="21"/>
-<wire x1="44.6532" y1="1.905" x2="44.6532" y2="5.715" width="0.127" layer="21"/>
-<wire x1="-1.905" y1="5.715" x2="-0.635" y2="5.715" width="0.127" layer="21"/>
-<wire x1="-1.905" y1="-5.715" x2="-0.635" y2="-5.715" width="0.127" layer="21"/>
-<wire x1="42.8752" y1="-5.715" x2="44.6532" y2="-5.715" width="0.127" layer="21"/>
-<wire x1="42.8752" y1="5.715" x2="44.6532" y2="5.715" width="0.127" layer="21"/>
-<wire x1="-4.445" y1="1.27" x2="-4.445" y2="-1.27" width="0.4064" layer="21"/>
-<wire x1="-3.175" y1="0" x2="-5.715" y2="0" width="0.4064" layer="21"/>
-</package>
 <package name="LED5MM-EDGE">
 <pad name="A" x="-1.27" y="0" drill="0.8128" diameter="1.8796" shape="long" rot="R90"/>
 <pad name="K" x="1.27" y="0" drill="0.8128" diameter="1.8796" shape="long" rot="R90"/>
@@ -798,51 +699,9 @@ Commonly used for 1/4W through-hole resistors. 0.3" pitch between holes.&lt;br&g
 <pad name="P$10" x="0" y="-22.86" drill="0.8" diameter="1.6764" shape="square"/>
 <pad name="P$11" x="0" y="-25.4" drill="0.8" diameter="1.6764" shape="square"/>
 </package>
-<package name="TO262-H">
-<description>&lt;b&gt;Molded Package&lt;/b&gt;</description>
-<wire x1="-5.1308" y1="-4.9784" x2="5.1308" y2="-4.9784" width="0.254" layer="21"/>
-<wire x1="5.1308" y1="-4.9784" x2="5.1308" y2="3.937" width="0.254" layer="21"/>
-<wire x1="5.1308" y1="3.937" x2="3.1242" y2="5.3086" width="0.254" layer="21"/>
-<wire x1="3.1242" y1="5.3086" x2="-3.3782" y2="5.3086" width="0.254" layer="21"/>
-<wire x1="-3.3782" y1="5.3086" x2="-5.1308" y2="4.191" width="0.254" layer="21"/>
-<wire x1="-5.1308" y1="4.191" x2="-5.1308" y2="3.937" width="0.254" layer="21"/>
-<wire x1="-5.1308" y1="3.937" x2="-5.1308" y2="-4.9784" width="0.254" layer="21"/>
-<wire x1="-5.1308" y1="3.937" x2="5.1308" y2="3.937" width="0.254" layer="21"/>
-<pad name="1" x="-2.54" y="-12.7" drill="1.016" shape="long" rot="R90"/>
-<pad name="2" x="0" y="-12.7" drill="1.016" shape="long" rot="R90"/>
-<pad name="3" x="2.54" y="-12.7" drill="1.016" shape="long" rot="R270"/>
-<text x="3.6195" y="-6.985" size="1.27" layer="25">&gt;NAME</text>
-<text x="-3.81" y="7.112" size="1.27" layer="27">&gt;VALUE</text>
-<rectangle x1="-3.2512" y1="-9.0424" x2="-1.8288" y2="-7.62" layer="21"/>
-<rectangle x1="-3.2512" y1="-7.62" x2="-1.8288" y2="-5.1308" layer="21"/>
-<rectangle x1="1.8288" y1="-7.62" x2="3.2512" y2="-5.1308" layer="21"/>
-<rectangle x1="-0.7112" y1="-7.62" x2="0.7112" y2="-5.1308" layer="21"/>
-<rectangle x1="-0.7112" y1="-9.0424" x2="0.7112" y2="-7.62" layer="21"/>
-<rectangle x1="1.8288" y1="-9.0424" x2="3.2512" y2="-7.62" layer="21"/>
-<rectangle x1="-2.921" y1="-12.954" x2="-2.159" y2="-9.017" layer="51"/>
-<rectangle x1="-0.381" y1="-12.954" x2="0.381" y2="-9.017" layer="51"/>
-<rectangle x1="2.159" y1="-12.954" x2="2.921" y2="-9.017" layer="51"/>
-<rectangle x1="-5.08" y1="-5.08" x2="5.08" y2="6.35" layer="1"/>
-<rectangle x1="-5.334" y1="-5.334" x2="5.334" y2="6.604" layer="29"/>
-</package>
-<package name="TO262-V">
-<description>&lt;b&gt;Molded Package&lt;/b&gt;</description>
-<wire x1="-4.6228" y1="-1.3716" x2="4.6228" y2="-1.3716" width="0.254" layer="21"/>
-<wire x1="4.6228" y1="-1.3716" x2="5.1308" y2="0.1524" width="0.254" layer="21"/>
-<wire x1="5.1308" y1="0.1524" x2="5.1308" y2="1.7526" width="0.254" layer="21"/>
-<wire x1="-5.1308" y1="1.7526" x2="-5.1308" y2="0.1524" width="0.254" layer="21"/>
-<wire x1="-5.1308" y1="0.1524" x2="-4.6228" y2="-1.3716" width="0.254" layer="21"/>
-<wire x1="-5.1308" y1="1.7526" x2="5.1308" y2="1.7526" width="0.254" layer="21"/>
-<pad name="1" x="-2.54" y="0" drill="1.016" shape="long" rot="R90"/>
-<pad name="2" x="0" y="0" drill="1.016" shape="long" rot="R90"/>
-<pad name="3" x="2.54" y="0" drill="1.016" shape="long" rot="R90"/>
-<text x="-4.953" y="-3.175" size="1.27" layer="25">&gt;NAME</text>
-<text x="-5.08" y="3.937" size="1.27" layer="27">&gt;VALUE</text>
-<rectangle x1="-5.2832" y1="1.778" x2="5.2832" y2="3.2004" layer="21"/>
-</package>
 <package name="KRUX_LOGO">
 <polygon width="0" layer="122">
-<vertex x="2.58979375" y="-1.14055625"/>
+<vertex x="2.6238" y="-1.1751"/>
 <vertex x="2.5076" y="-1.0562"/>
 <vertex x="2.5614" y="-0.9139"/>
 <vertex x="2.6086" y="-0.7574"/>
@@ -900,53 +759,53 @@ Commonly used for 1/4W through-hole resistors. 0.3" pitch between holes.&lt;br&g
 <vertex x="-2.0559" y="-0.5923"/>
 <vertex x="-2.5187" y="-0.8579"/>
 <vertex x="-2.4801" y="-0.9736"/>
-<vertex x="-2.572678125" y="-1.041409375"/>
-<vertex x="-2.64193125" y="-0.837446875"/>
-<vertex x="-2.695103125" y="-0.62590625"/>
-<vertex x="-2.73681875" y="-0.35776875"/>
-<vertex x="-2.749078125" y="-0.162021875"/>
-<vertex x="-2.751259375" y="-0.0073125"/>
-<vertex x="-2.7427375" y="0.1609125"/>
-<vertex x="-2.72333125" y="0.32335625"/>
-<vertex x="-2.69045625" y="0.523425"/>
-<vertex x="-2.63834375" y="0.721928125"/>
-<vertex x="-2.577709375" y="0.908484375"/>
-<vertex x="-2.48980625" y="1.120296875"/>
-<vertex x="-2.39918125" y="1.29573125"/>
-<vertex x="-2.308159375" y="1.4467625"/>
-<vertex x="-2.204053125" y="1.598928125"/>
-<vertex x="-2.04583125" y="1.7937125"/>
-<vertex x="-1.87025" y="1.971571875"/>
-<vertex x="-1.70255" y="2.116271875"/>
-<vertex x="-1.469209375" y="2.2842125"/>
-<vertex x="-1.266728125" y="2.40149375"/>
-<vertex x="-0.99714375" y="2.526153125"/>
-<vertex x="-0.75694375" y="2.609315625"/>
-<vertex x="-0.474140625" y="2.676334375"/>
-<vertex x="-0.221959375" y="2.711015625"/>
-<vertex x="0.084321875" y="2.72135625"/>
-<vertex x="0.363465625" y="2.700796875"/>
-<vertex x="0.6513625" y="2.65149375"/>
-<vertex x="0.895325" y="2.582696875"/>
-<vertex x="1.156646875" y="2.48315625"/>
-<vertex x="1.401828125" y="2.359275"/>
-<vertex x="1.6598875" y="2.193234375"/>
-<vertex x="1.88033125" y="2.0143125"/>
-<vertex x="2.06533125" y="1.834934375"/>
-<vertex x="2.23486875" y="1.63285625"/>
-<vertex x="2.363671875" y="1.45045"/>
-<vertex x="2.498990625" y="1.217175"/>
-<vertex x="2.6110125" y="0.972534375"/>
-<vertex x="2.702215625" y="0.70723125"/>
-<vertex x="2.76751875" y="0.42576875"/>
-<vertex x="2.803115625" y="0.131965625"/>
-<vertex x="2.808359375" y="-0.124653125"/>
-<vertex x="2.7927375" y="-0.3629375"/>
-<vertex x="2.74991875" y="-0.629984375"/>
-<vertex x="2.69601875" y="-0.841896875"/>
-<vertex x="2.646934375" y="-0.99600625"/>
-<vertex x="2.6043875" y="-1.10655"/>
-<vertex x="2.59089375" y="-1.14165625"/>
+<vertex x="-2.6078" y="-1.0681"/>
+<vertex x="-2.6616" y="-0.9133"/>
+<vertex x="-2.7232" y="-0.6835"/>
+<vertex x="-2.7607" y="-0.4856"/>
+<vertex x="-2.7842" y="-0.2744"/>
+<vertex x="-2.792" y="-0.093"/>
+<vertex x="-2.7905" y="0.0682"/>
+<vertex x="-2.7725" y="0.277"/>
+<vertex x="-2.7326" y="0.5164"/>
+<vertex x="-2.6833" y="0.7135"/>
+<vertex x="-2.6285" y="0.8887"/>
+<vertex x="-2.5589" y="1.0647"/>
+<vertex x="-2.4564" y="1.2736"/>
+<vertex x="-2.3508" y="1.4527"/>
+<vertex x="-2.2359" y="1.6216"/>
+<vertex x="-2.0739" y="1.818"/>
+<vertex x="-1.894" y="2.0018"/>
+<vertex x="-1.729" y="2.1465"/>
+<vertex x="-1.4935" y="2.3139"/>
+<vertex x="-1.2894" y="2.4328"/>
+<vertex x="-1.0101" y="2.5634"/>
+<vertex x="-0.7645" y="2.6471"/>
+<vertex x="-0.479" y="2.7152"/>
+<vertex x="-0.2279" y="2.7488"/>
+<vertex x="0.0827" y="2.7613"/>
+<vertex x="0.3721" y="2.7402"/>
+<vertex x="0.66" y="2.6909"/>
+<vertex x="0.9072" y="2.6221"/>
+<vertex x="1.1723" y="2.5204"/>
+<vertex x="1.4164" y="2.3976"/>
+<vertex x="1.6777" y="2.2294"/>
+<vertex x="1.9084" y="2.044"/>
+<vertex x="2.0907" y="1.8657"/>
+<vertex x="2.2597" y="1.6701"/>
+<vertex x="2.3966" y="1.4769"/>
+<vertex x="2.5303" y="1.2501"/>
+<vertex x="2.6461" y="1.0006"/>
+<vertex x="2.74" y="0.7299"/>
+<vertex x="2.808" y="0.4452"/>
+<vertex x="2.8463" y="0.1487"/>
+<vertex x="2.851" y="-0.1117"/>
+<vertex x="2.837" y="-0.3597"/>
+<vertex x="2.7931" y="-0.6397"/>
+<vertex x="2.7446" y="-0.8392"/>
+<vertex x="2.6885" y="-1.0122"/>
+<vertex x="2.6249" y="-1.1751"/>
+<vertex x="2.6249" y="-1.1762"/>
 </polygon>
 <polygon width="0" layer="122">
 <vertex x="2.1914" y="-0.9888"/>
@@ -970,6 +829,7 @@ Commonly used for 1/4W through-hole resistors. 0.3" pitch between holes.&lt;br&g
 <vertex x="0.0338" y="-3.2567"/>
 <vertex x="-0.4237" y="-3.2255"/>
 <vertex x="-0.8344" y="-3.1379"/>
+<vertex x="-1.142" y="-3.0367"/>
 <vertex x="-1.469" y="-2.881"/>
 <vertex x="-1.7415" y="-2.7195"/>
 <vertex x="-2.0354" y="-2.4976"/>
@@ -997,31 +857,31 @@ Commonly used for 1/4W through-hole resistors. 0.3" pitch between holes.&lt;br&g
 <vertex x="2.3463" y="-1.9214"/>
 </polygon>
 <polygon width="0" layer="122">
-<vertex x="2.178953125" y="-1.821715625"/>
-<vertex x="2.0634625" y="-1.9538875"/>
-<vertex x="1.91941875" y="-2.093959375"/>
-<vertex x="1.70245" y="-2.277584375"/>
-<vertex x="1.518390625" y="-2.406159375"/>
-<vertex x="1.287853125" y="-2.53724375"/>
-<vertex x="1.10539375" y="-2.621609375"/>
-<vertex x="0.9170375" y="-2.6945625"/>
-<vertex x="0.696825" y="-2.757034375"/>
-<vertex x="0.447940625" y="-2.809790625"/>
-<vertex x="0.187815625" y="-2.834546875"/>
-<vertex x="-0.019221875" y="-2.837571875"/>
-<vertex x="-0.215696875" y="-2.827040625"/>
-<vertex x="-0.4088625" y="-2.802253125"/>
-<vertex x="-0.640771875" y="-2.756390625"/>
-<vertex x="-0.8496375" y="-2.696346875"/>
-<vertex x="-1.01475625" y="-2.63509375"/>
-<vertex x="-1.19540625" y="-2.55246875"/>
-<vertex x="-1.382109375" y="-2.455190625"/>
-<vertex x="-1.580821875" y="-2.32341875"/>
-<vertex x="-1.757871875" y="-2.18929375"/>
-<vertex x="-1.9154" y="-2.043246875"/>
-<vertex x="-2.06023125" y="-1.89381875"/>
-<vertex x="-2.155740625" y="-1.773521875"/>
-<vertex x="-2.2342375" y="-1.6758375"/>
+<vertex x="2.2421" y="-1.815"/>
+<vertex x="2.1078" y="-1.9727"/>
+<vertex x="1.9651" y="-2.1168"/>
+<vertex x="1.7441" y="-2.3058"/>
+<vertex x="1.5681" y="-2.429"/>
+<vertex x="1.351" y="-2.5574"/>
+<vertex x="1.1457" y="-2.6552"/>
+<vertex x="0.956" y="-2.7295"/>
+<vertex x="0.7331" y="-2.796"/>
+<vertex x="0.4775" y="-2.8501"/>
+<vertex x="0.2429" y="-2.8762"/>
+<vertex x="0.0493" y="-2.8846"/>
+<vertex x="-0.1633" y="-2.8781"/>
+<vertex x="-0.3699" y="-2.856"/>
+<vertex x="-0.583" y="-2.8182"/>
+<vertex x="-0.8053" y="-2.7595"/>
+<vertex x="-0.9852" y="-2.6969"/>
+<vertex x="-1.186" y="-2.6089"/>
+<vertex x="-1.3633" y="-2.517"/>
+<vertex x="-1.5647" y="-2.3906"/>
+<vertex x="-1.7525" y="-2.2511"/>
+<vertex x="-1.9154" y="-2.1064"/>
+<vertex x="-2.0562" y="-1.961"/>
+<vertex x="-2.1853" y="-1.8098"/>
+<vertex x="-2.2681" y="-1.7003"/>
 <vertex x="-2.1449" y="-1.6103"/>
 <vertex x="-2.0426" y="-1.7452"/>
 <vertex x="-1.9239" y="-1.8808"/>
@@ -1116,7 +976,7 @@ Commonly used for 1/4W through-hole resistors. 0.3" pitch between holes.&lt;br&g
 <vertex x="1.9807" y="-1.8846"/>
 <vertex x="2.0714" y="-1.7824"/>
 <vertex x="2.1333" y="-1.7064"/>
-<vertex x="2.211003125" y="-1.78225"/>
+<vertex x="2.2419" y="-1.8145"/>
 </polygon>
 <polygon width="0" layer="122">
 <vertex x="-2.2037" y="-0.9905"/>
@@ -1219,101 +1079,6 @@ Commonly used for 1/4W through-hole resistors. 0.3" pitch between holes.&lt;br&g
 <vertex x="-2.8215" y="-0.8121"/>
 <vertex x="-2.8251" y="-0.8101"/>
 </polygon>
-</package>
-<package name="DN_LOGO">
-<polygon width="0" layer="121">
-<vertex x="0.381" y="5.30225"/>
-<vertex x="0.508" y="4.6910625"/>
-<vertex x="0.6111875" y="4.1036875"/>
-<vertex x="0.7064375" y="3.4369375"/>
-<vertex x="0.762" y="2.8019375"/>
-<vertex x="0.7540625" y="2.2621875"/>
-<vertex x="0.6588125" y="1.4049375"/>
-<vertex x="2.3574375" y="1.4049375"/>
-<vertex x="2.3574375" y="3.5163125"/>
-<vertex x="5.2705" y="3.5163125"/>
-<vertex x="5.47814375" y="3.46265625"/>
-<vertex x="5.667375" y="3.381375"/>
-<vertex x="5.83526875" y="3.2457375"/>
-<vertex x="5.953125" y="3.1115"/>
-<vertex x="6.039359375" y="2.9758625"/>
-<vertex x="6.111875" y="2.82575"/>
-<vertex x="6.181028125" y="2.595559375"/>
-<vertex x="6.1833125" y="2.348484375"/>
-<vertex x="6.140196875" y="2.1336"/>
-<vertex x="6.06425" y="1.9764375"/>
-<vertex x="5.8816875" y="1.7224375"/>
-<vertex x="5.6435625" y="1.5319375"/>
-<vertex x="5.2784375" y="1.4049375"/>
-<vertex x="0.6588125" y="1.4049375"/>
-<vertex x="0.5476875" y="0.7381875"/>
-<vertex x="0.381" y="-0.1031875"/>
-<vertex x="1.1350625" y="0.0079375"/>
-<vertex x="2.0716875" y="0.09525"/>
-<vertex x="3.01625" y="0.1349375"/>
-<vertex x="3.476625" y="0.1349375"/>
-<vertex x="4.270375" y="0.111125"/>
-<vertex x="4.85775" y="0.111125"/>
-<vertex x="5.349875" y="0.142875"/>
-<vertex x="6.0086875" y="0.238125"/>
-<vertex x="6.461125" y="0.396875"/>
-<vertex x="6.8500625" y="0.6111875"/>
-<vertex x="7.20725" y="0.936625"/>
-<vertex x="7.4374375" y="1.2938125"/>
-<vertex x="7.5961875" y="1.68275"/>
-<vertex x="7.737475" y="2.190878125"/>
-<vertex x="7.749159375" y="2.46976875"/>
-<vertex x="7.7390625" y="2.619375"/>
-<vertex x="7.7073125" y="3.032125"/>
-<vertex x="7.6120625" y="3.476625"/>
-<vertex x="7.490078125" y="3.813303125"/>
-<vertex x="7.381875" y="4.03225"/>
-<vertex x="7.2556375" y="4.210559375"/>
-<vertex x="7.0881875" y="4.3894375"/>
-<vertex x="6.731" y="4.66725"/>
-<vertex x="6.2785625" y="4.8815625"/>
-<vertex x="5.8975625" y="4.9768125"/>
-<vertex x="5.1831875" y="5.0720625"/>
-<vertex x="4.587875" y="5.095875"/>
-<vertex x="4.0719375" y="5.08"/>
-<vertex x="3.4528125" y="5.064125"/>
-<vertex x="2.9924375" y="5.064125"/>
-<vertex x="2.3495" y="5.0879375"/>
-<vertex x="1.42875" y="5.159375"/>
-<vertex x="0.682625" y="5.254625"/>
-</polygon>
-<wire x1="5.2149375" y1="0.2778125" x2="7.39775" y2="0.2778125" width="0.3048" layer="121"/>
-<wire x1="7.39775" y1="0.2778125" x2="7.5485625" y2="0.333375" width="0.3048" layer="121"/>
-<wire x1="7.5485625" y1="0.333375" x2="7.604125" y2="0.47625" width="0.3048" layer="121"/>
-<wire x1="7.604125" y1="0.47625" x2="7.5803125" y2="2.238375" width="0.3048" layer="121"/>
-<wire x1="5.0879375" y1="4.9133125" x2="9.096375" y2="4.9133125" width="0.3048" layer="121"/>
-<wire x1="9.096375" y1="4.9133125" x2="9.62025" y2="4.841875" width="0.3048" layer="121"/>
-<wire x1="9.62025" y1="4.841875" x2="10.1361875" y2="4.6751875" width="0.3048" layer="121"/>
-<wire x1="10.1361875" y1="4.6751875" x2="10.5489375" y2="4.47675" width="0.3048" layer="121"/>
-<wire x1="10.5489375" y1="4.47675" x2="10.8981875" y2="4.2545" width="0.3048" layer="121"/>
-<wire x1="10.8981875" y1="4.2545" x2="11.2395" y2="3.90525" width="0.3048" layer="121"/>
-<wire x1="11.2395" y1="3.90525" x2="11.4150125" y2="3.68896875" width="0.3048" layer="121"/>
-<wire x1="11.4150125" y1="3.68896875" x2="11.572875" y2="3.429" width="0.3048" layer="121"/>
-<wire x1="11.572875" y1="3.429" x2="11.68908125" y2="3.162428125" width="0.3048" layer="121"/>
-<wire x1="11.68908125" y1="3.162428125" x2="11.7713125" y2="2.88925" width="0.3048" layer="121"/>
-<wire x1="11.7713125" y1="2.88925" x2="11.8245875" y2="2.629534375" width="0.3048" layer="121"/>
-<wire x1="11.8245875" y1="2.629534375" x2="11.858625" y2="2.333625" width="0.3048" layer="121"/>
-<wire x1="11.858625" y1="2.333625" x2="11.858625" y2="0.2936875" width="0.3048" layer="121"/>
-<wire x1="11.858625" y1="0.2936875" x2="10.6600625" y2="0.2936875" width="0.3048" layer="121"/>
-<wire x1="10.6600625" y1="0.2936875" x2="10.5965625" y2="0.3254375" width="0.3048" layer="121"/>
-<wire x1="10.5965625" y1="0.3254375" x2="10.541" y2="0.396875" width="0.3048" layer="121"/>
-<wire x1="10.541" y1="0.396875" x2="10.541" y2="2.1669375" width="0.3048" layer="121"/>
-<wire x1="10.541" y1="2.1669375" x2="10.525634375" y2="2.342134375" width="0.3048" layer="121"/>
-<wire x1="10.525634375" y1="2.342134375" x2="10.493375" y2="2.50825" width="0.3048" layer="121"/>
-<wire x1="10.493375" y1="2.50825" x2="10.441559375" y2="2.68605" width="0.3048" layer="121"/>
-<wire x1="10.441559375" y1="2.68605" x2="10.3584375" y2="2.8575" width="0.3048" layer="121"/>
-<wire x1="10.3584375" y1="2.8575" x2="10.175875" y2="3.0876875" width="0.3048" layer="121"/>
-<wire x1="10.175875" y1="3.0876875" x2="10.03731875" y2="3.22694375" width="0.3048" layer="121"/>
-<wire x1="10.03731875" y1="3.22694375" x2="9.87425" y2="3.33375" width="0.3048" layer="121"/>
-<wire x1="9.87425" y1="3.33375" x2="9.525" y2="3.476625" width="0.3048" layer="121"/>
-<wire x1="9.525" y1="3.476625" x2="9.3050375" y2="3.536821875" width="0.3048" layer="121"/>
-<wire x1="9.3050375" y1="3.536821875" x2="9.064625" y2="3.5639375" width="0.3048" layer="121"/>
-<wire x1="9.064625" y1="3.5639375" x2="7.4374375" y2="3.5639375" width="0.3048" layer="121"/>
 </package>
 <package name="CMD_C0DE_LOGO">
 <wire x1="0" y1="1.984375" x2="0" y2="2.69875" width="0.4064" layer="122"/>
@@ -1581,84 +1346,6 @@ Commonly used for 1/4W through-hole resistors. 0.3" pitch between holes.&lt;br&g
 <wire x1="-1.5875" y1="0" x2="-1.5875" y2="-1.905" width="0.254" layer="94"/>
 <wire x1="-1.5875" y1="0" x2="-2.8575" y2="0" width="0.254" layer="94"/>
 </symbol>
-<symbol name="SOP22">
-<pin name="VS" x="12.7" y="7.62" length="middle" rot="R180"/>
-<pin name="OUT" x="12.7" y="0" length="middle" rot="R180"/>
-<pin name="GND" x="12.7" y="-7.62" length="middle" rot="R180"/>
-<wire x1="7.62" y1="12.7" x2="7.62" y2="-12.7" width="0.254" layer="94"/>
-<wire x1="-10.16" y1="-12.7" x2="-10.16" y2="12.7" width="0.254" layer="94"/>
-<wire x1="-10.16" y1="12.7" x2="7.62" y2="12.7" width="0.254" layer="94"/>
-<wire x1="-8.763" y1="-3.20675" x2="-7.366" y2="-1.80975" width="0.1524" layer="94"/>
-<wire x1="-7.366" y1="-1.80975" x2="-8.255" y2="-2.19075" width="0.1524" layer="94"/>
-<wire x1="-8.255" y1="-2.19075" x2="-7.747" y2="-2.69875" width="0.1524" layer="94"/>
-<wire x1="-7.747" y1="-2.69875" x2="-7.366" y2="-1.80975" width="0.1524" layer="94"/>
-<wire x1="-7.493" y1="-0.66675" x2="-8.382" y2="-1.04775" width="0.1524" layer="94"/>
-<wire x1="-8.382" y1="-1.04775" x2="-7.874" y2="-1.55575" width="0.1524" layer="94"/>
-<wire x1="-7.874" y1="-1.55575" x2="-7.493" y2="-0.66675" width="0.1524" layer="94"/>
-<wire x1="-8.89" y1="-2.06375" x2="-7.493" y2="-0.66675" width="0.1524" layer="94"/>
-<wire x1="-6.35" y1="-2.54" x2="-5.08" y2="0" width="0.254" layer="94" style="shortdash"/>
-<wire x1="-5.08" y1="0" x2="-3.81" y2="-2.54" width="0.254" layer="94" style="shortdash"/>
-<wire x1="-6.35" y1="0" x2="-5.08" y2="0" width="0.254" layer="94"/>
-<wire x1="-5.08" y1="0" x2="-3.81" y2="0" width="0.254" layer="94"/>
-<wire x1="-6.35" y1="-2.54" x2="-5.08" y2="-2.54" width="0.254" layer="94" style="shortdash"/>
-<wire x1="-5.08" y1="-2.54" x2="-3.81" y2="-2.54" width="0.254" layer="94" style="shortdash"/>
-<wire x1="-5.08" y1="0" x2="-5.08" y2="5.08" width="0.254" layer="94" style="shortdash"/>
-<wire x1="-5.08" y1="5.08" x2="-2.54" y2="5.08" width="0.254" layer="94" style="shortdash"/>
-<wire x1="-2.54" y1="5.08" x2="-2.54" y2="10.16" width="0.254" layer="94" style="shortdash"/>
-<wire x1="-2.54" y1="10.16" x2="5.08" y2="10.16" width="0.254" layer="94" style="shortdash"/>
-<wire x1="5.08" y1="10.16" x2="5.08" y2="-7.62" width="0.254" layer="94" style="shortdash"/>
-<wire x1="5.08" y1="-7.62" x2="-2.54" y2="-7.62" width="0.254" layer="94" style="shortdash"/>
-<wire x1="-2.54" y1="-7.62" x2="-2.54" y2="5.08" width="0.254" layer="94" style="shortdash"/>
-<wire x1="-5.08" y1="-2.54" x2="-5.08" y2="-10.16" width="0.254" layer="94" style="shortdash"/>
-<wire x1="-10.16" y1="-12.7" x2="7.62" y2="-12.7" width="0.254" layer="94"/>
-</symbol>
-<symbol name="STM32_DEV_BOARD">
-<pin name="B12" x="-17.78" y="20.32" length="middle"/>
-<pin name="B13" x="-17.78" y="15.24" length="middle"/>
-<pin name="B14" x="-17.78" y="10.16" length="middle"/>
-<pin name="B15" x="-17.78" y="5.08" length="middle"/>
-<pin name="A8" x="-17.78" y="0" length="middle"/>
-<pin name="A9" x="-17.78" y="-5.08" length="middle"/>
-<pin name="A10" x="-17.78" y="-10.16" length="middle"/>
-<pin name="A11" x="-17.78" y="-15.24" length="middle"/>
-<pin name="A12" x="-17.78" y="-20.32" length="middle"/>
-<pin name="A15" x="-17.78" y="-25.4" length="middle"/>
-<pin name="B3" x="-17.78" y="-30.48" length="middle"/>
-<pin name="B4" x="-17.78" y="-35.56" length="middle"/>
-<pin name="B5" x="-17.78" y="-40.64" length="middle"/>
-<pin name="B6" x="-17.78" y="-45.72" length="middle"/>
-<pin name="B7" x="-17.78" y="-50.8" length="middle"/>
-<pin name="B8" x="-17.78" y="-55.88" length="middle"/>
-<pin name="B9" x="-17.78" y="-60.96" length="middle"/>
-<pin name="5V" x="-17.78" y="-66.04" length="middle"/>
-<pin name="GND3" x="-17.78" y="-71.12" length="middle"/>
-<pin name="3.3V2" x="-17.78" y="-76.2" length="middle"/>
-<pin name="VB" x="17.78" y="-76.2" length="middle" rot="R180"/>
-<pin name="C13" x="17.78" y="-71.12" length="middle" rot="R180"/>
-<pin name="C14" x="17.78" y="-66.04" length="middle" rot="R180"/>
-<pin name="C15" x="17.78" y="-60.96" length="middle" rot="R180"/>
-<pin name="A0" x="17.78" y="-55.88" length="middle" rot="R180"/>
-<pin name="A1" x="17.78" y="-50.8" length="middle" rot="R180"/>
-<pin name="A2" x="17.78" y="-45.72" length="middle" rot="R180"/>
-<pin name="A3" x="17.78" y="-40.64" length="middle" rot="R180"/>
-<pin name="A4" x="17.78" y="-35.56" length="middle" rot="R180"/>
-<pin name="A5" x="17.78" y="-30.48" length="middle" rot="R180"/>
-<pin name="A6" x="17.78" y="-25.4" length="middle" rot="R180"/>
-<pin name="A7" x="17.78" y="-20.32" length="middle" rot="R180"/>
-<pin name="B0" x="17.78" y="-15.24" length="middle" rot="R180"/>
-<pin name="B1" x="17.78" y="-10.16" length="middle" rot="R180"/>
-<pin name="B10" x="17.78" y="-5.08" length="middle" rot="R180"/>
-<pin name="B11" x="17.78" y="0" length="middle" rot="R180"/>
-<pin name="RST" x="17.78" y="5.08" length="middle" rot="R180"/>
-<pin name="3.3V" x="17.78" y="10.16" length="middle" rot="R180"/>
-<pin name="GND2" x="17.78" y="15.24" length="middle" rot="R180"/>
-<pin name="GND1" x="17.78" y="20.32" length="middle" rot="R180"/>
-<wire x1="-12.7" y1="22.86" x2="-12.7" y2="-78.74" width="0.254" layer="94"/>
-<wire x1="-12.7" y1="-78.74" x2="12.7" y2="-78.74" width="0.254" layer="94"/>
-<wire x1="12.7" y1="-78.74" x2="12.7" y2="22.86" width="0.254" layer="94"/>
-<wire x1="12.7" y1="22.86" x2="-12.7" y2="22.86" width="0.254" layer="94"/>
-<text x="0" y="-30.48" size="2.54" layer="94" rot="R90">STM32</text>
-</symbol>
 <symbol name="LED">
 <wire x1="1.27" y1="0" x2="0" y2="-2.54" width="0.254" layer="94"/>
 <wire x1="0" y1="-2.54" x2="-1.27" y2="0" width="0.254" layer="94"/>
@@ -1699,23 +1386,10 @@ Commonly used for 1/4W through-hole resistors. 0.3" pitch between holes.&lt;br&g
 <pin name="2" x="5.08" y="0" visible="off" length="short" direction="pas" swaplevel="1" rot="R180"/>
 <pin name="1" x="-5.08" y="0" visible="off" length="short" direction="pas" swaplevel="1"/>
 </symbol>
-<symbol name="1_CELL_BATTERY">
-<pin name="+V" x="0" y="7.62" length="middle" rot="R270"/>
-<pin name="-V" x="0" y="-5.08" length="middle" rot="R90"/>
-<wire x1="-5.08" y1="0" x2="5.08" y2="0" width="0.254" layer="94"/>
-<wire x1="-2.54" y1="2.54" x2="2.54" y2="2.54" width="0.254" layer="94"/>
-<text x="2.54" y="5.08" size="1.778" layer="94">+</text>
-</symbol>
 <symbol name="VCC3">
 <pin name="VCC3" x="0" y="0" visible="off" length="short" direction="sup" rot="R90"/>
 <wire x1="-0.635" y1="1.27" x2="0" y2="2.54" width="0.254" layer="94"/>
 <wire x1="0" y1="2.54" x2="0.635" y2="1.27" width="0.254" layer="94"/>
-<text x="-1.27" y="3.175" size="1.778" layer="96">&gt;VALUE</text>
-</symbol>
-<symbol name="VCC">
-<pin name="VCC" x="0" y="0" visible="off" length="short" direction="sup" rot="R90"/>
-<wire x1="0" y1="2.54" x2="0.635" y2="1.27" width="0.254" layer="94"/>
-<wire x1="0" y1="2.54" x2="-0.635" y2="1.27" width="0.254" layer="94"/>
 <text x="-1.27" y="3.175" size="1.778" layer="96">&gt;VALUE</text>
 </symbol>
 <symbol name="HEADER_11PIN">
@@ -1733,30 +1407,6 @@ Commonly used for 1/4W through-hole resistors. 0.3" pitch between holes.&lt;br&g
 <wire x1="-2.54" y1="2.54" x2="0" y2="2.54" width="0.254" layer="95"/>
 <wire x1="0" y1="2.54" x2="0" y2="-53.34" width="0.254" layer="95"/>
 <wire x1="0" y1="-53.34" x2="-2.54" y2="-53.34" width="0.254" layer="95"/>
-</symbol>
-<symbol name="DUAL_SHOTTKY">
-<wire x1="-6.35" y1="3.81" x2="-3.81" y2="5.08" width="0.254" layer="94"/>
-<wire x1="-3.81" y1="5.08" x2="-6.35" y2="6.35" width="0.254" layer="94"/>
-<wire x1="-3.81" y1="6.35" x2="-3.81" y2="5.08" width="0.254" layer="94"/>
-<wire x1="-6.35" y1="6.35" x2="-6.35" y2="5.08" width="0.254" layer="94"/>
-<wire x1="-6.35" y1="5.08" x2="-6.35" y2="3.81" width="0.254" layer="94"/>
-<wire x1="-3.81" y1="5.08" x2="-3.81" y2="3.81" width="0.254" layer="94"/>
-<text x="-2.54" y="8.1026" size="1.778" layer="95">&gt;NAME</text>
-<text x="-2.54" y="-9.9314" size="1.778" layer="96">&gt;VALUE</text>
-<wire x1="-6.35" y1="-6.35" x2="-3.81" y2="-5.08" width="0.254" layer="94"/>
-<wire x1="-3.81" y1="-5.08" x2="-6.35" y2="-3.81" width="0.254" layer="94"/>
-<wire x1="-3.81" y1="-3.81" x2="-3.81" y2="-5.08" width="0.254" layer="94"/>
-<wire x1="-6.35" y1="-3.81" x2="-6.35" y2="-5.08" width="0.254" layer="94"/>
-<wire x1="-6.35" y1="-5.08" x2="-6.35" y2="-6.35" width="0.254" layer="94"/>
-<wire x1="-3.81" y1="-5.08" x2="-3.81" y2="-6.35" width="0.254" layer="94"/>
-<pin name="PIN1" x="-12.7" y="5.08" length="middle"/>
-<pin name="PIN3" x="-12.7" y="-5.08" length="middle"/>
-<pin name="PIN2" x="5.08" y="0" length="middle" rot="R180"/>
-<wire x1="-3.81" y1="5.08" x2="0" y2="5.08" width="0.127" layer="94"/>
-<wire x1="0" y1="5.08" x2="0" y2="-5.08" width="0.127" layer="94"/>
-<wire x1="0" y1="-5.08" x2="-3.81" y2="-5.08" width="0.127" layer="94"/>
-<wire x1="-7.62" y1="5.08" x2="-6.35" y2="5.08" width="0.127" layer="94"/>
-<wire x1="-6.35" y1="-5.08" x2="-7.62" y2="-5.08" width="0.127" layer="94"/>
 </symbol>
 <symbol name="KRUX_LOGO">
 <polygon width="0.04" layer="94">
@@ -2139,87 +1789,6 @@ Commonly used for 1/4W through-hole resistors. 0.3" pitch between holes.&lt;br&g
 <vertex x="-2.8251" y="-0.8101"/>
 </polygon>
 </symbol>
-<symbol name="DN_LOGO">
-<polygon width="0" layer="94">
-<vertex x="-10.8981875" y="5.23875"/>
-<vertex x="-10.7711875" y="4.6275625"/>
-<vertex x="-10.668" y="4.0401875"/>
-<vertex x="-10.57275" y="3.3734375"/>
-<vertex x="-10.5171875" y="2.7384375"/>
-<vertex x="-10.525125" y="2.1986875"/>
-<vertex x="-10.620375" y="1.3414375"/>
-<vertex x="-8.92175" y="1.3414375"/>
-<vertex x="-8.92175" y="3.4528125"/>
-<vertex x="-6.0086875" y="3.4528125"/>
-<vertex x="-5.6118125" y="3.317875"/>
-<vertex x="-5.3260625" y="3.048"/>
-<vertex x="-5.1673125" y="2.76225"/>
-<vertex x="-5.095875" y="2.4685625"/>
-<vertex x="-5.095875" y="2.25425"/>
-<vertex x="-5.2149375" y="1.9129375"/>
-<vertex x="-5.3975" y="1.6589375"/>
-<vertex x="-5.635625" y="1.4684375"/>
-<vertex x="-6.00075" y="1.3414375"/>
-<vertex x="-10.620375" y="1.3414375"/>
-<vertex x="-10.7315" y="0.6746875"/>
-<vertex x="-10.8981875" y="-0.1666875"/>
-<vertex x="-10.144125" y="-0.0555625"/>
-<vertex x="-9.2075" y="0.03175"/>
-<vertex x="-8.2629375" y="0.0714375"/>
-<vertex x="-7.8025625" y="0.0714375"/>
-<vertex x="-7.0088125" y="0.047625"/>
-<vertex x="-6.4214375" y="0.047625"/>
-<vertex x="-5.9293125" y="0.079375"/>
-<vertex x="-5.2705" y="0.174625"/>
-<vertex x="-4.8180625" y="0.333375"/>
-<vertex x="-4.429125" y="0.5476875"/>
-<vertex x="-4.0719375" y="0.873125"/>
-<vertex x="-3.84175" y="1.2303125"/>
-<vertex x="-3.683" y="1.61925"/>
-<vertex x="-3.5321875" y="2.159"/>
-<vertex x="-3.540125" y="2.555875"/>
-<vertex x="-3.571875" y="2.968625"/>
-<vertex x="-3.667125" y="3.413125"/>
-<vertex x="-3.8973125" y="3.96875"/>
-<vertex x="-4.191" y="4.3259375"/>
-<vertex x="-4.5481875" y="4.60375"/>
-<vertex x="-5.000625" y="4.8180625"/>
-<vertex x="-5.381625" y="4.9133125"/>
-<vertex x="-6.096" y="5.0085625"/>
-<vertex x="-6.6913125" y="5.032375"/>
-<vertex x="-7.20725" y="5.0165"/>
-<vertex x="-7.826375" y="5.000625"/>
-<vertex x="-8.28675" y="5.000625"/>
-<vertex x="-8.9296875" y="5.0244375"/>
-<vertex x="-9.8504375" y="5.095875"/>
-<vertex x="-10.5965625" y="5.191125"/>
-</polygon>
-<wire x1="-6.06425" y1="0.2143125" x2="-3.8814375" y2="0.2143125" width="0.3048" layer="94"/>
-<wire x1="-3.8814375" y1="0.2143125" x2="-3.730625" y2="0.269875" width="0.3048" layer="94"/>
-<wire x1="-3.730625" y1="0.269875" x2="-3.6750625" y2="0.41275" width="0.3048" layer="94"/>
-<wire x1="-3.6750625" y1="0.41275" x2="-3.698875" y2="2.174875" width="0.3048" layer="94"/>
-<wire x1="-6.19125" y1="4.8498125" x2="-2.1828125" y2="4.8498125" width="0.3048" layer="94"/>
-<wire x1="-2.1828125" y1="4.8498125" x2="-1.6589375" y2="4.778375" width="0.3048" layer="94"/>
-<wire x1="-1.6589375" y1="4.778375" x2="-1.143" y2="4.6116875" width="0.3048" layer="94"/>
-<wire x1="-1.143" y1="4.6116875" x2="-0.73025" y2="4.41325" width="0.3048" layer="94"/>
-<wire x1="-0.73025" y1="4.41325" x2="-0.381" y2="4.191" width="0.3048" layer="94"/>
-<wire x1="-0.381" y1="4.191" x2="-0.0396875" y2="3.84175" width="0.3048" layer="94"/>
-<wire x1="-0.0396875" y1="3.84175" x2="0.2936875" y2="3.3655" width="0.3048" layer="94"/>
-<wire x1="0.2936875" y1="3.3655" x2="0.492125" y2="2.82575" width="0.3048" layer="94"/>
-<wire x1="0.492125" y1="2.82575" x2="0.5794375" y2="2.270125" width="0.3048" layer="94"/>
-<wire x1="0.5794375" y1="2.270125" x2="0.5794375" y2="0.2301875" width="0.3048" layer="94"/>
-<wire x1="0.5794375" y1="0.2301875" x2="-0.619125" y2="0.2301875" width="0.3048" layer="94"/>
-<wire x1="-0.619125" y1="0.2301875" x2="-0.682625" y2="0.2619375" width="0.3048" layer="94"/>
-<wire x1="-0.682625" y1="0.2619375" x2="-0.7381875" y2="0.333375" width="0.3048" layer="94"/>
-<wire x1="-0.7381875" y1="0.333375" x2="-0.7381875" y2="2.1034375" width="0.3048" layer="94"/>
-<wire x1="-0.7381875" y1="2.1034375" x2="-0.7858125" y2="2.44475" width="0.3048" layer="94"/>
-<wire x1="-0.7858125" y1="2.44475" x2="-0.92075" y2="2.794" width="0.3048" layer="94"/>
-<wire x1="-0.92075" y1="2.794" x2="-1.1033125" y2="3.0241875" width="0.3048" layer="94"/>
-<wire x1="-1.1033125" y1="3.0241875" x2="-1.4049375" y2="3.27025" width="0.3048" layer="94"/>
-<wire x1="-1.4049375" y1="3.27025" x2="-1.7541875" y2="3.413125" width="0.3048" layer="94"/>
-<wire x1="-1.7541875" y1="3.413125" x2="-2.2145625" y2="3.5004375" width="0.3048" layer="94"/>
-<wire x1="-2.2145625" y1="3.5004375" x2="-3.84175" y2="3.5004375" width="0.3048" layer="94"/>
-</symbol>
 <symbol name="CMD_C0DE_LOGO">
 <wire x1="0" y1="1.984375" x2="0" y2="2.69875" width="0.4064" layer="94"/>
 <wire x1="-1.42875" y1="1.984375" x2="-1.42875" y2="2.69875" width="0.4064" layer="94"/>
@@ -2556,77 +2125,6 @@ Commonly used for 1/4W through-hole resistors. 0.3" pitch between holes.&lt;br&g
 </device>
 </devices>
 </deviceset>
-<deviceset name="SOP22">
-<gates>
-<gate name="G$1" symbol="SOP22" x="-7.62" y="0"/>
-</gates>
-<devices>
-<device name="" package="IR-MODULE">
-<connects>
-<connect gate="G$1" pin="GND" pad="3"/>
-<connect gate="G$1" pin="OUT" pad="1"/>
-<connect gate="G$1" pin="VS" pad="2"/>
-</connects>
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
-<deviceset name="STM32_DEV_BOARD">
-<gates>
-<gate name="G$1" symbol="STM32_DEV_BOARD" x="0" y="22.86"/>
-</gates>
-<devices>
-<device name="STM32_DEV_BOARD" package="STM32_DEV_BOARD">
-<connects>
-<connect gate="G$1" pin="3.3V" pad="3.3V"/>
-<connect gate="G$1" pin="3.3V2" pad="3.3V2"/>
-<connect gate="G$1" pin="5V" pad="5V"/>
-<connect gate="G$1" pin="A0" pad="A0"/>
-<connect gate="G$1" pin="A1" pad="A1"/>
-<connect gate="G$1" pin="A10" pad="A10"/>
-<connect gate="G$1" pin="A11" pad="A11"/>
-<connect gate="G$1" pin="A12" pad="A12"/>
-<connect gate="G$1" pin="A15" pad="A15"/>
-<connect gate="G$1" pin="A2" pad="A2"/>
-<connect gate="G$1" pin="A3" pad="A3"/>
-<connect gate="G$1" pin="A4" pad="A4"/>
-<connect gate="G$1" pin="A5" pad="A5"/>
-<connect gate="G$1" pin="A6" pad="A6"/>
-<connect gate="G$1" pin="A7" pad="A7"/>
-<connect gate="G$1" pin="A8" pad="A8"/>
-<connect gate="G$1" pin="A9" pad="A9"/>
-<connect gate="G$1" pin="B0" pad="B0"/>
-<connect gate="G$1" pin="B1" pad="B1"/>
-<connect gate="G$1" pin="B10" pad="B10"/>
-<connect gate="G$1" pin="B11" pad="B11"/>
-<connect gate="G$1" pin="B12" pad="B12"/>
-<connect gate="G$1" pin="B13" pad="B13"/>
-<connect gate="G$1" pin="B14" pad="B14"/>
-<connect gate="G$1" pin="B15" pad="B15"/>
-<connect gate="G$1" pin="B3" pad="B3"/>
-<connect gate="G$1" pin="B4" pad="B4"/>
-<connect gate="G$1" pin="B5" pad="B5"/>
-<connect gate="G$1" pin="B6" pad="B6"/>
-<connect gate="G$1" pin="B7" pad="B7"/>
-<connect gate="G$1" pin="B8" pad="B8"/>
-<connect gate="G$1" pin="B9" pad="B9"/>
-<connect gate="G$1" pin="C13" pad="C13"/>
-<connect gate="G$1" pin="C14" pad="C14"/>
-<connect gate="G$1" pin="C15" pad="C15"/>
-<connect gate="G$1" pin="GND1" pad="GND1"/>
-<connect gate="G$1" pin="GND2" pad="GND2"/>
-<connect gate="G$1" pin="GND3" pad="GND3"/>
-<connect gate="G$1" pin="RST" pad="RST"/>
-<connect gate="G$1" pin="VB" pad="VB"/>
-</connects>
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
 <deviceset name="LED" prefix="LED" uservalue="yes">
 <description>&lt;b&gt;LEDs&lt;/b&gt;
 Standard schematic elements and footprints for 5mm, 3mm, 1206, and 0603 sized LEDs. 5mm - Spark Fun Electronics SKU : COM-00529 (and others)</description>
@@ -2852,39 +2350,10 @@ Basic schematic elements and footprints for 0603, 1206, and PTH resistors.</desc
 </device>
 </devices>
 </deviceset>
-<deviceset name="AAA_BATTERY">
-<gates>
-<gate name="G$1" symbol="1_CELL_BATTERY" x="0" y="0"/>
-</gates>
-<devices>
-<device name="AAA_BATTERY_CLIP" package="AAA_BATTERY_CLIP">
-<connects>
-<connect gate="G$1" pin="+V" pad="VCC1 VCC2"/>
-<connect gate="G$1" pin="-V" pad="GND1 GND2"/>
-</connects>
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
 <deviceset name="VCC3">
 <description>SUPPLY SYMBOL</description>
 <gates>
 <gate name="VCC3" symbol="VCC3" x="0" y="0"/>
-</gates>
-<devices>
-<device name="">
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
-<deviceset name="VCC">
-<description>SUPPLY SYMBOL</description>
-<gates>
-<gate name="G$1" symbol="VCC" x="0" y="0"/>
 </gates>
 <devices>
 <device name="">
@@ -2919,51 +2388,12 @@ Basic schematic elements and footprints for 0603, 1206, and PTH resistors.</desc
 </device>
 </devices>
 </deviceset>
-<deviceset name="VT1045C">
-<gates>
-<gate name="G$1" symbol="DUAL_SHOTTKY" x="0" y="0"/>
-</gates>
-<devices>
-<device name="TO262-H" package="TO262-H">
-<connects>
-<connect gate="G$1" pin="PIN1" pad="1"/>
-<connect gate="G$1" pin="PIN2" pad="2"/>
-<connect gate="G$1" pin="PIN3" pad="3"/>
-</connects>
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-<device name="TO262-V" package="TO262-V">
-<connects>
-<connect gate="G$1" pin="PIN1" pad="1"/>
-<connect gate="G$1" pin="PIN2" pad="2"/>
-<connect gate="G$1" pin="PIN3" pad="3"/>
-</connects>
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
 <deviceset name="KRUX_LOGO">
 <gates>
 <gate name="G$1" symbol="KRUX_LOGO" x="0" y="0"/>
 </gates>
 <devices>
 <device name="" package="KRUX_LOGO">
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
-<deviceset name="DN_LOGO">
-<gates>
-<gate name="G$1" symbol="DN_LOGO" x="7.62" y="-2.54"/>
-</gates>
-<devices>
-<device name="" package="DN_LOGO">
 <technologies>
 <technology name=""/>
 </technologies>
@@ -3041,8 +2471,6 @@ Basic schematic elements and footprints for 0603, 1206, and PTH resistors.</desc
 <part name="SW*" library="SYNShop" deviceset="SWITCH_TACTILE" device="TACTILE-2PIN-NARROW"/>
 <part name="SW0" library="SYNShop" deviceset="SWITCH_TACTILE" device="TACTILE-2PIN-NARROW"/>
 <part name="SW#" library="SYNShop" deviceset="SWITCH_TACTILE" device="TACTILE-2PIN-NARROW"/>
-<part name="Q1" library="SYNShop" deviceset="SOP22" device=""/>
-<part name="U$15" library="SYNShop" deviceset="STM32_DEV_BOARD" device="STM32_DEV_BOARD"/>
 <part name="LED1" library="SYNShop" deviceset="LED" device="REVERSEMOUNT"/>
 <part name="LED2" library="SYNShop" deviceset="LED" device="REVERSEMOUNT"/>
 <part name="LED3" library="SYNShop" deviceset="LED" device="REVERSEMOUNT"/>
@@ -3063,44 +2491,17 @@ Basic schematic elements and footprints for 0603, 1206, and PTH resistors.</desc
 <part name="R7" library="SYNShop" deviceset="RESISTOR" device="1206"/>
 <part name="R8" library="SYNShop" deviceset="RESISTOR" device="1206"/>
 <part name="R9" library="SYNShop" deviceset="RESISTOR" device="1206"/>
-<part name="GND1" library="supply1" deviceset="GND" device=""/>
-<part name="GND2" library="supply1" deviceset="GND" device=""/>
 <part name="GND3" library="supply1" deviceset="GND" device=""/>
 <part name="GND4" library="supply1" deviceset="GND" device=""/>
 <part name="GND5" library="supply1" deviceset="GND" device=""/>
 <part name="GND6" library="supply1" deviceset="GND" device=""/>
-<part name="U$3" library="SYNShop" deviceset="AAA_BATTERY" device="AAA_BATTERY_CLIP"/>
-<part name="U$4" library="SYNShop" deviceset="AAA_BATTERY" device="AAA_BATTERY_CLIP"/>
-<part name="U$5" library="SYNShop" deviceset="AAA_BATTERY" device="AAA_BATTERY_CLIP"/>
-<part name="GND7" library="supply1" deviceset="GND" device=""/>
 <part name="U$7" library="SYNShop" deviceset="VCC3" device=""/>
-<part name="U$8" library="SYNShop" deviceset="VCC3" device=""/>
-<part name="U$9" library="SYNShop" deviceset="VCC3" device=""/>
-<part name="U$10" library="SYNShop" deviceset="VCC" device=""/>
-<part name="GND8" library="supply1" deviceset="GND" device=""/>
-<part name="R4" library="SYNShop" deviceset="RESISTOR" device="AXIAL-0.3" value="56"/>
-<part name="R5" library="SYNShop" deviceset="RESISTOR" device="AXIAL-0.3" value="56"/>
-<part name="LED10" library="SYNShop" deviceset="LED" device="LED5MM_EDGE" value="IR"/>
-<part name="LED11" library="SYNShop" deviceset="LED" device="LED5MM_EDGE" value="STATUS"/>
-<part name="GND9" library="supply1" deviceset="GND" device=""/>
 <part name="U$6" library="SYNShop" deviceset="HEADER_11PIN" device=""/>
 <part name="U$13" library="SYNShop" deviceset="HEADER_11PIN" device=""/>
 <part name="GND10" library="supply1" deviceset="GND" device=""/>
-<part name="U$14" library="SYNShop" deviceset="HEADER_11PIN" device=""/>
-<part name="U$17" library="SYNShop" deviceset="HEADER_11PIN" device=""/>
-<part name="GND11" library="supply1" deviceset="GND" device=""/>
-<part name="U$18" library="SYNShop" deviceset="VCC" device=""/>
-<part name="U$19" library="SYNShop" deviceset="VCC3" device=""/>
-<part name="RESET" library="SYNShop" deviceset="SWITCH_TACTILE" device="TACTILE-2PIN-NARROW"/>
-<part name="GND12" library="supply1" deviceset="GND" device=""/>
-<part name="R2" library="SYNShop" deviceset="RESISTOR" device="AXIAL-0.3" value="10K"/>
-<part name="R3" library="SYNShop" deviceset="RESISTOR" device="AXIAL-0.3" value="10K"/>
 <part name="U$16" library="SYNShop" deviceset="VCC3" device=""/>
-<part name="D1" library="SYNShop" deviceset="VT1045C" device="TO262-H"/>
 <part name="U$21" library="SYNShop" deviceset="KRUX_LOGO" device=""/>
-<part name="U$22" library="SYNShop" deviceset="DN_LOGO" device=""/>
 <part name="U$23" library="SYNShop" deviceset="CMD_C0DE_LOGO" device=""/>
-<part name="U$11" library="SYNShop" deviceset="VCC3" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -3161,8 +2562,6 @@ so only one resistor needed</text>
 <instance part="SW#" gate="G$1" x="279.4" y="12.7" smashed="yes" rot="R270">
 <attribute name="NAME" x="276.098" y="9.144" size="1.778" layer="95"/>
 </instance>
-<instance part="Q1" gate="G$1" x="264.16" y="177.8"/>
-<instance part="U$15" gate="G$1" x="66.04" y="99.06"/>
 <instance part="LED1" gate="G$1" x="200.66" y="43.18" rot="R270"/>
 <instance part="LED2" gate="G$1" x="210.82" y="43.18" rot="R270"/>
 <instance part="LED3" gate="G$1" x="220.98" y="43.18" rot="R270"/>
@@ -3183,46 +2582,17 @@ so only one resistor needed</text>
 <instance part="R7" gate="G$1" x="213.36" y="53.34" rot="R90"/>
 <instance part="R8" gate="G$1" x="203.2" y="53.34" rot="R90"/>
 <instance part="R9" gate="G$1" x="187.96" y="53.34" rot="R90"/>
-<instance part="GND1" gate="1" x="104.14" y="111.76"/>
-<instance part="GND2" gate="1" x="17.78" y="25.4"/>
 <instance part="GND3" gate="1" x="226.06" y="129.54"/>
 <instance part="GND4" gate="1" x="129.54" y="124.46"/>
 <instance part="GND5" gate="1" x="129.54" y="160.02"/>
 <instance part="GND6" gate="1" x="190.5" y="175.26"/>
-<instance part="U$3" gate="G$1" x="58.42" y="238.76"/>
-<instance part="U$4" gate="G$1" x="58.42" y="226.06"/>
-<instance part="U$5" gate="G$1" x="58.42" y="213.36"/>
-<instance part="GND7" gate="1" x="58.42" y="203.2"/>
 <instance part="U$7" gate="VCC3" x="226.06" y="147.32"/>
-<instance part="U$8" gate="VCC3" x="96.52" y="109.22"/>
-<instance part="U$9" gate="VCC3" x="35.56" y="22.86"/>
-<instance part="U$10" gate="G$1" x="17.78" y="33.02"/>
-<instance part="GND8" gate="1" x="284.48" y="167.64"/>
-<instance part="R4" gate="G$1" x="264.16" y="147.32"/>
-<instance part="R5" gate="G$1" x="264.16" y="132.08"/>
-<instance part="LED10" gate="G$1" x="274.32" y="147.32" rot="R90"/>
-<instance part="LED11" gate="G$1" x="274.32" y="132.08" rot="R90"/>
-<instance part="GND9" gate="1" x="284.48" y="129.54"/>
 <instance part="U$6" gate="G$1" x="330.2" y="172.72"/>
 <instance part="U$13" gate="G$1" x="370.84" y="172.72"/>
 <instance part="GND10" gate="1" x="381" y="119.38"/>
-<instance part="U$14" gate="G$1" x="330.2" y="238.76"/>
-<instance part="U$17" gate="G$1" x="370.84" y="238.76"/>
-<instance part="GND11" gate="1" x="381" y="185.42"/>
-<instance part="U$18" gate="G$1" x="58.42" y="269.24"/>
-<instance part="U$19" gate="VCC3" x="104.14" y="22.86"/>
-<instance part="RESET" gate="G$1" x="66.04" y="170.18" smashed="yes" rot="R270">
-<attribute name="NAME" x="62.738" y="166.624" size="1.778" layer="95"/>
-</instance>
-<instance part="GND12" gate="1" x="55.88" y="160.02"/>
-<instance part="R2" gate="G$1" x="210.82" y="187.96" rot="R90"/>
-<instance part="R3" gate="G$1" x="218.44" y="187.96" rot="R90"/>
 <instance part="U$16" gate="VCC3" x="210.82" y="195.58"/>
-<instance part="D1" gate="G$1" x="58.42" y="261.62" rot="R90"/>
 <instance part="U$21" gate="G$1" x="378.46" y="12.7"/>
-<instance part="U$22" gate="G$1" x="370.84" y="10.16"/>
 <instance part="U$23" gate="G$1" x="388.62" y="12.7"/>
-<instance part="U$11" gate="VCC3" x="284.48" y="187.96"/>
 </instances>
 <busses>
 </busses>
@@ -3243,19 +2613,9 @@ so only one resistor needed</text>
 <label x="243.84" y="66.04" size="1.778" layer="95" rot="R90"/>
 </segment>
 <segment>
-<pinref part="U$15" gate="G$1" pin="A8"/>
-<wire x1="48.26" y1="99.06" x2="43.18" y2="99.06" width="0.1524" layer="91"/>
-<label x="40.64" y="99.06" size="1.778" layer="95" rot="R180"/>
-</segment>
-<segment>
 <pinref part="U$6" gate="G$1" pin="P$5"/>
 <wire x1="335.28" y1="152.4" x2="340.36" y2="152.4" width="0.1524" layer="91"/>
 <label x="342.9" y="152.4" size="1.778" layer="95"/>
-</segment>
-<segment>
-<pinref part="U$14" gate="G$1" pin="P$5"/>
-<wire x1="335.28" y1="218.44" x2="340.36" y2="218.44" width="0.1524" layer="91"/>
-<label x="342.9" y="218.44" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="KEYBOARD_Y2" class="0">
@@ -3274,19 +2634,9 @@ so only one resistor needed</text>
 <label x="259.08" y="66.04" size="1.778" layer="95" rot="R90"/>
 </segment>
 <segment>
-<pinref part="U$15" gate="G$1" pin="A9"/>
-<wire x1="48.26" y1="93.98" x2="43.18" y2="93.98" width="0.1524" layer="91"/>
-<label x="40.64" y="93.98" size="1.778" layer="95" rot="R180"/>
-</segment>
-<segment>
 <pinref part="U$6" gate="G$1" pin="P$6"/>
 <wire x1="335.28" y1="147.32" x2="340.36" y2="147.32" width="0.1524" layer="91"/>
 <label x="342.9" y="147.32" size="1.778" layer="95"/>
-</segment>
-<segment>
-<pinref part="U$14" gate="G$1" pin="P$6"/>
-<wire x1="335.28" y1="213.36" x2="340.36" y2="213.36" width="0.1524" layer="91"/>
-<label x="342.9" y="213.36" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="KEYBOARD_Y3" class="0">
@@ -3305,19 +2655,9 @@ so only one resistor needed</text>
 <label x="274.32" y="66.04" size="1.778" layer="95" rot="R90"/>
 </segment>
 <segment>
-<pinref part="U$15" gate="G$1" pin="A10"/>
-<wire x1="48.26" y1="88.9" x2="43.18" y2="88.9" width="0.1524" layer="91"/>
-<label x="40.64" y="88.9" size="1.778" layer="95" rot="R180"/>
-</segment>
-<segment>
 <pinref part="U$6" gate="G$1" pin="P$7"/>
 <wire x1="335.28" y1="142.24" x2="340.36" y2="142.24" width="0.1524" layer="91"/>
 <label x="342.9" y="142.24" size="1.778" layer="95"/>
-</segment>
-<segment>
-<pinref part="U$14" gate="G$1" pin="P$7"/>
-<wire x1="335.28" y1="208.28" x2="340.36" y2="208.28" width="0.1524" layer="91"/>
-<label x="342.9" y="208.28" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="N$8" class="0">
@@ -3387,20 +2727,6 @@ so only one resistor needed</text>
 </net>
 <net name="GND" class="0">
 <segment>
-<pinref part="GND2" gate="1" pin="GND"/>
-<pinref part="U$15" gate="G$1" pin="GND3"/>
-<wire x1="17.78" y1="27.94" x2="48.26" y2="27.94" width="0.1524" layer="91"/>
-</segment>
-<segment>
-<pinref part="U$15" gate="G$1" pin="GND2"/>
-<pinref part="GND1" gate="1" pin="GND"/>
-<wire x1="83.82" y1="114.3" x2="104.14" y2="114.3" width="0.1524" layer="91"/>
-<pinref part="U$15" gate="G$1" pin="GND1"/>
-<wire x1="83.82" y1="119.38" x2="104.14" y2="119.38" width="0.1524" layer="91"/>
-<wire x1="104.14" y1="119.38" x2="104.14" y2="114.3" width="0.1524" layer="91"/>
-<junction x="104.14" y="114.3"/>
-</segment>
-<segment>
 <pinref part="GND5" gate="1" pin="GND"/>
 <pinref part="U$2" gate="G$1" pin="GND"/>
 <wire x1="129.54" y1="162.56" x2="162.56" y2="162.56" width="0.1524" layer="91"/>
@@ -3421,47 +2747,9 @@ so only one resistor needed</text>
 <wire x1="182.88" y1="177.8" x2="190.5" y2="177.8" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="U$5" gate="G$1" pin="-V"/>
-<pinref part="GND7" gate="1" pin="GND"/>
-<wire x1="58.42" y1="205.74" x2="58.42" y2="208.28" width="0.1524" layer="91"/>
-</segment>
-<segment>
-<pinref part="Q1" gate="G$1" pin="GND"/>
-<pinref part="GND8" gate="1" pin="GND"/>
-<wire x1="284.48" y1="170.18" x2="276.86" y2="170.18" width="0.1524" layer="91"/>
-</segment>
-<segment>
-<pinref part="GND9" gate="1" pin="GND"/>
-<pinref part="LED11" gate="G$1" pin="C"/>
-<wire x1="279.4" y1="132.08" x2="284.48" y2="132.08" width="0.1524" layer="91"/>
-</segment>
-<segment>
 <pinref part="U$13" gate="G$1" pin="P$11"/>
 <wire x1="375.92" y1="121.92" x2="381" y2="121.92" width="0.1524" layer="91"/>
 <pinref part="GND10" gate="1" pin="GND"/>
-</segment>
-<segment>
-<pinref part="U$17" gate="G$1" pin="P$11"/>
-<wire x1="375.92" y1="187.96" x2="381" y2="187.96" width="0.1524" layer="91"/>
-<pinref part="GND11" gate="1" pin="GND"/>
-</segment>
-<segment>
-<pinref part="RESET" gate="G$1" pin="C"/>
-<wire x1="60.96" y1="170.18" x2="55.88" y2="170.18" width="0.1524" layer="91"/>
-<wire x1="55.88" y1="170.18" x2="55.88" y2="162.56" width="0.1524" layer="91"/>
-<pinref part="GND12" gate="1" pin="GND"/>
-</segment>
-</net>
-<net name="N$13" class="0">
-<segment>
-<pinref part="U$3" gate="G$1" pin="-V"/>
-<pinref part="U$4" gate="G$1" pin="+V"/>
-</segment>
-</net>
-<net name="N$14" class="0">
-<segment>
-<pinref part="U$4" gate="G$1" pin="-V"/>
-<pinref part="U$5" gate="G$1" pin="+V"/>
 </segment>
 </net>
 <net name="LED_OUT1" class="0">
@@ -3471,19 +2759,9 @@ so only one resistor needed</text>
 <label x="203.2" y="66.04" size="1.778" layer="95" rot="R90"/>
 </segment>
 <segment>
-<pinref part="U$15" gate="G$1" pin="A15"/>
-<wire x1="48.26" y1="73.66" x2="43.18" y2="73.66" width="0.1524" layer="91"/>
-<label x="40.64" y="73.66" size="1.778" layer="95" rot="R180"/>
-</segment>
-<segment>
 <pinref part="U$6" gate="G$1" pin="P$8"/>
 <wire x1="335.28" y1="137.16" x2="340.36" y2="137.16" width="0.1524" layer="91"/>
 <label x="342.9" y="137.16" size="1.778" layer="95"/>
-</segment>
-<segment>
-<pinref part="U$14" gate="G$1" pin="P$8"/>
-<wire x1="335.28" y1="203.2" x2="340.36" y2="203.2" width="0.1524" layer="91"/>
-<label x="342.9" y="203.2" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="LED_OUT2" class="0">
@@ -3493,19 +2771,9 @@ so only one resistor needed</text>
 <label x="213.36" y="66.04" size="1.778" layer="95" rot="R90"/>
 </segment>
 <segment>
-<pinref part="U$15" gate="G$1" pin="B3"/>
-<wire x1="48.26" y1="68.58" x2="43.18" y2="68.58" width="0.1524" layer="91"/>
-<label x="40.64" y="68.58" size="1.778" layer="95" rot="R180"/>
-</segment>
-<segment>
 <pinref part="U$6" gate="G$1" pin="P$9"/>
 <wire x1="335.28" y1="132.08" x2="340.36" y2="132.08" width="0.1524" layer="91"/>
 <label x="342.9" y="132.08" size="1.778" layer="95"/>
-</segment>
-<segment>
-<pinref part="U$14" gate="G$1" pin="P$9"/>
-<wire x1="335.28" y1="198.12" x2="340.36" y2="198.12" width="0.1524" layer="91"/>
-<label x="342.9" y="198.12" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="LED_OUT3" class="0">
@@ -3515,19 +2783,9 @@ so only one resistor needed</text>
 <label x="223.52" y="66.04" size="1.778" layer="95" rot="R90"/>
 </segment>
 <segment>
-<pinref part="U$15" gate="G$1" pin="B4"/>
-<wire x1="48.26" y1="63.5" x2="43.18" y2="63.5" width="0.1524" layer="91"/>
-<label x="40.64" y="63.5" size="1.778" layer="95" rot="R180"/>
-</segment>
-<segment>
 <pinref part="U$6" gate="G$1" pin="P$10"/>
 <wire x1="335.28" y1="127" x2="340.36" y2="127" width="0.1524" layer="91"/>
 <label x="342.9" y="127" size="1.778" layer="95"/>
-</segment>
-<segment>
-<pinref part="U$14" gate="G$1" pin="P$10"/>
-<wire x1="335.28" y1="193.04" x2="340.36" y2="193.04" width="0.1524" layer="91"/>
-<label x="342.9" y="193.04" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="LED_OUT4" class="0">
@@ -3537,19 +2795,9 @@ so only one resistor needed</text>
 <label x="187.96" y="66.04" size="1.778" layer="95" rot="R90"/>
 </segment>
 <segment>
-<pinref part="U$15" gate="G$1" pin="B5"/>
-<wire x1="48.26" y1="58.42" x2="43.18" y2="58.42" width="0.1524" layer="91"/>
-<label x="40.64" y="58.42" size="1.778" layer="95" rot="R180"/>
-</segment>
-<segment>
 <pinref part="U$6" gate="G$1" pin="P$11"/>
 <wire x1="335.28" y1="121.92" x2="340.36" y2="121.92" width="0.1524" layer="91"/>
 <label x="342.9" y="121.92" size="1.778" layer="95"/>
-</segment>
-<segment>
-<pinref part="U$14" gate="G$1" pin="P$11"/>
-<wire x1="335.28" y1="187.96" x2="340.36" y2="187.96" width="0.1524" layer="91"/>
-<label x="342.9" y="187.96" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="KEYBOARD_X1" class="0">
@@ -3584,19 +2832,9 @@ so only one resistor needed</text>
 <label x="170.18" y="38.1" size="1.778" layer="95" rot="R180"/>
 </segment>
 <segment>
-<pinref part="U$15" gate="G$1" pin="B12"/>
-<wire x1="48.26" y1="119.38" x2="43.18" y2="119.38" width="0.1524" layer="91"/>
-<label x="40.64" y="119.38" size="1.778" layer="95" rot="R180"/>
-</segment>
-<segment>
 <pinref part="U$6" gate="G$1" pin="P$1"/>
 <wire x1="335.28" y1="172.72" x2="340.36" y2="172.72" width="0.1524" layer="91"/>
 <label x="342.9" y="172.72" size="1.778" layer="95"/>
-</segment>
-<segment>
-<pinref part="U$14" gate="G$1" pin="P$1"/>
-<wire x1="335.28" y1="238.76" x2="340.36" y2="238.76" width="0.1524" layer="91"/>
-<label x="342.9" y="238.76" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="KEYBOARD_X2" class="0">
@@ -3631,19 +2869,9 @@ so only one resistor needed</text>
 <label x="170.18" y="27.94" size="1.778" layer="95" rot="R180"/>
 </segment>
 <segment>
-<pinref part="U$15" gate="G$1" pin="B13"/>
-<wire x1="48.26" y1="114.3" x2="43.18" y2="114.3" width="0.1524" layer="91"/>
-<label x="40.64" y="114.3" size="1.778" layer="95" rot="R180"/>
-</segment>
-<segment>
 <pinref part="U$6" gate="G$1" pin="P$2"/>
 <wire x1="335.28" y1="167.64" x2="340.36" y2="167.64" width="0.1524" layer="91"/>
 <label x="342.9" y="167.64" size="1.778" layer="95"/>
-</segment>
-<segment>
-<pinref part="U$14" gate="G$1" pin="P$2"/>
-<wire x1="335.28" y1="233.68" x2="340.36" y2="233.68" width="0.1524" layer="91"/>
-<label x="342.9" y="233.68" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="KEYBOARD_X3" class="0">
@@ -3678,19 +2906,9 @@ so only one resistor needed</text>
 <label x="170.18" y="17.78" size="1.778" layer="95" rot="R180"/>
 </segment>
 <segment>
-<pinref part="U$15" gate="G$1" pin="B14"/>
-<wire x1="48.26" y1="109.22" x2="43.18" y2="109.22" width="0.1524" layer="91"/>
-<label x="40.64" y="109.22" size="1.778" layer="95" rot="R180"/>
-</segment>
-<segment>
 <pinref part="U$6" gate="G$1" pin="P$3"/>
 <wire x1="335.28" y1="162.56" x2="340.36" y2="162.56" width="0.1524" layer="91"/>
 <label x="342.9" y="162.56" size="1.778" layer="95"/>
-</segment>
-<segment>
-<pinref part="U$14" gate="G$1" pin="P$3"/>
-<wire x1="335.28" y1="228.6" x2="340.36" y2="228.6" width="0.1524" layer="91"/>
-<label x="342.9" y="228.6" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="KEYBOARD_X4" class="0">
@@ -3726,51 +2944,12 @@ so only one resistor needed</text>
 <label x="170.18" y="7.62" size="1.778" layer="95" rot="R180"/>
 </segment>
 <segment>
-<pinref part="U$15" gate="G$1" pin="B15"/>
-<wire x1="48.26" y1="104.14" x2="43.18" y2="104.14" width="0.1524" layer="91"/>
-<label x="40.64" y="104.14" size="1.778" layer="95" rot="R180"/>
-</segment>
-<segment>
 <pinref part="U$6" gate="G$1" pin="P$4"/>
 <wire x1="335.28" y1="157.48" x2="340.36" y2="157.48" width="0.1524" layer="91"/>
 <label x="342.9" y="157.48" size="1.778" layer="95"/>
 </segment>
-<segment>
-<pinref part="U$14" gate="G$1" pin="P$4"/>
-<wire x1="335.28" y1="223.52" x2="340.36" y2="223.52" width="0.1524" layer="91"/>
-<label x="342.9" y="223.52" size="1.778" layer="95"/>
-</segment>
-</net>
-<net name="IR_UART2_TX" class="0">
-<segment>
-<pinref part="U$15" gate="G$1" pin="A2"/>
-<wire x1="83.82" y1="53.34" x2="88.9" y2="53.34" width="0.1524" layer="91"/>
-<label x="91.44" y="53.34" size="1.778" layer="95"/>
-</segment>
-<segment>
-<pinref part="R4" gate="G$1" pin="1"/>
-<wire x1="259.08" y1="147.32" x2="254" y2="147.32" width="0.1524" layer="91"/>
-<label x="251.46" y="147.32" size="1.778" layer="95" rot="R180"/>
-</segment>
-</net>
-<net name="IR_UART2_RX" class="0">
-<segment>
-<pinref part="U$15" gate="G$1" pin="A3"/>
-<wire x1="83.82" y1="58.42" x2="88.9" y2="58.42" width="0.1524" layer="91"/>
-<label x="91.44" y="58.42" size="1.778" layer="95"/>
-</segment>
-<segment>
-<pinref part="Q1" gate="G$1" pin="OUT"/>
-<wire x1="276.86" y1="177.8" x2="281.94" y2="177.8" width="0.1524" layer="91"/>
-<label x="284.48" y="177.8" size="1.778" layer="95"/>
-</segment>
 </net>
 <net name="RFM69_SPI_SCK" class="0">
-<segment>
-<pinref part="U$15" gate="G$1" pin="A5"/>
-<wire x1="83.82" y1="68.58" x2="88.9" y2="68.58" width="0.1524" layer="91"/>
-<label x="91.44" y="68.58" size="1.778" layer="95"/>
-</segment>
 <segment>
 <pinref part="U$2" gate="G$1" pin="SCK"/>
 <wire x1="162.56" y1="147.32" x2="157.48" y2="147.32" width="0.1524" layer="91"/>
@@ -3781,18 +2960,8 @@ so only one resistor needed</text>
 <wire x1="375.92" y1="142.24" x2="381" y2="142.24" width="0.1524" layer="91"/>
 <label x="383.54" y="142.24" size="1.778" layer="95"/>
 </segment>
-<segment>
-<pinref part="U$17" gate="G$1" pin="P$7"/>
-<wire x1="375.92" y1="208.28" x2="381" y2="208.28" width="0.1524" layer="91"/>
-<label x="383.54" y="208.28" size="1.778" layer="95"/>
-</segment>
 </net>
 <net name="RFM69_SPI_MISO" class="0">
-<segment>
-<pinref part="U$15" gate="G$1" pin="A6"/>
-<wire x1="83.82" y1="73.66" x2="88.9" y2="73.66" width="0.1524" layer="91"/>
-<label x="91.44" y="73.66" size="1.778" layer="95"/>
-</segment>
 <segment>
 <pinref part="U$2" gate="G$1" pin="MISO"/>
 <wire x1="162.56" y1="157.48" x2="157.48" y2="157.48" width="0.1524" layer="91"/>
@@ -3803,18 +2972,8 @@ so only one resistor needed</text>
 <wire x1="375.92" y1="152.4" x2="381" y2="152.4" width="0.1524" layer="91"/>
 <label x="383.54" y="152.4" size="1.778" layer="95"/>
 </segment>
-<segment>
-<pinref part="U$17" gate="G$1" pin="P$5"/>
-<wire x1="375.92" y1="218.44" x2="381" y2="218.44" width="0.1524" layer="91"/>
-<label x="383.54" y="218.44" size="1.778" layer="95"/>
-</segment>
 </net>
 <net name="RFM69_SPI_MOSI" class="0">
-<segment>
-<pinref part="U$15" gate="G$1" pin="A7"/>
-<wire x1="83.82" y1="78.74" x2="88.9" y2="78.74" width="0.1524" layer="91"/>
-<label x="91.44" y="78.74" size="1.778" layer="95"/>
-</segment>
 <segment>
 <pinref part="U$2" gate="G$1" pin="MOSI"/>
 <wire x1="162.56" y1="152.4" x2="157.48" y2="152.4" width="0.1524" layer="91"/>
@@ -3825,86 +2984,23 @@ so only one resistor needed</text>
 <wire x1="375.92" y1="147.32" x2="381" y2="147.32" width="0.1524" layer="91"/>
 <label x="383.54" y="147.32" size="1.778" layer="95"/>
 </segment>
-<segment>
-<pinref part="U$17" gate="G$1" pin="P$6"/>
-<wire x1="375.92" y1="213.36" x2="381" y2="213.36" width="0.1524" layer="91"/>
-<label x="383.54" y="213.36" size="1.778" layer="95"/>
-</segment>
-</net>
-<net name="FTDI_UART3_TX" class="0">
-<segment>
-<pinref part="U$15" gate="G$1" pin="B10"/>
-<wire x1="83.82" y1="93.98" x2="88.9" y2="93.98" width="0.1524" layer="91"/>
-<label x="91.44" y="93.98" size="1.778" layer="95"/>
-</segment>
-</net>
-<net name="FTDI_UART3_RX" class="0">
-<segment>
-<pinref part="U$15" gate="G$1" pin="B11"/>
-<wire x1="83.82" y1="99.06" x2="88.9" y2="99.06" width="0.1524" layer="91"/>
-<label x="91.44" y="99.06" size="1.778" layer="95"/>
-</segment>
-</net>
-<net name="RESET" class="0">
-<segment>
-<pinref part="U$15" gate="G$1" pin="RST"/>
-<wire x1="83.82" y1="104.14" x2="88.9" y2="104.14" width="0.1524" layer="91"/>
-<label x="91.44" y="104.14" size="1.778" layer="95"/>
-</segment>
-<segment>
-<pinref part="RESET" gate="G$1" pin="A"/>
-<wire x1="71.12" y1="170.18" x2="86.36" y2="170.18" width="0.1524" layer="91"/>
-<label x="88.9" y="170.18" size="1.778" layer="95"/>
-</segment>
-</net>
-<net name="USB_DM" class="0">
-<segment>
-<pinref part="U$15" gate="G$1" pin="A11"/>
-<wire x1="48.26" y1="83.82" x2="43.18" y2="83.82" width="0.1524" layer="91"/>
-<label x="40.64" y="83.82" size="1.778" layer="95" rot="R180"/>
-</segment>
-</net>
-<net name="USB_DP" class="0">
-<segment>
-<pinref part="U$15" gate="G$1" pin="A12"/>
-<wire x1="48.26" y1="78.74" x2="43.18" y2="78.74" width="0.1524" layer="91"/>
-<label x="40.64" y="78.74" size="1.778" layer="95" rot="R180"/>
-</segment>
 </net>
 <net name="OLED_I2C1_SDA" class="0">
 <segment>
-<pinref part="U$15" gate="G$1" pin="B7"/>
-<wire x1="48.26" y1="48.26" x2="43.18" y2="48.26" width="0.1524" layer="91"/>
-<label x="40.64" y="48.26" size="1.778" layer="95" rot="R180"/>
-</segment>
-<segment>
 <pinref part="U$1" gate="G$1" pin="SDA"/>
 <label x="190.5" y="180.34" size="1.778" layer="95"/>
-<pinref part="R3" gate="G$1" pin="1"/>
 <wire x1="182.88" y1="180.34" x2="218.44" y2="180.34" width="0.1524" layer="91"/>
-<wire x1="218.44" y1="180.34" x2="218.44" y2="182.88" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="U$13" gate="G$1" pin="P$3"/>
 <wire x1="375.92" y1="162.56" x2="381" y2="162.56" width="0.1524" layer="91"/>
 <label x="383.54" y="162.56" size="1.778" layer="95"/>
 </segment>
-<segment>
-<pinref part="U$17" gate="G$1" pin="P$3"/>
-<wire x1="375.92" y1="228.6" x2="381" y2="228.6" width="0.1524" layer="91"/>
-<label x="383.54" y="228.6" size="1.778" layer="95"/>
-</segment>
 </net>
 <net name="OLED_I2C1_SCL" class="0">
 <segment>
-<pinref part="U$15" gate="G$1" pin="B6"/>
-<wire x1="48.26" y1="53.34" x2="43.18" y2="53.34" width="0.1524" layer="91"/>
-<label x="40.64" y="53.34" size="1.778" layer="95" rot="R180"/>
-</segment>
-<segment>
 <pinref part="U$1" gate="G$1" pin="SCL"/>
 <label x="190.5" y="182.88" size="1.778" layer="95"/>
-<pinref part="R2" gate="G$1" pin="1"/>
 <wire x1="182.88" y1="182.88" x2="210.82" y2="182.88" width="0.1524" layer="91"/>
 </segment>
 <segment>
@@ -3912,72 +3008,12 @@ so only one resistor needed</text>
 <wire x1="375.92" y1="167.64" x2="381" y2="167.64" width="0.1524" layer="91"/>
 <label x="383.54" y="167.64" size="1.778" layer="95"/>
 </segment>
-<segment>
-<pinref part="U$17" gate="G$1" pin="P$2"/>
-<wire x1="375.92" y1="233.68" x2="381" y2="233.68" width="0.1524" layer="91"/>
-<label x="383.54" y="233.68" size="1.778" layer="95"/>
-</segment>
-</net>
-<net name="IR_LED_STATUS" class="0">
-<segment>
-<pinref part="R5" gate="G$1" pin="1"/>
-<wire x1="259.08" y1="132.08" x2="254" y2="132.08" width="0.1524" layer="91"/>
-<label x="251.46" y="132.08" size="1.778" layer="95" rot="R180"/>
-</segment>
-<segment>
-<pinref part="U$15" gate="G$1" pin="B1"/>
-<wire x1="83.82" y1="88.9" x2="88.9" y2="88.9" width="0.1524" layer="91"/>
-<label x="91.44" y="88.9" size="1.778" layer="95"/>
-</segment>
-</net>
-<net name="C15" class="0">
-<segment>
-<pinref part="U$15" gate="G$1" pin="C15"/>
-<wire x1="83.82" y1="38.1" x2="88.9" y2="38.1" width="0.1524" layer="91"/>
-<label x="91.44" y="38.1" size="1.778" layer="95"/>
-</segment>
-</net>
-<net name="C14" class="0">
-<segment>
-<pinref part="U$15" gate="G$1" pin="C14"/>
-<wire x1="83.82" y1="33.02" x2="88.9" y2="33.02" width="0.1524" layer="91"/>
-<label x="91.44" y="33.02" size="1.778" layer="95"/>
-</segment>
-</net>
-<net name="C13" class="0">
-<segment>
-<pinref part="U$15" gate="G$1" pin="C13"/>
-<wire x1="83.82" y1="27.94" x2="88.9" y2="27.94" width="0.1524" layer="91"/>
-<label x="91.44" y="27.94" size="1.778" layer="95"/>
-</segment>
-</net>
-<net name="IR_TIM2_CH2" class="0">
-<segment>
-<pinref part="U$15" gate="G$1" pin="A1"/>
-<wire x1="83.82" y1="48.26" x2="88.9" y2="48.26" width="0.1524" layer="91"/>
-<label x="91.44" y="48.26" size="1.778" layer="95"/>
-</segment>
-<segment>
-<pinref part="LED10" gate="G$1" pin="C"/>
-<wire x1="279.4" y1="147.32" x2="284.48" y2="147.32" width="0.1524" layer="91"/>
-<label x="287.02" y="147.32" size="1.778" layer="95"/>
-</segment>
 </net>
 <net name="RFM69_INTERRUPT_DIO0" class="0">
-<segment>
-<pinref part="U$15" gate="G$1" pin="B0"/>
-<wire x1="83.82" y1="83.82" x2="88.9" y2="83.82" width="0.1524" layer="91"/>
-<label x="91.44" y="83.82" size="1.778" layer="95"/>
-</segment>
 <segment>
 <pinref part="U$13" gate="G$1" pin="P$4"/>
 <wire x1="375.92" y1="157.48" x2="381" y2="157.48" width="0.1524" layer="91"/>
 <label x="383.54" y="157.48" size="1.778" layer="95"/>
-</segment>
-<segment>
-<pinref part="U$17" gate="G$1" pin="P$4"/>
-<wire x1="375.92" y1="223.52" x2="381" y2="223.52" width="0.1524" layer="91"/>
-<label x="383.54" y="223.52" size="1.778" layer="95"/>
 </segment>
 <segment>
 <pinref part="U$2" gate="G$1" pin="DIO0"/>
@@ -3985,19 +3021,7 @@ so only one resistor needed</text>
 <label x="208.28" y="154.94" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="B8" class="0">
-<segment>
-<pinref part="U$15" gate="G$1" pin="B8"/>
-<wire x1="48.26" y1="43.18" x2="43.18" y2="43.18" width="0.1524" layer="91"/>
-<label x="40.64" y="43.18" size="1.778" layer="95" rot="R180"/>
-</segment>
-</net>
 <net name="RFM69_RESET" class="0">
-<segment>
-<pinref part="U$15" gate="G$1" pin="B9"/>
-<wire x1="48.26" y1="38.1" x2="43.18" y2="38.1" width="0.1524" layer="91"/>
-<label x="40.64" y="38.1" size="1.778" layer="95" rot="R180"/>
-</segment>
 <segment>
 <pinref part="U$2" gate="G$1" pin="RESET"/>
 <wire x1="162.56" y1="137.16" x2="157.48" y2="137.16" width="0.1524" layer="91"/>
@@ -4008,11 +3032,6 @@ so only one resistor needed</text>
 <wire x1="375.92" y1="132.08" x2="381" y2="132.08" width="0.1524" layer="91"/>
 <label x="383.54" y="132.08" size="1.778" layer="95"/>
 </segment>
-<segment>
-<pinref part="U$17" gate="G$1" pin="P$9"/>
-<wire x1="375.92" y1="198.12" x2="381" y2="198.12" width="0.1524" layer="91"/>
-<label x="383.54" y="198.12" size="1.778" layer="95"/>
-</segment>
 </net>
 <net name="RFM69_SPI_NSS" class="0">
 <segment>
@@ -4021,33 +3040,9 @@ so only one resistor needed</text>
 <label x="154.94" y="142.24" size="1.778" layer="95" rot="R180"/>
 </segment>
 <segment>
-<pinref part="U$15" gate="G$1" pin="A4"/>
-<wire x1="83.82" y1="63.5" x2="88.9" y2="63.5" width="0.1524" layer="91"/>
-<label x="91.44" y="63.5" size="1.778" layer="95"/>
-</segment>
-<segment>
 <pinref part="U$13" gate="G$1" pin="P$8"/>
 <wire x1="375.92" y1="137.16" x2="381" y2="137.16" width="0.1524" layer="91"/>
 <label x="383.54" y="137.16" size="1.778" layer="95"/>
-</segment>
-<segment>
-<pinref part="U$17" gate="G$1" pin="P$8"/>
-<wire x1="375.92" y1="203.2" x2="381" y2="203.2" width="0.1524" layer="91"/>
-<label x="383.54" y="203.2" size="1.778" layer="95"/>
-</segment>
-</net>
-<net name="N$1" class="0">
-<segment>
-<pinref part="R4" gate="G$1" pin="2"/>
-<pinref part="LED10" gate="G$1" pin="A"/>
-<wire x1="269.24" y1="147.32" x2="271.78" y2="147.32" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$2" class="0">
-<segment>
-<pinref part="R5" gate="G$1" pin="2"/>
-<pinref part="LED11" gate="G$1" pin="A"/>
-<wire x1="269.24" y1="132.08" x2="271.78" y2="132.08" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="ANTENNA" class="0">
@@ -4063,21 +3058,6 @@ so only one resistor needed</text>
 <wire x1="375.92" y1="172.72" x2="381" y2="172.72" width="0.1524" layer="91"/>
 <label x="383.54" y="172.72" size="1.778" layer="95"/>
 </segment>
-<segment>
-<pinref part="U$15" gate="G$1" pin="5V"/>
-<wire x1="48.26" y1="33.02" x2="17.78" y2="33.02" width="0.1524" layer="91"/>
-<pinref part="U$10" gate="G$1" pin="VCC"/>
-</segment>
-<segment>
-<pinref part="U$17" gate="G$1" pin="P$1"/>
-<wire x1="375.92" y1="238.76" x2="381" y2="238.76" width="0.1524" layer="91"/>
-<label x="383.54" y="238.76" size="1.778" layer="95"/>
-</segment>
-<segment>
-<pinref part="U$18" gate="G$1" pin="VCC"/>
-<wire x1="58.42" y1="269.24" x2="58.42" y2="266.7" width="0.1524" layer="91"/>
-<pinref part="D1" gate="G$1" pin="PIN2"/>
-</segment>
 </net>
 <net name="3.3V" class="0">
 <segment>
@@ -4086,65 +3066,17 @@ so only one resistor needed</text>
 <pinref part="U$7" gate="VCC3" pin="VCC3"/>
 </segment>
 <segment>
-<pinref part="U$15" gate="G$1" pin="3.3V"/>
-<wire x1="83.82" y1="109.22" x2="96.52" y2="109.22" width="0.1524" layer="91"/>
-<pinref part="U$8" gate="VCC3" pin="VCC3"/>
-</segment>
-<segment>
-<pinref part="U$15" gate="G$1" pin="3.3V2"/>
-<wire x1="48.26" y1="22.86" x2="35.56" y2="22.86" width="0.1524" layer="91"/>
-<pinref part="U$9" gate="VCC3" pin="VCC3"/>
-</segment>
-<segment>
 <pinref part="U$13" gate="G$1" pin="P$10"/>
 <wire x1="375.92" y1="127" x2="381" y2="127" width="0.1524" layer="91"/>
 <label x="383.54" y="127" size="1.778" layer="95"/>
 </segment>
 <segment>
-<pinref part="U$17" gate="G$1" pin="P$10"/>
-<wire x1="375.92" y1="193.04" x2="381" y2="193.04" width="0.1524" layer="91"/>
-<label x="383.54" y="193.04" size="1.778" layer="95"/>
-</segment>
-<segment>
-<pinref part="U$15" gate="G$1" pin="VB"/>
-<wire x1="83.82" y1="22.86" x2="104.14" y2="22.86" width="0.1524" layer="91"/>
-<pinref part="U$19" gate="VCC3" pin="VCC3"/>
-</segment>
-<segment>
-<pinref part="R2" gate="G$1" pin="2"/>
-<pinref part="R3" gate="G$1" pin="2"/>
-<wire x1="218.44" y1="193.04" x2="210.82" y2="193.04" width="0.1524" layer="91"/>
 <pinref part="U$16" gate="VCC3" pin="VCC3"/>
 <wire x1="210.82" y1="193.04" x2="210.82" y2="195.58" width="0.1524" layer="91"/>
-<junction x="210.82" y="193.04"/>
 <pinref part="U$1" gate="G$1" pin="VCC"/>
 <wire x1="182.88" y1="185.42" x2="190.5" y2="185.42" width="0.1524" layer="91"/>
 <wire x1="190.5" y1="185.42" x2="190.5" y2="193.04" width="0.1524" layer="91"/>
 <wire x1="190.5" y1="193.04" x2="210.82" y2="193.04" width="0.1524" layer="91"/>
-</segment>
-<segment>
-<pinref part="U$11" gate="VCC3" pin="VCC3"/>
-<wire x1="284.48" y1="185.42" x2="284.48" y2="187.96" width="0.1524" layer="91"/>
-<pinref part="Q1" gate="G$1" pin="VS"/>
-<wire x1="276.86" y1="185.42" x2="284.48" y2="185.42" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="A0" class="0">
-<segment>
-<pinref part="U$15" gate="G$1" pin="A0"/>
-<wire x1="83.82" y1="43.18" x2="88.9" y2="43.18" width="0.1524" layer="91"/>
-<label x="91.44" y="43.18" size="1.778" layer="95"/>
-</segment>
-</net>
-<net name="N$3" class="0">
-<segment>
-<pinref part="D1" gate="G$1" pin="PIN1"/>
-<pinref part="D1" gate="G$1" pin="PIN3"/>
-<wire x1="53.34" y1="248.92" x2="58.42" y2="248.92" width="0.1524" layer="91"/>
-<pinref part="U$3" gate="G$1" pin="+V"/>
-<wire x1="58.42" y1="248.92" x2="63.5" y2="248.92" width="0.1524" layer="91"/>
-<wire x1="58.42" y1="246.38" x2="58.42" y2="248.92" width="0.1524" layer="91"/>
-<junction x="58.42" y="248.92"/>
 </segment>
 </net>
 </nets>
