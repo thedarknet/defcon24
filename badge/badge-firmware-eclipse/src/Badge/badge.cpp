@@ -94,6 +94,7 @@ void initFlash() {
 }
 
 StateBase *CurrentState = 0;
+static const uint32_t TIME_BETWEEN_INITS = 100;
 
 uint32_t startBadge() {
 	uint32_t retVal = 0;
@@ -104,12 +105,14 @@ uint32_t startBadge() {
 			uint8_t(64), uint8_t(0), uint8_t(0));
 	//DO SELF CHECK
 	if (gui_init()) {
+		delay(1000);
 		items[0].set(0, "OLED_INIT");
 		DrawList.ItemsCount++;
 		retVal |= COMPONENTS_ITEMS::OLED;
 		gui_set_curList(&DrawList);
 	}
 	gui_draw();
+	delay(TIME_BETWEEN_INITS);
 #if 1
 #define INITIAL_STATE 6
 	if (Radio.initialize(RF69_915MHZ, 1)) {
@@ -127,6 +130,7 @@ uint32_t startBadge() {
 	}
 	DrawList.ItemsCount++;
 	gui_draw();
+	delay(TIME_BETWEEN_INITS);
 
 	if (MyContacts.init()) {
 		items[2].set(2, "Flash mem INIT");
@@ -136,7 +140,7 @@ uint32_t startBadge() {
 	}
 	//test for IR??
 	DrawList.ItemsCount++;
-	gui_draw();
+	delay(TIME_BETWEEN_INITS);
 
 
 	//remove nextStateswitch

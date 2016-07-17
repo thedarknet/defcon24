@@ -502,7 +502,8 @@ int16_t RFM69::readRSSI(bool forceTrigger) {
 			; // wait for RSSI_Ready
 	}
 	rssi = -readReg(REG_RSSIVALUE);
-	rssi >>= 1;
+	rssi/=2;
+	//rssi >>= 1;
 	return rssi;
 }
 

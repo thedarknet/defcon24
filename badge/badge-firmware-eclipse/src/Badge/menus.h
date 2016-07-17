@@ -181,7 +181,7 @@ private:
 	static const uint16_t MAX_ENCRYPTED_LENGTH = 200;
 	INTERNAL_STATE InternalState;
 	char EntryBuffer[MAX_ENCRYPTED_LENGTH];
-	char Wheels[3];
+	char Wheels[6];
 	char EncryptResult[MAX_ENCRYPTED_LENGTH];
 };
 

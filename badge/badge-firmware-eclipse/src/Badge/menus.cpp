@@ -176,12 +176,14 @@ SettingState::SettingState() :
 	Items[2].id = 2;
 	Items[2].text = (const char *) "Set Sleep Time";
 	Items[3].id = 3;
-	Items[3].text = (const char *) "UNKNOWN";
+	Items[3].text = (const char *) "RESERVED";
 }
 
 SettingState::~SettingState() {
 
 }
+
+KeyBoardLetterCtx KCTX;
 
 ErrorType SettingState::onInit() {
 	gui_set_curList(&SettingList);
@@ -215,29 +217,33 @@ ReturnStateContext SettingState::onRun(QKeyboard & kb) {
 			nextState = StateFactory::getMenuState();
 		}
 			break;
-		case 11: {
-			SubState = SettingList.selectedItem + 100;
-		}
+		case 11:
+			{
+				SubState = SettingList.selectedItem + 100;
+				gui_set_curList(0);
+				gui_draw();
+				switch(SubState) {
+				case 100:
+					memset(&AgentName[0],0,sizeof(AgentName));
+					KCTX.init(&AgentName[0],sizeof(AgentName));
+					break;
+				}
+			}
 			break;
 		default:
 			break;
 		}
 		break;
 	case 100: {
-		gui_lable((const char*) "Enter you're agent name:", 0, 10, 128, 64, 0, 0);
-		char letter = kb.getLetter();
-		if (letter == 127) {
-			AgentName[InputPos] = '\0';
-			InputPos--;
-		} else if (letter == 126) {
+		gui_lable_multiline((const char*) "Set agent name:", 0, 20, 128, 64, 0, 0);
+		kb.updateContext(KCTX);
+		if (kb.getLastPinSeleted() == 11 && AgentName[0]!='\0' && AgentName[0]!=' ') {
 			//done
 			getContactStore().getMyInfo().setAgentname(&AgentName[0]);
 			gui_lable((const char *) "Saving ...", 0, 30, 128, 64, 0, 0);
 			nextState = StateFactory::getMenuState();
-		} else {
-			AgentName[InputPos++] = letter;
 		}
-		gui_lable(&AgentName[0], 0, 20, 128, 64, 0, 0);
+		gui_lable_multiline(&AgentName[0], 0, 30, 128, 64, 0, 0);
 		break;
 	}
 	case 101: {
@@ -254,7 +260,7 @@ ReturnStateContext SettingState::onRun(QKeyboard & kb) {
 		if (kb.getLastPinSeleted() == 9) {
 			AgentName[InputPos] = '\0';
 			InputPos--;
-		} else if (kb.getLastPinSeleted() == 11) {
+		} else if (kb.getLastPinSeleted() == 11 && AgentName[0]!='\0') {
 			//done
 			getContactStore().getRecordInfo().setSleepTime(atoi(&AgentName[0]));
 			gui_lable((const char *) "Saving ...", 0, 30, 128, 64, 0, 0);
@@ -426,6 +432,7 @@ ErrorType SendMsgState::onInit() {
 	if (shouldReset()) {
 		memset(&MsgBuffer[0], 0, sizeof(MsgBuffer));
 		InputPos = 0;
+		KCTX.init(&MsgBuffer[0],sizeof(MsgBuffer));
 	} else {
 		clearState(DONT_RESET);
 	}
@@ -440,21 +447,10 @@ ReturnStateContext SendMsgState::onRun(QKeyboard &kb) {
 		gui_lable("Send Message: ", 0, 10, 128, 64, 0, 0);
 		gui_lable_multiline(&MsgBuffer[0], 0, 20, 128, 64, 0, 0);
 		//keyboard entry
-		char letter = kb.getLetter();
-		if (letter != 0) {
-			MsgBuffer[InputPos] = letter;
-			if (InputPos >= sizeof(MsgBuffer)) {
-				InputPos = sizeof(MsgBuffer) - 1;
-			}
-		} else {
-			uint8_t pin = kb.getLastPinSeleted();
-			if (pin == 11) { //return has been pushed
-				InternalState = INTERNAL_STATE::CONFIRM_SEND;
-			} else if (pin == 9) {
-				if (InputPos > 0) {
-					InputPos--;
-				}
-			}
+		kb.updateContext(KCTX);
+		uint8_t pin = kb.getLastPinSeleted();
+		if (pin == 11) { //return has been pushed
+			InternalState = INTERNAL_STATE::CONFIRM_SEND;
 		}
 	}
 		break;
@@ -510,6 +506,7 @@ EngimaState::~EngimaState() {
 }
 
 ErrorType EngimaState::onInit() {
+	gui_set_curList(0);
 	memset(&EntryBuffer[0], 0, sizeof(EntryBuffer));
 	memset(&Wheels[0], 0, sizeof(Wheels));
 	Wheels[0]='A', Wheels[1] = 'B', Wheels[2]='C';
@@ -520,7 +517,7 @@ ErrorType EngimaState::onInit() {
 
 ReturnStateContext EngimaState::onRun(QKeyboard &kb) {
 	StateBase* nextState = this;
-	gui_lable("not implemented", 0, 10, 128, 64, 0, 0);
+	gui_lable_multiline("EngimaState not implemented", 0, 10, 128, 64, 0, 0);
 	uint8_t pin = kb.getLastPinSeleted();
 	if (pin == 11) {
 		nextState = StateFactory::getMenuState();
@@ -713,7 +710,7 @@ ErrorType RadioInfoState::onInit() {
 ReturnStateContext RadioInfoState::onRun(QKeyboard &kb) {
 	StateBase *nextState = this;
 	sprintf(&ListBuffer[0][0], "Frequency: %lu", getRadio().getFrequency());
-	sprintf(&ListBuffer[1][0], "RSSI: %u", getRadio().readRSSI());
+	sprintf(&ListBuffer[1][0], "RSSI: %d", getRadio().readRSSI());
 	sprintf(&ListBuffer[2][0], "RSSI Threshold: %u", getRadio().getRSSIThreshHold());
 	sprintf(&ListBuffer[3][0], "Gain: %u", getRadio().getCurrentGain());
 	uint8_t pin = kb.getLastPinSeleted();
