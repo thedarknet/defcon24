@@ -23,10 +23,6 @@
 #ifndef SSD1306_H
 #define SSD1306_H 100
 
-/* C++ detection */
-//#ifdef __cplusplus
-//extern C {
-//#endif
 
 /**
  * This SSD1306 LCD uses I2C for communication
@@ -263,11 +259,5 @@ void ssd1306_I2C_Write(uint8_t address, uint8_t reg, uint8_t data);
  * @retval None
  */
 void ssd1306_I2C_WriteMulti(uint8_t address, uint8_t reg, uint8_t *data, uint16_t count);
-
-
-///* C++ detection */
-//#ifdef __cplusplus
-//}
-//#endif
 
 #endif
