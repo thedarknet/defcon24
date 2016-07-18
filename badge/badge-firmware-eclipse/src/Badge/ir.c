@@ -256,17 +256,17 @@ void IRStartRx() {
 // Block until a packet is received OR the timeout expires
 int32_t IRRxBlocking(uint32_t timeout_ms) {
   uint32_t timeout = HAL_GetTick() + timeout_ms;
+
   IRStartRx();
+
   while((IRState != IR_RX_DONE) && !(IRState < 0) && (HAL_GetTick() < timeout)) {
-      // Error condition
-      if(IRState < 0) {
-          return IRState;
-      }
       __WFI();
   }
 
   if (HAL_GetTick() >= timeout) {
       return IR_RX_ERR_TIMEOUT;
+  } else if(IRState < 0) {
+      return IRState;
   } else {
       return IRBytesAvailable();
   }
