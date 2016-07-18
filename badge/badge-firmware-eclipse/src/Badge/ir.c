@@ -36,6 +36,7 @@
 
 #include "stm32f1xx_hal.h"
 #include "ir.h"
+#include "crc.h"
 
 // Number of TIM3 ticks for mark/space/start pulses
 #define TICK_BASE (400)
@@ -60,7 +61,8 @@ typedef enum {
   IR_RX_DONE = 5,
   IR_RX_ERR = -1,
   IR_RX_ERR_TIMEOUT = -2,
-  IR_RX_ERR_OVERFLOW = -3
+  IR_RX_ERR_OVERFLOW = -3,
+  IR_RX_ERR_CRC = -4
 } IRState_t;
 
 typedef enum {
@@ -72,6 +74,7 @@ static volatile IRState_t IRState;
 static volatile IRMode_t IRMode;
 static volatile uint8_t irRxBuff[IR_RX_BUFF_SIZE];
 static volatile uint32_t irRxBits;
+static volatile crc_t crc;
 
 TIM_HandleTypeDef htim3;
 
@@ -211,10 +214,19 @@ void IRTxByte(uint8_t byte) {
 }
 
 void IRTxBuff(uint8_t *buff, size_t len) {
+  crc = crc_init();
+
   IRStartStop();
+
   for(uint8_t byte = 0; byte < len; byte++) {
       IRTxByte(buff[byte]);
+      crc = crc_update(crc, (unsigned char *)&buff[byte], 1);
   }
+
+  crc = crc_finalize(crc);
+
+  IRTxByte(crc);
+
   IRStartStop();
 }
 
@@ -235,14 +247,22 @@ void IRRxBit(uint8_t newBit) {
     irRxBuff[byte] |= (1 << (7-bit));
   }
 
+  // If full byte has been received, calculate CRC for that byte
+  if(bit == 0x7) {
+    crc = crc_update(crc, (unsigned char *)&irRxBuff[byte], 1);
+  }
+
   irRxBits++;
 }
 
 int32_t IRBytesAvailable() {
-  if(IRState != IR_RX_DONE) {
-    return 0;
+  int32_t bytes = (irRxBits >> 3);
+
+  if ((IRState == IR_RX_DONE) && (bytes > 0))  {
+    // Don't count CRC byte!
+    return bytes - 1;
   } else {
-    return (irRxBits >> 3);
+    return 0;
   }
 }
 
@@ -317,6 +337,7 @@ void IRStateMachine() {
       // Start pulse received! Start getting bits
       if((pinState == 1) && (count > START_TICKS)) {
           irRxBits = 0;
+          crc = crc_init();
           IRState = IR_RX_MARK_START;
       } else {
           // Doesn't look like a start pulse, go back to waiting
@@ -342,7 +363,13 @@ void IRStateMachine() {
       }
 
       if(count > START_TICKS) {
-          IRState = IR_RX_DONE;
+          crc = crc_finalize(crc);
+          if(crc == 0) {
+              IRState = IR_RX_DONE;
+          } else {
+              IRState = IR_RX_ERR_CRC;
+          }
+
           HAL_NVIC_DisableIRQ(EXTI3_IRQn);
       } else if(count > MARK_TICKS) {
           startIRPulseTimer(); // Start timing space
