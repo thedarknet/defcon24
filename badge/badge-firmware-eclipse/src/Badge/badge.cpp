@@ -143,11 +143,6 @@ uint32_t startBadge() {
 	delay(TIME_BETWEEN_INITS);
 
 
-	//remove nextStateswitch
-	//nextStateSwitchTime = HAL_GetTick() + 5000;
-	//move to use of IR
-	//initUARTIR();
-
 	////////
 	state = INITIAL_STATE;
 	gui_set_curList(0);
