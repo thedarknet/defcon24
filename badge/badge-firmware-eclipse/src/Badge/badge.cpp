@@ -150,17 +150,24 @@ uint32_t startBadge() {
 	return true;
 }
 
-int counter = 0;
-
-uint32_t lastSendTime = 0;
-
+uint32_t nextTickToScanKeyBoard = 0;
 
 void loopBadge() {
 
-	KB.scan();
+	//check to see if keyboard should be ignored
+	uint32_t tick = HAL_GetTick();
+	if(tick>nextTickToScanKeyBoard) {
+		KB.scan();
+	}
+
 	ReturnStateContext rsc = CurrentState->run(KB);
 
 	if (rsc.Err.ok()) {
+		if(CurrentState!=rsc.NextMenuToRun) {
+			//on state switches reset keyboard and give a 1 second pause on reading from keyboard.
+			KB.reset();
+			nextTickToScanKeyBoard = tick+1000;
+		}
 		CurrentState = rsc.NextMenuToRun;
 	}
 	gui_draw();

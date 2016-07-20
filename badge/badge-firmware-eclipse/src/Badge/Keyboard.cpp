@@ -1,5 +1,88 @@
 #include "Keyboard.h"
 #include <gpio.h>
+#include <string.h>
+
+KeyBoardLetterCtx::KeyBoardLetterCtx() {
+}
+
+void KeyBoardLetterCtx::processButtonPush(uint8_t button, const char *buttonLetters) {
+	if (LastPin == button) {
+		LetterSelection++;
+		if (LetterSelection >= strlen(buttonLetters)) {
+			LetterSelection = 0;
+		}
+	} else {
+		LetterSelection = 0;
+		setCurrentLetterInBufferAndInc();
+	}
+	if(buttonLetters[LetterSelection]=='\b') {
+		Buffer[CursorPosition] = '\0';
+		decPosition();
+	} else {
+		CurrentLetter = buttonLetters[LetterSelection];
+	}
+	LastPin = button;
+	timerStart();
+}
+bool KeyBoardLetterCtx::isKeySelectionTimedOut() {
+	if (Started && (HAL_GetTick() - LastTimeLetterWasPushed) > 3000) {
+		return true;
+	}
+	return false;
+}
+void KeyBoardLetterCtx::timerStart() {
+	Started = true;
+	LastTimeLetterWasPushed = HAL_GetTick();
+}
+void KeyBoardLetterCtx::timerStop() {
+	Started = false;
+}
+
+void KeyBoardLetterCtx::decPosition() {
+	if (--CursorPosition <-1 ) {
+		CursorPosition = - 1;
+	}
+}
+
+void KeyBoardLetterCtx::incPosition() {
+	if (++CursorPosition >= BufferSize) {
+		CursorPosition = BufferSize - 1;
+	}
+}
+uint8_t KeyBoardLetterCtx::getCursorPosition() {
+	return CursorPosition;
+}
+void KeyBoardLetterCtx::setCurrentLetterInBufferAndInc() {
+	if(CursorPosition>=0) {
+		Buffer[CursorPosition] = CurrentLetter;
+	}
+	incPosition();
+}
+void KeyBoardLetterCtx::blinkLetter() {
+	uint32_t tmp = HAL_GetTick() / 500;
+	if (tmp != LastBlinkTime) {
+		LastBlinkTime = tmp;
+		UnderBar = !UnderBar;
+	}
+	if (UnderBar) {
+		Buffer[CursorPosition] = '_';
+	} else {
+		Buffer[CursorPosition] = CurrentLetter;
+	}
+}
+void KeyBoardLetterCtx::init(char *b, uint16_t s) {
+	Buffer = b;
+	Started = false;
+	UnderBar = true;
+	CurrentLetter = ' ';
+	BufferSize = s;
+	CursorPosition = -1;
+	LastTimeLetterWasPushed = 0;
+	LetterSelection = 0;
+	LastBlinkTime = 0;
+	LastPin = 0xFF;
+	ButtonReleased = 1;
+}
 
 QKeyboard::QKeyboard(PinConfig Y1Pin, PinConfig Y2Pin, PinConfig Y3Pin, PinConfig X1Pin, PinConfig X2Pin,
 		PinConfig X3Pin, PinConfig X4Pin) :
@@ -14,6 +97,10 @@ QKeyboard::QKeyboard(PinConfig Y1Pin, PinConfig Y2Pin, PinConfig Y3Pin, PinConfi
 }
 
 bool lightAll = true;
+
+void QKeyboard::setAllLightsOn(bool b) {
+	lightAll = b;
+}
 
 void QKeyboard::scan() {
 	HAL_GPIO_WritePin(LED_OUT1_GPIO_Port, LED_OUT1_Pin, GPIO_PIN_RESET);
@@ -57,75 +144,61 @@ void QKeyboard::scan() {
 	}
 }
 
-
-void QKeyboard::updateContext(KeyBoardLetterCtx &ctx) {
-	if(ctx.Started && getLastPinSeleted()==QKeyboard::NO_LETTER_SELECTED
-			&& (HAL_GetTick()-ctx.LastTimeLetterWasPushed)>1000 && ctx.CurrentLetter!=QKeyboard::NO_LETTER_SELECTED) {
-		ctx.Buffer[ctx.CursorPosition] = ctx.CurrentLetter;
-		ctx.CursorPosition++;
-		ctx.Started = false;
-	} else if(getLastPinSeleted()!=QKeyboard::NO_PIN_SELECTED && !ctx.Started) {
-		ctx.Started = true;
-	} else {
-		ctx.Started = false;
-		switch (getLastPinSeleted()) {
-		case 0:
-			static const char *zero = ".,?1";	//ABC1";
-			ctx.CurrentLetter = zero[ctx.LetterSelection];
-			break;
-		case 1:
-			static const char *one = "ABC2";
-			ctx.CurrentLetter = one[ctx.LetterSelection];
-			break;
-		case 2:
-			static const char *two = "DEF3";
-			ctx.CurrentLetter = two[ctx.LetterSelection];
-			break;
-		case 3:
-			static const char *three = "GHI4";
-			ctx.CurrentLetter = three[ctx.LetterSelection];
-			break;
-		case 4:
-			static const char *four = "JKL5";
-			ctx.CurrentLetter = four[ctx.LetterSelection];
-			break;
-		case 5:
-			static const char *five = "MNO6";
-			ctx.CurrentLetter = five[ctx.LetterSelection];
-			break;
-		case 6:
-			static const char *six = "PQRS7";
-			ctx.CurrentLetter = six[ctx.LetterSelection];
-			break;
-		case 7:
-			static const char *seven = "TUV8";
-			ctx.CurrentLetter = seven[ctx.LetterSelection];
-			break;
-		case 8:
-			static const char *eight = "WXYZ9";
-			ctx.CurrentLetter = eight[ctx.LetterSelection];
-			break;
-		case 9:
-			static const char *nine = "##+";
-			ctx.CurrentLetter = nine[ctx.LetterSelection];
-			break;
-		case 10:
-			ctx.CurrentLetter = '0';
-			break;
-		}
-		}
-	uint32_t tmp = HAL_GetTick()/500;
-	if(tmp!=ctx.LastBlinkTime) {
-		ctx.LastBlinkTime = tmp;
-		ctx.UnderBar=!ctx.UnderBar;
-	}
-	if(ctx.UnderBar) {
-		ctx.Buffer[ctx.CursorPosition] = '_';
-	} else {
-		ctx.Buffer[ctx.CursorPosition] = ctx.CurrentLetter;
-	}
+void QKeyboard::reset() {
+	TimesLastPinSelected = 0;
+	LastSelectedPin = NO_PIN_SELECTED;
 }
 
+void QKeyboard::updateContext(KeyBoardLetterCtx &ctx) {
+	if (ctx.isKeySelectionTimedOut() && getLastPinSeleted() == QKeyboard::NO_PIN_SELECTED) {
+		ctx.setCurrentLetterInBufferAndInc();
+		ctx.timerStop();
+	} else if (getLastPinSeleted() != QKeyboard::NO_PIN_SELECTED && ctx.hasReleasedButton()) {
+		ctx.setButtonPushed();
+		const char *current = 0;
+		switch (getLastPinSeleted()) {
+		case 0:
+			current = ".,?1";
+			break;
+		case 1:
+			current = "ABC2";
+			break;
+		case 2:
+			current = "DEF3";
+			break;
+		case 3:
+			current = "GHI4";
+			break;
+		case 4:
+			current = "JKL5";
+			break;
+		case 5:
+			current = "MNO6";
+			break;
+		case 6:
+			current = "PQRS7";
+			break;
+		case 7:
+			current = "TUV8";
+			break;
+		case 8:
+			current = "WXYZ9";
+			break;
+		case 9:
+			current = "##+";
+			break;
+		case 10:
+			current = "0\b";
+			break;
+		}
+		if(getLastPinSeleted()<11) {
+			ctx.processButtonPush(getLastPinSeleted(), current);
+		}
+	} else if (getLastPinSeleted()==QKeyboard::NO_PIN_SELECTED) {
+		ctx.setButtonReleased();
+	}
+	ctx.blinkLetter();
+}
 
 uint8_t QKeyboard::getNumber() {
 	switch (getLastPinSeleted()) {

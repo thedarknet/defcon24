@@ -6,6 +6,7 @@ extern "C" {
 #endif
 
 void IRInit(void);
+void IRStop();
 void IRTxBuff(uint8_t *buff, size_t len);
 int32_t IRRxBlocking(uint32_t timeout_ms);
 
