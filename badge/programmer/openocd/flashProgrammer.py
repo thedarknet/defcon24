@@ -68,8 +68,6 @@ class flashProgrammer(object):
             return list of output lines without command echo
         '''
 
-        print cmd
-
         self.telnet.write(cmd + '\n')
 
         lines = self.telnet.read_until('\n\r>', timeout=timeout)
@@ -113,6 +111,31 @@ class flashProgrammer(object):
         lines = self._sendCmd('dump_image ' + filename + ' ' + str(address) + ' ' + str(size))
         # TODO - verify output
         print(lines)
+
+    def verifyFile(self, filename, address):
+        lines = self._sendCmd('verify_image ' + filename + ' ' + str(address))
+        
+        ''' Valid output example:
+            stm32f1x.cpu: target state: halted
+            target halted due to breakpoint, current mode: Handler HardFault
+            xPSR: 0x61000003 pc: 0x2000002e msp: 0x20004fd8
+            verified 44 bytes in 0.019517s (2.202 KiB/s)
+
+            Invalid output example:
+            stm32f1x.cpu: target state: halted
+            target halted due to breakpoint, current mode: Handler HardFault
+            xPSR: 0x61000003 pc: 0x2000002e msp: 0x20004fd8
+            checksum mismatch - attempting binary compare
+            diff 0 address 0x0000d400. Was 0x00 instead of 0xdc
+            diff 1 address 0x0000d401. Was 0x00 instead of 0xdc
+            No more differences found.
+        '''
+
+        if 'verified' in lines[3]:
+            return True
+        else:
+            return False
+
 
     def kill(self):
         self.openOCD.kill()
