@@ -215,6 +215,7 @@ public:
 	static StateBase *getEnigmaState();
 	static StateBase *getBadgeInfoState();
 	static StateBase *getRadioInfoState();
+	static StateBase *getGameOfLifeState();
 
 };
 

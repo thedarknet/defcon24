@@ -5,6 +5,7 @@
 #include <uECC.h>
 #include <sha256.h>
 #include "menus/irmenu.h"
+#include "menus/GameOfLife.h"
 
 StateBase::StateBase() :
 		StateData(0), StateStartTime(0) {
@@ -694,6 +695,7 @@ AddressState TheAddressState;
 SendMsgState TheSendMsgState;
 RadioInfoState TheRadioInfoState;
 BadgeInfoState TheBadgeInfoState;
+GameOfLife TheGameOfLifeState;
 
 bool StateFactory::init() {
 	return true;
@@ -736,5 +738,9 @@ StateBase* StateFactory::getBadgeInfoState() {
 
 StateBase* StateFactory::getRadioInfoState() {
 	return &TheRadioInfoState;
+}
+
+StateBase *StateFactory::getGameOfLifeState() {
+	return &TheGameOfLifeState;
 }
 
