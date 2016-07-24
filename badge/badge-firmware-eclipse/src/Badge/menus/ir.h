@@ -1,9 +1,13 @@
+
 #ifndef __IR_H__
 #define __IR_H__
 
 #ifdef __cplusplus
-extern "C" {
-#endif
+ extern "C" {
+#else
+#include <stdbool.h>
+ #endif
+
 
 void IRInit(void);
 void IRStop();
