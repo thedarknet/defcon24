@@ -15,14 +15,16 @@ void KeyBoardLetterCtx::processButtonPush(uint8_t button, const char *buttonLett
 		LetterSelection = 0;
 		setCurrentLetterInBufferAndInc();
 	}
-	if(buttonLetters[LetterSelection]=='\b') {
+	if (buttonLetters[LetterSelection] == '\b') {
+		Buffer[CursorPosition] = '\0';
+		decPosition();
 		Buffer[CursorPosition] = '\0';
 		decPosition();
 	} else {
 		CurrentLetter = buttonLetters[LetterSelection];
+		LastPin = button;
+		timerStart();
 	}
-	LastPin = button;
-	timerStart();
 }
 bool KeyBoardLetterCtx::isKeySelectionTimedOut() {
 	if (Started && (HAL_GetTick() - LastTimeLetterWasPushed) > 3000) {
@@ -39,8 +41,8 @@ void KeyBoardLetterCtx::timerStop() {
 }
 
 void KeyBoardLetterCtx::decPosition() {
-	if (--CursorPosition <-1 ) {
-		CursorPosition = - 1;
+	if (--CursorPosition < 0) {
+		CursorPosition = 0;
 	}
 }
 
@@ -53,7 +55,7 @@ uint8_t KeyBoardLetterCtx::getCursorPosition() {
 	return CursorPosition;
 }
 void KeyBoardLetterCtx::setCurrentLetterInBufferAndInc() {
-	if(CursorPosition>=0) {
+	if (CursorPosition >= 0) {
 		Buffer[CursorPosition] = CurrentLetter;
 	}
 	incPosition();
@@ -64,10 +66,12 @@ void KeyBoardLetterCtx::blinkLetter() {
 		LastBlinkTime = tmp;
 		UnderBar = !UnderBar;
 	}
+	int16_t pos = CursorPosition;
+	if(pos<0) pos = 0;
 	if (UnderBar) {
-		Buffer[CursorPosition] = '_';
+		Buffer[pos] = '_';
 	} else {
-		Buffer[CursorPosition] = CurrentLetter;
+		Buffer[pos] = CurrentLetter;
 	}
 }
 void KeyBoardLetterCtx::init(char *b, uint16_t s) {
@@ -191,10 +195,10 @@ void QKeyboard::updateContext(KeyBoardLetterCtx &ctx) {
 			current = "0\b";
 			break;
 		}
-		if(getLastPinSeleted()<11) {
+		if (getLastPinSeleted() < 11) {
 			ctx.processButtonPush(getLastPinSeleted(), current);
 		}
-	} else if (getLastPinSeleted()==QKeyboard::NO_PIN_SELECTED) {
+	} else if (getLastPinSeleted() == QKeyboard::NO_PIN_SELECTED) {
 		ctx.setButtonReleased();
 	}
 	ctx.blinkLetter();

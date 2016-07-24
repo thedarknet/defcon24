@@ -5,94 +5,153 @@
 const uint8_t ContactStore::DaemonPublic[ContactStore::PUBLIC_KEY_LENGTH] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
+static const uint32_t CONTACTS_PER_PAGE = FLASH_PAGE_SIZE / ContactStore::Contact::SIZE;
+
 class FLASH_LOCKER {
 public:
 	FLASH_LOCKER() {
 		HAL_FLASH_Unlock();
+		__HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP| FLASH_FLAG_WRPERR | FLASH_FLAG_PGERR);
 	}
 	~FLASH_LOCKER() {
 		HAL_FLASH_Lock();
 	}
 };
 
-ContactStore::RecordInfo::RecordInfo(uint32_t start) :
-		StartAddress(start) {
+#define SECTOR_TO_ADDRESS(sector) (FLASH_BASE + (FLASH_PAGE_SIZE*sector))
+
+ContactStore::SettingsInfo::SettingsInfo(uint16_t sector) :
+		SettingSector(sector), StartAddress(SECTOR_TO_ADDRESS(sector)), AgentName() {
+	CurrentAddress = StartAddress;
+	memset(&AgentName[0], 0, sizeof(AgentName));
 }
 
-uint16_t ContactStore::RecordInfo::getVersion() {
-	return *((uint16_t*) StartAddress);
+bool ContactStore::SettingsInfo::init() {
+	for (uint32_t addr = StartAddress; addr < (StartAddress + FLASH_PAGE_SIZE); addr += SettingsInfo::SIZE) {
+		uint16_t value = *((uint16_t*) addr);
+		if (value == 0xDCDC) {
+			CurrentAddress = addr;
+			const char *AgentNameAddr = ((const char *) (CurrentAddress + sizeof(uint16_t) + sizeof(uint32_t)));
+			strncpy(&AgentName[0],AgentNameAddr,sizeof(AgentName));
+			return true;
+		}
+	}
+	//couldn't find DS
+	CurrentAddress = StartAddress + FLASH_PAGE_SIZE; //force a page erase
+	DataStructure ds;
+	ds.Reserved1 = 0;
+	ds.Reserved2 = 0;
+	ds.ScreenSaverTime = 3;
+	ds.ScreenSaverType = 0;
+	ds.SleepTimer = 5;
+	ds.NumContacts = 0;
+	return writeSettings(ds);
 }
 
-uint8_t ContactStore::RecordInfo::getNumContacts() {
-	DataStructure ds = getRecordDS();
+bool ContactStore::SettingsInfo::setAgentname(const char name[AGENT_NAME_LENGTH]) {
+	strncpy(&AgentName[0],&name[0],sizeof(AgentName));
+	DataStructure ds = getSettings();
+	return writeSettings(ds);
+}
+
+const char *ContactStore::SettingsInfo::getAgentName() {
+	return &AgentName[0];
+}
+
+uint16_t ContactStore::SettingsInfo::getVersion() {
+	return *((uint16_t*) CurrentAddress);
+}
+
+uint8_t ContactStore::SettingsInfo::getNumContacts() {
+	DataStructure ds = getSettings();
 	return ds.NumContacts;
 }
 
-ContactStore::RecordInfo::DataStructure ContactStore::RecordInfo::getRecordDS() {
-	return *((ContactStore::RecordInfo::DataStructure*) (StartAddress + sizeof(uint16_t)));
+ContactStore::SettingsInfo::DataStructure ContactStore::SettingsInfo::getSettings() {
+	return *((ContactStore::SettingsInfo::DataStructure*) (CurrentAddress + sizeof(uint16_t)));
 }
 
-void ContactStore::RecordInfo::writeRecordDS(const DataStructure &ds) {
+bool ContactStore::SettingsInfo::writeSettings(const DataStructure &ds) {
 	FLASH_LOCKER f;
+	uint32_t startNewAddress = CurrentAddress + SettingsInfo::SIZE;
+	uint32_t endNewAddress = startNewAddress + SettingsInfo::SIZE;
+	if (endNewAddress >= (StartAddress + FLASH_PAGE_SIZE)) {
+		FLASH_EraseInitTypeDef EraseInitStruct;
+		EraseInitStruct.TypeErase = FLASH_TYPEERASE_PAGES;
+		EraseInitStruct.Banks = FLASH_BANK_1;
+		EraseInitStruct.PageAddress = StartAddress;
+		EraseInitStruct.NbPages = 1;
+		uint32_t SectorError = 0;
+
+		if (HAL_FLASHEx_Erase(&EraseInitStruct, &SectorError) != HAL_OK) {
+			return false;
+		}
+		CurrentAddress = StartAddress;
+		startNewAddress = CurrentAddress;
+		endNewAddress = CurrentAddress + SettingsInfo::SIZE;
+	} else {
+		//zero out the one we were on
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD, CurrentAddress, 0); //2
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, CurrentAddress+2, 0); //4
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, CurrentAddress+6, 0);
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, CurrentAddress+10, 0);
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, CurrentAddress+14, 0);
+		CurrentAddress = startNewAddress;
+	}
+	HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD, CurrentAddress, 0xDCDC);
 	uint32_t data = *((uint32_t*) &ds);
-	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, (StartAddress + sizeof(uint16_t)), data);
+	if (HAL_OK == HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, (CurrentAddress + sizeof(uint16_t)), data)) {
+		uint32_t agentStart = CurrentAddress + sizeof(uint16_t) + sizeof(uint32_t);
+		if (HAL_OK == HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, agentStart, (*((uint32_t *) &AgentName[0])))) {
+			if (HAL_OK == HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, agentStart + 4, (*((uint32_t *) &AgentName[4])))) {
+				if (HAL_OK
+						== HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, agentStart + 8, (*((uint32_t *) &AgentName[8])))) {
+					return true;
+				}
+			}
+		}
+	}
+	return false;
 }
 
-uint8_t ContactStore::RecordInfo::setNumContacts(uint8_t num) {
+uint8_t ContactStore::SettingsInfo::setNumContacts(uint8_t num) {
 	if (num > MAX_CONTACTS)
 		return MAX_CONTACTS;
-	DataStructure ds = getRecordDS();
+	DataStructure ds = getSettings();
 	ds.NumContacts = num;
-	writeRecordDS(ds);
+	writeSettings(ds);
 	return num;
 }
 
-uint32_t ContactStore::RecordInfo::getContactStartAddress() {
-	return SIZE + MyInfo::SIZE;
-}
-
-bool ContactStore::RecordInfo::getContactAt(uint8_t n, ContactStore::Contact &c) {
-	uint8_t currnetNum = getNumContacts();
-	if (n > currnetNum) {
-		return false;
-	}
-	c = ContactStore::Contact(getContactStartAddress() + (n * ContactStore::Contact::SIZE));
-	return true;
-}
-
-void ContactStore::RecordInfo::setScreenSaverType(uint8_t value) {
-	DataStructure ds = getRecordDS();
+bool ContactStore::SettingsInfo::setScreenSaverType(uint8_t value) {
+	DataStructure ds = getSettings();
 	ds.ScreenSaverType = value & 0xF;
-	writeRecordDS(ds);
+	return writeSettings(ds);
 }
 
-uint8_t ContactStore::RecordInfo::getScreenSaverType() {
-	DataStructure ds = getRecordDS();
+uint8_t ContactStore::SettingsInfo::getScreenSaverType() {
+	DataStructure ds = getSettings();
 	return ds.ScreenSaverType;
 }
 
-void ContactStore::RecordInfo::setScreenSaverTime(uint8_t value) {
-	DataStructure ds = getRecordDS();
+bool ContactStore::SettingsInfo::setScreenSaverTime(uint8_t value) {
+	DataStructure ds = getSettings();
 	ds.ScreenSaverTime = value & 0xF;
-	writeRecordDS(ds);
+	return writeSettings(ds);
 }
 
-uint8_t ContactStore::RecordInfo::getScreenSaverTime() {
-	return getRecordDS().ScreenSaverTime;
+uint8_t ContactStore::SettingsInfo::getScreenSaverTime() {
+	return getSettings().ScreenSaverTime;
 }
 
-void ContactStore::RecordInfo::setSleepTime(uint8_t n) {
-	DataStructure ds = getRecordDS();
+bool ContactStore::SettingsInfo::setSleepTime(uint8_t n) {
+	DataStructure ds = getSettings();
 	ds.SleepTimer = n & 0xF;
-	writeRecordDS(ds);
+	return writeSettings(ds);
 }
 
-uint8_t ContactStore::RecordInfo::getSleepTime() {
-	return getRecordDS().SleepTimer;
-}
-
-bool ContactStore::RecordInfo::isUberBadge() {
-	return getRecordDS().isUberBadge;
+uint8_t ContactStore::SettingsInfo::getSleepTime() {
+	return getSettings().SleepTimer;
 }
 
 // MyInfo
@@ -102,16 +161,16 @@ ContactStore::MyInfo::MyInfo(uint32_t startAddress) :
 
 }
 
+bool ContactStore::MyInfo::init() {
+	return (*(uint16_t*) StartAddress) == 0xdcdc;
+}
+
 uint8_t *ContactStore::MyInfo::getPrivateKey() {
-	return ((uint8_t*) (StartAddress + sizeof(uint16_t)));
+	return ((uint8_t*) (StartAddress + sizeof(uint16_t) + sizeof(uint16_t)));
 }
 
 uint16_t ContactStore::MyInfo::getUniqueID() {
-	return *((uint16_t*) (StartAddress));
-}
-
-const char *ContactStore::MyInfo::getAgentName() {
-	return ((const char *) (StartAddress + sizeof(uint16_t) + PRIVATE_KEY_LENGTH));
+	return *((uint16_t*) (StartAddress + sizeof(uint16_t)));
 }
 
 //TODO make this a member var of MyInfo
@@ -126,19 +185,8 @@ uint8_t *ContactStore::MyInfo::getPublicKey() {
 	return 0;
 }
 
-void ContactStore::MyInfo::setAgentname(const char name[AGENT_NAME_LENGTH]) {
-	FLASH_LOCKER f;
-	uint32_t s = StartAddress + sizeof(uint16_t) + PUBLIC_KEY_LENGTH + PRIVATE_KEY_LENGTH;
-	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, s, (*((uint32_t *) &name[0])));
-	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, s + 4, (*((uint32_t *) &name[4])));
-	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, s + 8, (*((uint32_t *) &name[8])));
-}
-
-//Contacts
-//==================================================
-ContactStore::Contact::Contact(uint32_t startAddress) :
-		StartAddress(startAddress) {
-
+ContactStore::Contact::Contact(uint32_t startAddr) :
+		StartAddress(startAddr) {
 }
 
 ContactStore::Contact::Contact(const ContactStore::Contact &c) {
@@ -202,21 +250,20 @@ ContactStore::MyInfo &ContactStore::getMyInfo() {
 	return MeInfo;
 }
 
-ContactStore::RecordInfo &ContactStore::getRecordInfo() {
-	return RecInfo;
+ContactStore::SettingsInfo &ContactStore::getSettings() {
+	return Settings;
 }
 
 //=============================================
-ContactStore::ContactStore(uint32_t startAddr, uint32_t size) :
-		StartAddress(startAddr), StorageSize(size), RecInfo(startAddr), MeInfo(startAddr + RecordInfo::SIZE) {
+ContactStore::ContactStore(uint8_t SettingSector, uint8_t startingContactSector, uint8_t numContactSectors,
+		uint32_t addressOfMyInfo) :
+		Settings(SettingSector), MeInfo(addressOfMyInfo), StartingContactSector(startingContactSector), NumContactSectors(
+				numContactSectors) {
 
 }
 
 bool ContactStore::init() {
-	FLASH_LOCKER f;
-	RecordInfo ri(StartAddress);
-	//uint16_t temp = ri.getVersion();
-	if (0xDCDC == ri.getVersion()) {
+	if (Settings.init() && getMyInfo().init()) {
 		//version is good, validate keys:
 		uint8_t publicKey[PUBLIC_KEY_LENGTH] = { 0 };
 		//given our private key, generate our public key and ensure its good
@@ -229,16 +276,32 @@ bool ContactStore::init() {
 	return false;
 }
 
+bool ContactStore::getContactAt(uint16_t numContact, Contact &c) {
+	uint8_t currentContacts = Settings.getNumContacts();
+	if (numContact < currentContacts) {
+		//determine page
+		uint16_t sector = StartingContactSector + numContact / CONTACTS_PER_PAGE;
+		//valid page is in our range
+		if (sector < (StartingContactSector + NumContactSectors)) {
+			uint16_t offSet = numContact % CONTACTS_PER_PAGE;
+			uint32_t sectorAddress = SECTOR_TO_ADDRESS(sector);
+			c = Contact(sectorAddress + (offSet * Contact::SIZE));
+			return true;
+		}
+	}
+	return false;
+}
+
 bool ContactStore::addContact(uint16_t uid, char agentName[AGENT_NAME_LENGTH], uint8_t key[PUBLIC_KEY_LENGTH],
 		uint8_t sig[SIGNATURE_LENGTH]) {
-	uint8_t currentContacts = RecInfo.getNumContacts();
-	uint8_t newNumContacts = RecInfo.setNumContacts(currentContacts + 1);
+	uint8_t currentContacts = Settings.getNumContacts();
+	uint8_t newNumContacts = Settings.setNumContacts(currentContacts + 1);
 
 	if (newNumContacts == currentContacts) {
 		return false;
 	}
 	Contact c(0xFFFFFFFF);
-	RecInfo.getContactAt(newNumContacts, c);
+	getContactAt(newNumContacts, c);
 	c.setUniqueID(uid);
 	c.setAgentname(agentName);
 	c.setPublicKey(key);

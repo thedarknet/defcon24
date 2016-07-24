@@ -78,8 +78,7 @@ ErrorType DisplayMessageState::onShutdown() {
 }
 
 MenuState::MenuState() :
-		StateBase(), MenuList("Main Menu",  Items, 0, 10, 128, 64, 0,
-				(sizeof(Items) / sizeof(Items[0]))) {
+		StateBase(), MenuList("Main Menu", Items, 0, 10, 128, 64, 0, (sizeof(Items) / sizeof(Items[0]))) {
 	Items[0].id = 0;
 	Items[0].text = (const char *) "Settings";
 	Items[1].id = 1;
@@ -166,8 +165,8 @@ ErrorType MenuState::onShutdown() {
 }
 
 SettingState::SettingState() :
-		StateBase(), SettingList((const char *) "MENU", Items, 0, 0, 128, 64, 0,
-				sizeof(Items) / sizeof(Items[0])), InputPos(0), SubState(0) {
+		StateBase(), SettingList((const char *) "MENU", Items, 0, 0, 128, 64, 0, sizeof(Items) / sizeof(Items[0])), InputPos(
+				0), SubState(0) {
 
 	memset(&AgentName[0], 0, sizeof(AgentName));
 	Items[0].id = 0;
@@ -176,8 +175,8 @@ SettingState::SettingState() :
 	Items[1].text = (const char *) "Set Screen Saver";
 	Items[2].id = 2;
 	Items[2].text = (const char *) "Set Sleep Time";
-	Items[3].id = 3;
-	Items[3].text = (const char *) "RESERVED";
+	//Items[3].id = 3;
+	//Items[3].text = (const char *) "RESERVED";
 }
 
 SettingState::~SettingState() {
@@ -191,6 +190,8 @@ ErrorType SettingState::onInit() {
 	SubState = 0;
 	return ErrorType();
 }
+
+static const char *NUMBERS = "123456789";
 
 ReturnStateContext SettingState::onRun(QKeyboard & kb) {
 	uint8_t key = kb.getLastPinSeleted();
@@ -218,58 +219,81 @@ ReturnStateContext SettingState::onRun(QKeyboard & kb) {
 			nextState = StateFactory::getMenuState();
 		}
 			break;
-		case 11:
-			{
-				SubState = SettingList.selectedItem + 100;
-				gui_set_curList(0);
-				gui_draw();
-				switch(SubState) {
-				case 100:
-					memset(&AgentName[0],0,sizeof(AgentName));
-					KCTX.init(&AgentName[0],sizeof(AgentName));
-					break;
-				}
+		case 11: {
+			SubState = SettingList.selectedItem + 100;
+			gui_set_curList(0);
+			gui_draw();
+			switch (SubState) {
+			case 100:
+				memset(&AgentName[0], 0, sizeof(AgentName));
+				KCTX.init(&AgentName[0], sizeof(AgentName));
+				break;
+			case 101:
+				sprintf(&AgentName[0],"Current:  %d",getContactStore().getSettings().getScreenSaverType()+1);
+				break;
+			case 102:
+				InputPos = getContactStore().getSettings().getSleepTime();
+				break;
 			}
+		}
 			break;
 		default:
 			break;
 		}
 		break;
 	case 100: {
-		gui_lable_multiline((const char*) "Set agent name:", 0, 20, 128, 64, 0, 0);
-		kb.updateContext(KCTX);
-		if (kb.getLastPinSeleted() == 11 && AgentName[0]!='\0' && AgentName[0]!=' ') {
-			//done
-			getContactStore().getMyInfo().setAgentname(&AgentName[0]);
-			gui_lable((const char *) "Saving ...", 0, 30, 128, 64, 0, 0);
-			nextState = StateFactory::getMenuState();
+		gui_lable_multiline((const char*) "Current agent name:", 0, 10, 128, 64, 0, 0);
+		if (*getContactStore().getSettings().getAgentName() == '\0') {
+			gui_lable_multiline((const char *) "NOT SET", 0, 20, 128, 64, 0, 0);
+		} else {
+			gui_lable_multiline(getContactStore().getSettings().getAgentName(), 0, 20, 128, 64, 0, 0);
 		}
-		gui_lable_multiline(&AgentName[0], 0, 30, 128, 64, 0, 0);
+		gui_lable_multiline((const char*) "Set agent name:", 0, 30, 128, 64, 0, 0);
+		kb.updateContext(KCTX);
+		if (kb.getLastPinSeleted() == 11 && AgentName[0] != '\0' && AgentName[0] != ' ') {
+			//done
+			if (getContactStore().getSettings().setAgentname(&AgentName[0])) {
+				nextState = StateFactory::getDisplayMessageState(StateFactory::getMenuState(), "Save Successful", 2000);
+			} else {
+				nextState = StateFactory::getDisplayMessageState(StateFactory::getMenuState(), "Save FAILED!", 4000);
+			}
+		} else {
+			gui_lable_multiline(&AgentName[0], 0, 40, 128, 64, 0, 0);
+		}
 		break;
 	}
 	case 101: {
-		gui_lable((const char*) "Choose Number of Screen Saver:", 0, 10, 128, 64, 0, 0);
-		gui_lable((const char*) "1: Game of Life", 0, 20, 128, 64, 0, 0);
+		gui_lable_multiline((const char*) "Screen Saver:", 0, 10, 128, 64, 0, 0);
+		gui_lable_multiline(&AgentName[0], 0, 20, 128, 64, 0, 0);
+		gui_lable_multiline((const char*) "1: Game of Life", 0, 30, 128, 64, 0, 0);
 		uint8_t ss = kb.getLastPinSeleted();
-		if (ss == 1) {
-			getContactStore().getRecordInfo().setScreenSaverType(ss);
+		switch (ss) {
+		case 0:
+			if (getContactStore().getSettings().setScreenSaverType(ss)) {
+				nextState = StateFactory::getDisplayMessageState(StateFactory::getMenuState(), "Setting saved", 2000);
+			} else {
+				nextState = StateFactory::getDisplayMessageState(StateFactory::getMenuState(), "Save FAILED!", 4000);
+			}
+			break;
 		}
 		break;
 	}
 	case 102:
-		gui_lable((const char*) "Time until badge goes to sleep:", 0, 10, 128, 64, 0, 0);
-		if (kb.getLastPinSeleted() == 9) {
-			AgentName[InputPos] = '\0';
-			InputPos--;
-		} else if (kb.getLastPinSeleted() == 11 && AgentName[0]!='\0') {
-			//done
-			getContactStore().getRecordInfo().setSleepTime(atoi(&AgentName[0]));
-			gui_lable((const char *) "Saving ...", 0, 30, 128, 64, 0, 0);
-			nextState = StateFactory::getMenuState();
+		gui_lable_multiline((const char*) "Time until badge goes to sleep:", 0, 10, 128, 64, 0, 0);
+		if (kb.getLastPinSeleted() == 9 || kb.getLastPinSeleted() == 10
+				|| kb.getLastPinSeleted() == QKeyboard::NO_PIN_SELECTED) {
+			//InputPos = 4;
+		} else if (kb.getLastPinSeleted() == 11) {
+			if (getContactStore().getSettings().setSleepTime(InputPos)) {
+				nextState = StateFactory::getDisplayMessageState(StateFactory::getMenuState(), "Setting saved", 2000);
+			} else {
+				nextState = StateFactory::getDisplayMessageState(StateFactory::getMenuState(), "Save FAILED!", 4000);
+			}
 		} else {
-			AgentName[InputPos++] = kb.getNumber();
+			InputPos = kb.getLastPinSeleted();
 		}
-		gui_lable(&AgentName[0], 0, 20, 128, 64, 0, 0);
+		sprintf(&AgentName[0], "%c Minutes", NUMBERS[InputPos]);
+		gui_lable_multiline(&AgentName[0], 0, 30, 128, 64, 0, 0);
 		break;
 	case 103:
 		break;
@@ -283,7 +307,6 @@ ErrorType SettingState::onShutdown() {
 	memset(&AgentName[0], 0, sizeof(AgentName));
 	return ErrorType();
 }
-
 
 ////////////////////////////////////////////////
 AddressState::AddressState() :
@@ -303,11 +326,11 @@ ErrorType AddressState::onInit() {
 }
 
 void AddressState::setNext4Items(uint16_t startAt) {
-	uint8_t num = getContactStore().getRecordInfo().getNumContacts();
+	uint8_t num = getContactStore().getSettings().getNumContacts();
 	for (uint16_t i = startAt, j = 0; j < (4); i++, j++) {
 		ContactStore::Contact c(0); // 0 is illegal memory
 		if (i < num) {
-			getContactStore().getRecordInfo().getContactAt(i, c);
+			getContactStore().getContactAt(i, c);
 			Items[j].id = c.getUniqueID();
 			Items[j].text = c.getAgentName();
 		} else {
@@ -371,7 +394,7 @@ ErrorType SendMsgState::onInit() {
 	if (shouldReset()) {
 		memset(&MsgBuffer[0], 0, sizeof(MsgBuffer));
 		InputPos = 0;
-		KCTX.init(&MsgBuffer[0],sizeof(MsgBuffer));
+		KCTX.init(&MsgBuffer[0], sizeof(MsgBuffer));
 	} else {
 		clearState(DONT_RESET);
 	}
@@ -407,7 +430,7 @@ ReturnStateContext SendMsgState::onRun(QKeyboard &kb) {
 	case SENDING: {
 		char buf[32];
 		ContactStore::Contact c(0);
-		if (getContactStore().getRecordInfo().getContactAt(this->ContactID, c)) {
+		if (getContactStore().getContactAt(this->ContactID, c)) {
 			sprintf(&buf[0], "Sending Message to: %s", c.getAgentName());
 			gui_lable_multiline(&buf[0], 0, 10, 128, 64, 0, 0);
 			if (getRadio().sendWithRetry(c.getUniqueID(), &MsgBuffer[0], strlen(&MsgBuffer[0]), 3, 100)) {
@@ -448,7 +471,7 @@ ErrorType EngimaState::onInit() {
 	gui_set_curList(0);
 	memset(&EntryBuffer[0], 0, sizeof(EntryBuffer));
 	memset(&Wheels[0], 0, sizeof(Wheels));
-	Wheels[0]='A', Wheels[1] = 'B', Wheels[2]='C';
+	Wheels[0] = 'A', Wheels[1] = 'B', Wheels[2] = 'C';
 	memset(&EncryptResult[0], 0, sizeof(EncryptResult));
 	InternalState = SET_WHEELS;
 	return ErrorType();
@@ -473,16 +496,16 @@ const char rotors[NUM_ROTORS][27] = { "DVOARQWTUZJCNFLSPMBHEYIGKX", "GHQZUJFWLVM
 		"SDIJUOBALVMYRNGWKHPQCXTFZE", "LIVPNYCUGSRFBXKQHMOEWZTDAJ" };
 
 long EngimaState::mod26(long a) {
-  return (a%26+26)%26;
+	return (a % 26 + 26) % 26;
 }
 
-int EngimaState::li (char l) {
-  // Letter index
-  return l - 'A';
+int EngimaState::li(char l) {
+// Letter index
+	return l - 'A';
 }
 
-int EngimaState::indexof (const char* array, int find) {
-  return strchr(array, find) - array;
+int EngimaState::indexof(const char* array, int find) {
+	return strchr(array, find) - array;
 }
 
 void EngimaState::doPlug(char *r, const char *swapChars, int s) {
@@ -505,7 +528,7 @@ int toupper(int __c) {
 
 const char* EngimaState::crypt(char *Wheels, const char *plugBoard, int plugBoardSize, const char *ct) {
 	static const char reflector[] = "YRUHQSLDPXNGOKMIEBFZCWVJAT";
-	// Sets initial permutation
+// Sets initial permutation
 	int L = li(toupper(Wheels[1]));
 	int M = li(toupper(Wheels[3]));
 	int R = li(toupper(Wheels[5]));
@@ -528,7 +551,7 @@ const char* EngimaState::crypt(char *Wheels, const char *plugBoard, int plugBoar
 	doPlug(&r2[0], plugBoard, plugBoardSize);
 
 	for (uint16_t x = 0; x < strlen(ct) && x < sizeof(EncryptResult); x++) {
-		if (ct[x]==' ')
+		if (ct[x] == ' ')
 			continue;
 
 		int ct_letter = li(toupper(ct[x]));
@@ -556,7 +579,6 @@ const char* EngimaState::crypt(char *Wheels, const char *plugBoard, int plugBoar
 	return &EncryptResult[0];
 }
 
-
 ErrorType EngimaState::onShutdown() {
 	return ErrorType();
 }
@@ -564,13 +586,12 @@ ErrorType EngimaState::onShutdown() {
 //////////////////////////////////////////////////////////////
 
 BadgeInfoState::BadgeInfoState() :
-		StateBase(), BadgeInfoList("Badge Info:", Items, 0, 0, 128, 64, 0,
-				(sizeof(Items) / sizeof(Items[0]))) {
+		StateBase(), BadgeInfoList("Badge Info:", Items, 0, 0, 128, 64, 0, (sizeof(Items) / sizeof(Items[0]))) {
 
 	for (uint32_t i = 0; i < (sizeof(Items) / sizeof(Items[0])); i++) {
 		Items[i].id = i;
 	}
-	//char ListBuffer[20][6];
+//char ListBuffer[20][6];
 }
 
 BadgeInfoState::~BadgeInfoState() {
@@ -585,7 +606,7 @@ ErrorType BadgeInfoState::onInit() {
 	sprintf(&ListBuffer[2][0], "REVID: %lu", HAL_GetREVID());
 	sprintf(&ListBuffer[3][0], "HAL Version: %lu", HAL_GetHalVersion());
 	sprintf(&ListBuffer[4][0], "UID: %u", getContactStore().getMyInfo().getUniqueID());
-	sprintf(&ListBuffer[5][0], "Num contacts: %u", getContactStore().getRecordInfo().getNumContacts());
+	sprintf(&ListBuffer[5][0], "Num contacts: %u", getContactStore().getSettings().getNumContacts());
 	for (uint32_t i = 0; i < (sizeof(Items) / sizeof(Items[0])); i++) {
 		Items[i].text = &ListBuffer[i][0];
 	}
@@ -628,8 +649,7 @@ ErrorType BadgeInfoState::onShutdown() {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 RadioInfoState::RadioInfoState() :
-		StateBase(), RadioInfoList("Radio Info:", Items, 0, 0, 128, 64, 0,
-				(sizeof(Items) / sizeof(Items[0]))), Items(), ListBuffer() {
+		StateBase(), RadioInfoList("Radio Info:", Items, 0, 0, 128, 64, 0, (sizeof(Items) / sizeof(Items[0]))), Items(), ListBuffer() {
 
 }
 

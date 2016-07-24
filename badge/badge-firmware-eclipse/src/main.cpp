@@ -85,7 +85,7 @@ int main(void) {
 	MX_TIM2_Init();
 	//MX_USART2_UART_Init();
 	MX_USART3_UART_Init();
-	MX_USB_DEVICE_Init();
+	//MX_USB_DEVICE_Init();
 
 	/* USER CODE BEGIN 2 */
 	const uint32_t retStart = startBadge();

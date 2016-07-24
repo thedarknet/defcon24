@@ -241,19 +241,14 @@ int main(int argc, char *argv[]) {
 				if (exists(fullFileName)) {
 					numberToGen++;
 				} else {
-					//see keystore.h for format
-					static const unsigned int defaults1 = 0b00100001; //screen saver type = 1 sleep time = 2
-					static const unsigned int defaults2 = 0b00000001; //screen saver time = 1
-					unsigned char reserveFlags = makeUber == 1 ? 0x1 : 0x0;
-					char agentName[12] = { '\0' };
+					unsigned short reserveFlags = makeUber == 1 ? 0x1 : 0x0;
 					ofstream of(fullFileName.c_str());
 					//                   			magic 	magic	reserved	Num Contacts 		settings 1		Settings 2
-					const unsigned char magic[6] = { 0xDC, 0xDC, reserveFlags, 0x0, defaults1, defaults2 };
+					const unsigned char magic[2] = { 0xDC, 0xDC };
 					of.write((const char *) &magic[0], sizeof(magic));
 					of.write((const char *) &RadioID[0], sizeof(RadioID));
-					//of.write((const char *)&compressPubKey[0], sizeof(compressPubKey));
 					of.write((const char *) &privateKey[0], sizeof(privateKey));
-					of.write(&agentName[0], sizeof(agentName));  //just zero-ing out memory
+					of.write((const char *) &reserveFlags, sizeof(reserveFlags));  //just zero-ing out memory
 					of.flush();
 				}
 			}

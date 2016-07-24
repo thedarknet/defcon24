@@ -106,7 +106,7 @@ protected:
 	virtual ErrorType onShutdown();
 private:
 	GUI_ListData SettingList;
-	GUI_ListItemData Items[4]; //set agent name,
+	GUI_ListItemData Items[3]; //set agent name,
 	char AgentName[ContactStore::AGENT_NAME_LENGTH];
 	uint8_t InputPos;
 	uint8_t SubState;
