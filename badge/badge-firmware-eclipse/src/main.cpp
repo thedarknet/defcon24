@@ -37,7 +37,6 @@
 #include "spi.h"
 #include "tim.h"
 #include "usart.h"
-#include "usb_device.h"
 #include "gpio.h"
 #include "Badge/menus/ir.h"
 
