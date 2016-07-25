@@ -6,6 +6,7 @@
 #include <sha256.h>
 #include "menus/irmenu.h"
 #include "menus/GameOfLife.h"
+#include "menus/EventState.h"
 
 StateBase::StateBase() :
 		StateData(0), StateStartTime(0) {
@@ -176,8 +177,8 @@ SettingState::SettingState() :
 	Items[1].text = (const char *) "Set Screen Saver";
 	Items[2].id = 2;
 	Items[2].text = (const char *) "Set Sleep Time";
-	//Items[3].id = 3;
-	//Items[3].text = (const char *) "RESERVED";
+	Items[3].id = 3;
+	Items[3].text = (const char *) "Reset Badge";
 }
 
 SettingState::~SettingState() {
@@ -234,6 +235,9 @@ ReturnStateContext SettingState::onRun(QKeyboard & kb) {
 				break;
 			case 102:
 				InputPos = getContactStore().getSettings().getSleepTime();
+				break;
+			case 103:
+				kb.reset();
 				break;
 			}
 		}
@@ -297,6 +301,15 @@ ReturnStateContext SettingState::onRun(QKeyboard & kb) {
 		gui_lable_multiline(&AgentName[0], 0, 30, 128, 64, 0, 0);
 		break;
 	case 103:
+		gui_lable_multiline((const char*) "Reset to factory defaults?", 0, 10, 128, 64, 0, 0);
+		gui_lable_multiline((const char*) "Press # to Cancel", 0, 30, 128, 64, 0, 0);
+		gui_lable_multiline((const char*) "Press enter to do it", 0, 40, 128, 64, 0, 0);
+		if(kb.getLastPinSeleted()==9) {
+			nextState = StateFactory::getMenuState();
+		} else if (kb.getLastPinSeleted()==11){
+			getContactStore().resetToFactory();
+			nextState = StateFactory::getMenuState();
+		}
 		break;
 	}
 	return ReturnStateContext(nextState);
@@ -407,7 +420,7 @@ ReturnStateContext SendMsgState::onRun(QKeyboard &kb) {
 	StateBase *nextState = this;
 	switch (InternalState) {
 	case TYPE_MESSAGE: {
-		gui_lable("Send Message: ", 0, 10, 128, 64, 0, 0);
+		gui_lable_multiline("Send Message: ", 0, 10, 128, 64, 0, 0);
 		gui_lable_multiline(&MsgBuffer[0], 0, 20, 128, 64, 0, 0);
 		//keyboard entry
 		kb.updateContext(KCTX);
@@ -418,7 +431,7 @@ ReturnStateContext SendMsgState::onRun(QKeyboard &kb) {
 	}
 		break;
 	case CONFIRM_SEND: {
-		gui_lable("Send by pressing #", 0, 10, 128, 64, 0, 0);
+		gui_lable_multiline("Send by pressing #", 0, 10, 128, 64, 0, 0);
 		gui_lable_multiline(&MsgBuffer[0], 0, 20, 128, 64, 0, 0);
 		uint8_t pin = kb.getLastPinSeleted();
 		if (pin == 9) {
@@ -688,7 +701,7 @@ ErrorType RadioInfoState::onShutdown() {
 //============================================================
 DisplayMessageState Display_Message_State(3000, 0);
 MenuState MenuState;
-IRState TheIRPairingState;
+IRState TheIRPairingState(2000,5);
 SettingState TheSettingState;
 EngimaState TheEnginmaState;
 AddressState TheAddressState;
@@ -696,6 +709,7 @@ SendMsgState TheSendMsgState;
 RadioInfoState TheRadioInfoState;
 BadgeInfoState TheBadgeInfoState;
 GameOfLife TheGameOfLifeState;
+EventState TheEventState;
 
 bool StateFactory::init() {
 	return true;
@@ -716,7 +730,7 @@ StateBase *StateFactory::getSettingState() {
 	return &TheSettingState;
 }
 
-StateBase *StateFactory::getIRPairingState() {
+IRState *StateFactory::getIRPairingState() {
 	return &TheIRPairingState;
 }
 
@@ -744,3 +758,6 @@ StateBase *StateFactory::getGameOfLifeState() {
 	return &TheGameOfLifeState;
 }
 
+EventState *StateFactory::getEventState() {
+	return &TheEventState;
+}

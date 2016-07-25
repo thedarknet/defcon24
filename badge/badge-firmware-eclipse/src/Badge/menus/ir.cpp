@@ -37,6 +37,7 @@
 #include "stm32f1xx_hal.h"
 #include "ir.h"
 #include "crc.h"
+#include <tim.h>
 
 // Number of TIM3 ticks for mark/space/start pulses
 #define TICK_BASE (400)
@@ -86,8 +87,7 @@ void TIM3_Init() {
 
 	TIM_ClockConfigTypeDef sClockSourceConfig;
 
-	__HAL_RCC_TIM3_CLK_ENABLE()
-	;
+	__HAL_RCC_TIM3_CLK_ENABLE();
 
 	htim3.Instance = TIM3;
 	htim3.Init.Prescaler = 32;
@@ -176,11 +176,15 @@ void IRInit(void) {
 
 	// Pulse measuring timer for receive
 	TIM3_Init();
+	//start 38KHz timer to flash transmitter
+	HAL_TIM_OC_Start(&htim2, TIM_CHANNEL_2);
 
 }
 
 void IRStop() {
 	stopIRPulseTimer();
+	HAL_TIM_OC_Stop(&htim2, TIM_CHANNEL_2);
+	HAL_TIM_Base_Stop_IT(&htim3);
 	HAL_NVIC_DisableIRQ(EXTI3_IRQn);
 }
 
@@ -276,6 +280,11 @@ void IRStartRx() {
 	IRState = IR_RX_IDLE;
 	__HAL_GPIO_EXTI_CLEAR_IT(IR_UART2_RX_Pin);
 	HAL_NVIC_EnableIRQ(EXTI3_IRQn);
+}
+
+void IRStopRX() {
+	IRState = IR_RX_IDLE;
+	HAL_NVIC_DisableIRQ(EXTI3_IRQn);
 }
 
 // Block until a packet is received OR the timeout expires

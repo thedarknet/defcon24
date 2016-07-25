@@ -8,6 +8,8 @@
 
 #define uint32 unsigned long
 
+static const uint32 SHA256_HASH_SIZE = 32;
+
 struct ShaOBJ {
 	uint32 state[8];
 	uint_64 bit_len;
@@ -18,6 +20,6 @@ struct ShaOBJ {
 void sha256_init(ShaOBJ *ctx);
 void sha256_update(ShaOBJ* ctx);
 void sha256_add(ShaOBJ* ctx, const unsigned char* msg, uint32 len);
-void sha256_digest(ShaOBJ* ctx, unsigned char hash[]);
+void sha256_digest(ShaOBJ* ctx, unsigned char hash[SHA256_HASH_SIZE]);
 
 #endif

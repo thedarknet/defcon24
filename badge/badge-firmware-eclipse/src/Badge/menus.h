@@ -106,7 +106,7 @@ protected:
 	virtual ErrorType onShutdown();
 private:
 	GUI_ListData SettingList;
-	GUI_ListItemData Items[3]; //set agent name,
+	GUI_ListItemData Items[4];
 	char AgentName[ContactStore::AGENT_NAME_LENGTH];
 	uint8_t InputPos;
 	uint8_t SubState;
@@ -202,6 +202,8 @@ private:
 	char ListBuffer[4][20];
 };
 
+class EventState;
+class IRState;
 //=============================
 class StateFactory {
 public:
@@ -209,13 +211,14 @@ public:
 	static StateBase *getDisplayMessageState(StateBase *bm, const char *message, uint16_t timeToDisplay);
 	static StateBase *getMenuState();
 	static StateBase *getSettingState();
-	static StateBase *getIRPairingState();
+	static IRState 	 *getIRPairingState();
 	static StateBase *getAddressBookState();
 	static StateBase *getSendMessageState();
 	static StateBase *getEnigmaState();
 	static StateBase *getBadgeInfoState();
 	static StateBase *getRadioInfoState();
 	static StateBase *getGameOfLifeState();
+	static EventState *getEventState();
 
 };
 

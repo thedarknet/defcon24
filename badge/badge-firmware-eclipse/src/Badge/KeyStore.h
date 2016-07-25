@@ -61,6 +61,7 @@ public:
 
 	class Contact {
 	public:
+		friend class ContactStore;
 		static const uint8_t SIZE = sizeof(uint16_t) + PUBLIC_KEY_LENGTH + SIGNATURE_LENGTH + AGENT_NAME_LENGTH;
 
 		uint16_t getUniqueID();
@@ -72,7 +73,6 @@ public:
 		void setPublicKey(const uint8_t key[PUBLIC_KEY_LENGTH]);
 		void setPairingSignature(const uint8_t sig[SIGNATURE_LENGTH]);
 		Contact(uint32_t startAddress);
-		Contact(const Contact &c);
 	protected:
 		uint32_t StartAddress;
 	};
@@ -103,6 +103,7 @@ public:
 		uint8_t getSleepTime();
 		const char *getAgentName();
 		bool setAgentname(const char name[AGENT_NAME_LENGTH]);
+		void resetToFactory();
 	protected:
 		bool writeSettings(const DataStructure &ds);
 		DataStructure getSettings();
@@ -123,6 +124,7 @@ public:
 		uint8_t *getPublicKey();
 		uint8_t *getPrivateKey();
 		bool isUberBadge();
+		uint8_t *getCompressedPublicKey();
 		MyInfo(uint32_t startAddress);
 	private:
 		uint32_t StartAddress;
@@ -137,6 +139,7 @@ public:
 			uint8_t sig[SIGNATURE_LENGTH]);
 	uint8_t getNumContactsThatCanBeStored();
 	bool getContactAt(uint16_t numContact, Contact &c);
+	void resetToFactory();
 private:
 	SettingsInfo Settings;
 	MyInfo MeInfo;

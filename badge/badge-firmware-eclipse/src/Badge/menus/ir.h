@@ -18,7 +18,8 @@ int32_t IRBytesAvailable();
 uint8_t *IRGetBuff();
 bool IRDataReady();
 void IRStartRx();
-int32_t IRGetState();
+void IRStopRX();
+//int32_t IRGetState();
 
 #ifdef __cplusplus
 }

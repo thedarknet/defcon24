@@ -7,6 +7,7 @@
 #include <KeyStore.h>
 #include <tim.h>
 #include <usart.h>
+#include "menus/irmenu.h"
 
 char sendingBuf[64] = { '\0' };
 char receivingBuf[64] = { '\0' };
@@ -28,8 +29,8 @@ QKeyboard KB(QKeyboard::PinConfig(KEYBOARD_Y1_GPIO_Port, KEYBOARD_Y1_Pin),
 RFM69 Radio(RFM69_SPI_NSS_Pin, RFM69_Interrupt_DIO0_Pin, true);
 
 static const uint16_t SETTING_SECTOR = 57; //0x800e400
-static const uint16_t FIRST_CONTACT_SECTOR = SETTING_SECTOR+1; //0x800e800
-static const uint16_t NUM_CONTACT_SECTOR = 64-FIRST_CONTACT_SECTOR;
+static const uint16_t FIRST_CONTACT_SECTOR = SETTING_SECTOR + 1; //0x800e800
+static const uint16_t NUM_CONTACT_SECTOR = 64 - FIRST_CONTACT_SECTOR;
 static const uint32_t MY_INFO_ADDRESS = 0x800FFD4;
 
 ContactStore MyContacts(SETTING_SECTOR, FIRST_CONTACT_SECTOR, NUM_CONTACT_SECTOR, MY_INFO_ADDRESS); //0x2710); //0x4E00);
@@ -55,39 +56,39 @@ ErrorType::ErrorType(const ErrorType &r) {
 }
 
 void initFlash() {
-/*
-	HAL_FLASH_Unlock();
-	FLASH_EraseInitTypeDef EraseInitStruct;
-	EraseInitStruct.TypeErase = FLASH_TYPEERASE_PAGES;
-	EraseInitStruct.Banks = FLASH_BANK_1;
-	EraseInitStruct.PageAddress = FLASH_BASE + (57 * FLASH_PAGE_SIZE);
-	EraseInitStruct.NbPages = 1;
-	uint32_t SectorError = 0;
+	/*
+	 HAL_FLASH_Unlock();
+	 FLASH_EraseInitTypeDef EraseInitStruct;
+	 EraseInitStruct.TypeErase = FLASH_TYPEERASE_PAGES;
+	 EraseInitStruct.Banks = FLASH_BANK_1;
+	 EraseInitStruct.PageAddress = FLASH_BASE + (57 * FLASH_PAGE_SIZE);
+	 EraseInitStruct.NbPages = 1;
+	 uint32_t SectorError = 0;
 
-	//if(FLASH_PageErase(FLASH_BASE + ( 57 * FLASH_PAGE_SIZE))==HAL_OK) {
-	if (HAL_FLASHEx_Erase(&EraseInitStruct, &SectorError) == HAL_OK) {
-		HAL_FLASH_Lock();
-		HAL_FLASH_Unlock();
-		HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD, 0x800e400, 0xDCDC);
-		HAL_FLASH_Lock();
-		uint16_t v = *((uint16_t *) 0x800e400);
-		char b[10];
-		sprintf(&b[0], "%d", v);
+	 //if(FLASH_PageErase(FLASH_BASE + ( 57 * FLASH_PAGE_SIZE))==HAL_OK) {
+	 if (HAL_FLASHEx_Erase(&EraseInitStruct, &SectorError) == HAL_OK) {
+	 HAL_FLASH_Lock();
+	 HAL_FLASH_Unlock();
+	 HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD, 0x800e400, 0xDCDC);
+	 HAL_FLASH_Lock();
+	 uint16_t v = *((uint16_t *) 0x800e400);
+	 char b[10];
+	 sprintf(&b[0], "%d", v);
 
-		HAL_FLASH_Unlock();
-		HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD, 0x800e400, 0x0);
-		HAL_FLASH_Lock();
-		v = *((uint16_t *) 0x800e400);
-		sprintf(&b[0], "%d", v);
-		HAL_FLASH_Unlock();
-		HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD, 0x800e400, 0xDCDC);
-		HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD, 0x800e402, 0xDCDC);
-		HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD, 0x800e412, 0xDCDC);
-		HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD, 0x800e4A2, 0xDCDC);
-	}
+	 HAL_FLASH_Unlock();
+	 HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD, 0x800e400, 0x0);
+	 HAL_FLASH_Lock();
+	 v = *((uint16_t *) 0x800e400);
+	 sprintf(&b[0], "%d", v);
+	 HAL_FLASH_Unlock();
+	 HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD, 0x800e400, 0xDCDC);
+	 HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD, 0x800e402, 0xDCDC);
+	 HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD, 0x800e412, 0xDCDC);
+	 HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD, 0x800e4A2, 0xDCDC);
+	 }
 
-	HAL_FLASH_Lock();
-	*/
+	 HAL_FLASH_Lock();
+	 */
 #if ONE_TIME==1
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wstrict-aliasing"
@@ -177,6 +178,8 @@ uint32_t startBadge() {
 	////////
 	state = INITIAL_STATE;
 	gui_set_curList(0);
+
+	StateFactory::getIRPairingState()->BeTheBob();
 	CurrentState = StateFactory::getMenuState();
 	return true;
 }
@@ -198,9 +201,11 @@ void loopBadge() {
 			//on state switches reset keyboard and give a 1 second pause on reading from keyboard.
 			KB.reset();
 			nextTickToScanKeyBoard = tick + 1000;
+			//did we just switch to the IR pairing state?
 		}
 		CurrentState = rsc.NextMenuToRun;
 	}
+	StateFactory::getIRPairingState()->ListenForAlice();
 	gui_draw();
 }
 
