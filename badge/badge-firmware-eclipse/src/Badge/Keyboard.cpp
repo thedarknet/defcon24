@@ -20,6 +20,8 @@ void KeyBoardLetterCtx::processButtonPush(uint8_t button, const char *buttonLett
 		decPosition();
 		Buffer[CursorPosition] = '\0';
 		decPosition();
+		CurrentLetter = ' ';
+		LastPin = QKeyboard::NO_PIN_SELECTED;
 	} else {
 		CurrentLetter = buttonLetters[LetterSelection];
 		LastPin = button;
@@ -84,13 +86,12 @@ void KeyBoardLetterCtx::init(char *b, uint16_t s) {
 	LastTimeLetterWasPushed = 0;
 	LetterSelection = 0;
 	LastBlinkTime = 0;
-	LastPin = 0xFF;
-	ButtonReleased = 1;
+	LastPin = QKeyboard::NO_PIN_SELECTED;
 }
 
 QKeyboard::QKeyboard(PinConfig Y1Pin, PinConfig Y2Pin, PinConfig Y3Pin, PinConfig X1Pin, PinConfig X2Pin,
 		PinConfig X3Pin, PinConfig X4Pin) :
-		LastSelectedPin(NO_PIN_SELECTED), TimesLastPinSelected(0) {
+		LastSelectedPin(NO_PIN_SELECTED), TimesLastPinSelected(0), KeyJustReleased(NO_PIN_SELECTED) {
 	YPins[0] = Y1Pin;
 	YPins[1] = Y2Pin;
 	YPins[2] = Y3Pin;
@@ -133,7 +134,11 @@ void QKeyboard::scan() {
 	}
 	if (selectedPin == LastSelectedPin) {
 		TimesLastPinSelected++;
+		if(KeyJustReleased!=NO_PIN_SELECTED && selectedPin==NO_PIN_SELECTED) {
+			KeyJustReleased = NO_PIN_SELECTED;
+		}
 	} else {
+		KeyJustReleased = LastSelectedPin;
 		LastSelectedPin = selectedPin;
 		TimesLastPinSelected = 0;
 	}
@@ -148,19 +153,26 @@ void QKeyboard::scan() {
 	}
 }
 
+uint8_t QKeyboard::getLastKeyReleased() {
+	return KeyJustReleased;
+}
+
+bool QKeyboard::wasKeyReleased() {
+	return KeyJustReleased!=NO_PIN_SELECTED;
+}
+
 void QKeyboard::reset() {
 	TimesLastPinSelected = 0;
 	LastSelectedPin = NO_PIN_SELECTED;
 }
 
 void QKeyboard::updateContext(KeyBoardLetterCtx &ctx) {
-	if (ctx.isKeySelectionTimedOut() && getLastPinSeleted() == QKeyboard::NO_PIN_SELECTED) {
+	if (ctx.isKeySelectionTimedOut() && !wasKeyReleased()) {
 		ctx.setCurrentLetterInBufferAndInc();
 		ctx.timerStop();
-	} else if (getLastPinSeleted() != QKeyboard::NO_PIN_SELECTED && ctx.hasReleasedButton()) {
-		ctx.setButtonPushed();
+	} else if (wasKeyReleased()) {
 		const char *current = 0;
-		switch (getLastPinSeleted()) {
+		switch (getLastKeyReleased()) {
 		case 0:
 			current = ".,?1";
 			break;
@@ -195,36 +207,11 @@ void QKeyboard::updateContext(KeyBoardLetterCtx &ctx) {
 			current = "0\b";
 			break;
 		}
-		if (getLastPinSeleted() < 11) {
-			ctx.processButtonPush(getLastPinSeleted(), current);
+		if (getLastKeyReleased() < 11) {
+			ctx.processButtonPush(getLastKeyReleased(), current);
 		}
-	} else if (getLastPinSeleted() == QKeyboard::NO_PIN_SELECTED) {
-		ctx.setButtonReleased();
 	}
 	ctx.blinkLetter();
-}
-
-uint8_t QKeyboard::getNumber() {
-	switch (getLastPinSeleted()) {
-	case 0:
-	case 1:
-	case 2:
-	case 3:
-	case 4:
-	case 5:
-	case 6:
-	case 7:
-	case 8:
-		return getLastPinSeleted() + 1;
-		break;
-	case 10:
-		return 0;
-		break;
-	case 9:
-	case 11:
-		return NOT_A_NUMBER;
-		break;
-	}
 }
 
 uint8_t QKeyboard::getLastPinPushed() {

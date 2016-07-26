@@ -8,7 +8,6 @@ private:
 	int16_t CursorPosition:10;
 	int16_t Started : 1;
 	int16_t UnderBar :1;
-	int16_t ButtonReleased : 1;
 	char *Buffer;
 	char CurrentLetter;
 	uint16_t BufferSize;
@@ -17,9 +16,6 @@ private:
 	uint32_t LastBlinkTime;
 	uint8_t LastPin;
 public:
-	void setButtonReleased() {ButtonReleased = 1;}
-	bool hasReleasedButton() {return ButtonReleased;}
-	void setButtonPushed() {ButtonReleased = 0;}
 	void processButtonPush(uint8_t button, const char *buttonLetters);
 	bool isKeySelectionTimedOut();
 	void timerStart();
@@ -57,8 +53,9 @@ public:
 	uint8_t getLastPinPushed();
 	//last button pushed and held for at least TIMES_BUTTON_MUST_BE_HELD
 	uint8_t getLastPinSeleted();
+	uint8_t getLastKeyReleased();
+	bool wasKeyReleased();
 	void updateContext(KeyBoardLetterCtx &ctx);
-	uint8_t getNumber();
 	void reset();
 	void setAllLightsOn(bool b);
 protected:
@@ -68,6 +65,7 @@ private:
 	PinConfig XPins[4];
 	uint8_t LastSelectedPin;
 	uint8_t TimesLastPinSelected;
+	uint8_t KeyJustReleased;
 };
 
 #endif

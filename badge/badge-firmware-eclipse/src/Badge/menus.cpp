@@ -107,7 +107,7 @@ ErrorType MenuState::onInit() {
 }
 
 ReturnStateContext MenuState::onRun(QKeyboard &kb) {
-	uint8_t key = kb.getLastPinSeleted();
+	uint8_t key = kb.getLastKeyReleased();
 	StateBase *nextState = this;
 	switch (key) {
 	case 1: {
