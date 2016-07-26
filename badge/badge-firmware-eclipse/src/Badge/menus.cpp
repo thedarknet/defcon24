@@ -7,6 +7,7 @@
 #include "menus/irmenu.h"
 #include "menus/GameOfLife.h"
 #include "menus/EventState.h"
+#include "menus/AddressState.h"
 
 StateBase::StateBase() :
 		StateData(0), StateStartTime(0) {
@@ -69,7 +70,7 @@ void DisplayMessageState::setMessage(const char *msg) {
 
 ReturnStateContext DisplayMessageState::onRun(QKeyboard &kb) {
 	gui_lable_multiline(&this->Message[0], 0, 10, 120, 50, SSD1306_COLOR_BLACK, 0);
-	if (timeInState() > TimeInState || kb.getLastPinSeleted() != QKeyboard::NO_PIN_SELECTED) {
+	if (timeInState() > TimeInState || kb.getLastKeyReleased() != QKeyboard::NO_PIN_SELECTED) {
 		return ReturnStateContext(StateFactory::getMenuState());
 	}
 	return ReturnStateContext(this);
@@ -196,7 +197,7 @@ ErrorType SettingState::onInit() {
 static const char *NUMBERS = "123456789";
 
 ReturnStateContext SettingState::onRun(QKeyboard & kb) {
-	uint8_t key = kb.getLastPinSeleted();
+	uint8_t key = kb.getLastKeyReleased();
 	StateBase *nextState = this;
 	switch (SubState) {
 	case 0:
@@ -255,7 +256,7 @@ ReturnStateContext SettingState::onRun(QKeyboard & kb) {
 		}
 		gui_lable_multiline((const char*) "Set agent name:", 0, 30, 128, 64, 0, 0);
 		kb.updateContext(KCTX);
-		if (kb.getLastPinSeleted() == 11 && AgentName[0] != '\0' && AgentName[0] != ' ') {
+		if (kb.getLastKeyReleased() == 11 && AgentName[0] != '\0' && AgentName[0] != ' ') {
 			//done
 			if (getContactStore().getSettings().setAgentname(&AgentName[0])) {
 				nextState = StateFactory::getDisplayMessageState(StateFactory::getMenuState(), "Save Successful", 2000);
@@ -271,7 +272,7 @@ ReturnStateContext SettingState::onRun(QKeyboard & kb) {
 		gui_lable_multiline((const char*) "Screen Saver:", 0, 10, 128, 64, 0, 0);
 		gui_lable_multiline(&AgentName[0], 0, 20, 128, 64, 0, 0);
 		gui_lable_multiline((const char*) "1: Game of Life", 0, 30, 128, 64, 0, 0);
-		uint8_t ss = kb.getLastPinSeleted();
+		uint8_t ss = kb.getLastKeyReleased();
 		switch (ss) {
 		case 0:
 			if (getContactStore().getSettings().setScreenSaverType(ss)) {
@@ -285,17 +286,17 @@ ReturnStateContext SettingState::onRun(QKeyboard & kb) {
 	}
 	case 102:
 		gui_lable_multiline((const char*) "Time until badge goes to sleep:", 0, 10, 128, 64, 0, 0);
-		if (kb.getLastPinSeleted() == 9 || kb.getLastPinSeleted() == 10
-				|| kb.getLastPinSeleted() == QKeyboard::NO_PIN_SELECTED) {
+		if (kb.getLastKeyReleased() == 9 || kb.getLastKeyReleased() == 10
+				|| kb.getLastKeyReleased() == QKeyboard::NO_PIN_SELECTED) {
 			//InputPos = 4;
-		} else if (kb.getLastPinSeleted() == 11) {
+		} else if (kb.getLastKeyReleased() == 11) {
 			if (getContactStore().getSettings().setSleepTime(InputPos)) {
 				nextState = StateFactory::getDisplayMessageState(StateFactory::getMenuState(), "Setting saved", 2000);
 			} else {
 				nextState = StateFactory::getDisplayMessageState(StateFactory::getMenuState(), "Save FAILED!", 4000);
 			}
 		} else {
-			InputPos = kb.getLastPinSeleted();
+			InputPos = kb.getLastKeyReleased();
 		}
 		sprintf(&AgentName[0], "%c Minutes", NUMBERS[InputPos]);
 		gui_lable_multiline(&AgentName[0], 0, 30, 128, 64, 0, 0);
@@ -304,9 +305,9 @@ ReturnStateContext SettingState::onRun(QKeyboard & kb) {
 		gui_lable_multiline((const char*) "Reset to factory defaults?", 0, 10, 128, 64, 0, 0);
 		gui_lable_multiline((const char*) "Press # to Cancel", 0, 30, 128, 64, 0, 0);
 		gui_lable_multiline((const char*) "Press enter to do it", 0, 40, 128, 64, 0, 0);
-		if(kb.getLastPinSeleted()==9) {
+		if(kb.getLastKeyReleased()==9) {
 			nextState = StateFactory::getMenuState();
-		} else if (kb.getLastPinSeleted()==11){
+		} else if (kb.getLastKeyReleased()==11){
 			getContactStore().resetToFactory();
 			nextState = StateFactory::getMenuState();
 		}
@@ -322,75 +323,6 @@ ErrorType SettingState::onShutdown() {
 	return ErrorType();
 }
 
-////////////////////////////////////////////////
-AddressState::AddressState() :
-		StateBase(), AddressList((const char *) "Address Book", Items, 0, 0, 128, 64, 0,
-				sizeof(Items) / sizeof(Items[0])), ContactIndex(0) {
-
-}
-
-AddressState::~AddressState() {
-
-}
-
-ErrorType AddressState::onInit() {
-	gui_set_curList(&AddressList);
-	setNext4Items(0);
-	return ErrorType();
-}
-
-void AddressState::setNext4Items(uint16_t startAt) {
-	uint8_t num = getContactStore().getSettings().getNumContacts();
-	for (uint16_t i = startAt, j = 0; j < (4); i++, j++) {
-		ContactStore::Contact c(0); // 0 is illegal memory
-		if (i < num) {
-			getContactStore().getContactAt(i, c);
-			Items[j].id = c.getUniqueID();
-			Items[j].text = c.getAgentName();
-		} else {
-			Items[j].id = 0;
-			Items[j].text = "";
-		}
-	}
-}
-
-ReturnStateContext AddressState::onRun(QKeyboard &kb) {
-	uint8_t pin = kb.getLastPinSeleted();
-	StateBase *nextState = this;
-	switch (pin) {
-	case 1:
-		if (AddressList.selectedItem == 0) {
-			//keep selection at 0 but load new values
-			uint16_t startAt = Items[AddressList.selectedItem].id;
-			if (startAt > 0) {
-				setNext4Items(startAt - 1);
-			}
-		} else {
-			AddressList.selectedItem--;
-		}
-		break;
-	case 7:
-		if (AddressList.selectedItem == (sizeof(Items) / sizeof(Items[0]) - 1)) {
-			setNext4Items(Items[AddressList.selectedItem].id + 1);
-		} else {
-			AddressList.selectedItem++;
-		}
-		break;
-	case 9:
-		nextState = StateFactory::getMenuState();
-		break;
-	case 11:
-		nextState = StateFactory::getSendMessageState();
-		((SendMsgState*) nextState)->setContactToMessage(Items[AddressList.selectedItem].id);
-		break;
-	}
-	return ReturnStateContext(nextState);
-}
-
-ErrorType AddressState::onShutdown() {
-	gui_set_curList(0);
-	return ErrorType();
-}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 SendMsgState::SendMsgState() :
@@ -424,7 +356,7 @@ ReturnStateContext SendMsgState::onRun(QKeyboard &kb) {
 		gui_lable_multiline(&MsgBuffer[0], 0, 20, 128, 64, 0, 0);
 		//keyboard entry
 		kb.updateContext(KCTX);
-		uint8_t pin = kb.getLastPinSeleted();
+		uint8_t pin = kb.getLastKeyReleased();
 		if (pin == 11) { //return has been pushed
 			InternalState = INTERNAL_STATE::CONFIRM_SEND;
 		}
@@ -433,7 +365,7 @@ ReturnStateContext SendMsgState::onRun(QKeyboard &kb) {
 	case CONFIRM_SEND: {
 		gui_lable_multiline("Send by pressing #", 0, 10, 128, 64, 0, 0);
 		gui_lable_multiline(&MsgBuffer[0], 0, 20, 128, 64, 0, 0);
-		uint8_t pin = kb.getLastPinSeleted();
+		uint8_t pin = kb.getLastKeyReleased();
 		if (pin == 9) {
 			InternalState = TYPE_MESSAGE;
 		} else if (pin == 11) {
@@ -494,7 +426,7 @@ ErrorType EngimaState::onInit() {
 ReturnStateContext EngimaState::onRun(QKeyboard &kb) {
 	StateBase* nextState = this;
 	gui_lable_multiline("EngimaState not implemented", 0, 10, 128, 64, 0, 0);
-	uint8_t pin = kb.getLastPinSeleted();
+	uint8_t pin = kb.getLastKeyReleased();
 	if (pin == 11) {
 		nextState = StateFactory::getMenuState();
 	}
@@ -628,7 +560,7 @@ ErrorType BadgeInfoState::onInit() {
 }
 
 ReturnStateContext BadgeInfoState::onRun(QKeyboard &kb) {
-	uint8_t key = kb.getLastPinSeleted();
+	uint8_t key = kb.getLastKeyReleased();
 	StateBase *nextState = this;
 	switch (key) {
 	case 1: {
@@ -686,7 +618,7 @@ ReturnStateContext RadioInfoState::onRun(QKeyboard &kb) {
 	sprintf(&ListBuffer[1][0], "RSSI: %d", getRadio().readRSSI());
 	sprintf(&ListBuffer[2][0], "RSSI Threshold: %u", getRadio().getRSSIThreshHold());
 	sprintf(&ListBuffer[3][0], "Gain: %u", getRadio().getCurrentGain());
-	uint8_t pin = kb.getLastPinSeleted();
+	uint8_t pin = kb.getLastKeyReleased();
 	if (pin == 9) {
 		nextState = StateFactory::getMenuState();
 	}

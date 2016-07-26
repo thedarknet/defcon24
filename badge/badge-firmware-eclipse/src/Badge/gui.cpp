@@ -94,6 +94,27 @@ void gui_set_curList(GUI_ListData* list)
 	gui_CurList = list;
 }
 
+const char *GUI_ListItemData::getScrollOffset() {
+	uint16_t offSet = 0;
+	if(Scrollable) {
+		if(LastScrollTime==0) {
+			LastScrollTime=HAL_GetTick();
+		}
+		if(HAL_GetTick()-LastScrollTime>TimeBetweenScroll) {
+			LastScrollTime = HAL_GetTick();
+			LastScrollPosition++;
+			uint32_t l = strlen(text);
+			//char b[10];
+			//sprintf(&b[0],"%d",l);
+			if(LastScrollPosition>=l) {
+				LastScrollPosition = 0;
+			}
+		}
+		offSet = LastScrollPosition;
+	}
+	return text+offSet;
+}
+
 uint8_t gui_draw_list()
 {
 	if(gui_CurList == 0)
@@ -117,8 +138,9 @@ uint8_t gui_draw_list()
 		{
 			if(i != gui_CurList->selectedItem)
 				gui_lable(gui_CurList->items[i].text, gui_CurList->x + 1, ry + i*GUI_DefFont.FontHeight, gui_CurList->w - 3, GUI_DefFont.FontHeight, 0, 0);
-			else
-				gui_lable(gui_CurList->items[i].text, gui_CurList->x +1 , ry + i*GUI_DefFont.FontHeight, gui_CurList->w - 3, GUI_DefFont.FontHeight, 1, 0);
+			else {
+				gui_lable(gui_CurList->items[i].getScrollOffset(), gui_CurList->x +1 , ry + i*GUI_DefFont.FontHeight, gui_CurList->w - 3, GUI_DefFont.FontHeight, 1, 0);
+			}
 		}
 	}
 	else
@@ -130,7 +152,7 @@ uint8_t gui_draw_list()
 				if(i != gui_CurList->selectedItem)
 					gui_lable(gui_CurList->items[i].text, gui_CurList->x + 1, ry + (i - gui_CurList->ItemsCount + maxC)*GUI_DefFont.FontHeight, gui_CurList->w - 3, GUI_DefFont.FontHeight, 0, 0);
 				else
-					gui_lable(gui_CurList->items[i].text, gui_CurList->x + 1, ry + (i - gui_CurList->ItemsCount + maxC)*GUI_DefFont.FontHeight, gui_CurList->w - 3, GUI_DefFont.FontHeight, 1, 0);
+					gui_lable(gui_CurList->items[i].getScrollOffset(), gui_CurList->x + 1, ry + (i - gui_CurList->ItemsCount + maxC)*GUI_DefFont.FontHeight, gui_CurList->w - 3, GUI_DefFont.FontHeight, 1, 0);
 			}
 		}
 		else if(gui_CurList->selectedItem < maxC / 2)
@@ -140,7 +162,7 @@ uint8_t gui_draw_list()
 				if(i != gui_CurList->selectedItem)
 					gui_lable(gui_CurList->items[i].text, gui_CurList->x + 1, ry + i*GUI_DefFont.FontHeight, gui_CurList->w - 3, GUI_DefFont.FontHeight, 0, 0);
 				else
-					gui_lable(gui_CurList->items[i].text, gui_CurList->x + 1, ry + i*GUI_DefFont.FontHeight, gui_CurList->w - 3, GUI_DefFont.FontHeight, 1, 0);
+					gui_lable(gui_CurList->items[i].getScrollOffset(), gui_CurList->x + 1, ry + i*GUI_DefFont.FontHeight, gui_CurList->w - 3, GUI_DefFont.FontHeight, 1, 0);
 			}
 		}
 		else
@@ -150,7 +172,7 @@ uint8_t gui_draw_list()
 				if(i != gui_CurList->selectedItem)
 					gui_lable(gui_CurList->items[i].text, gui_CurList->x + 1, ry + (i - gui_CurList->selectedItem + maxC/2)*GUI_DefFont.FontHeight, gui_CurList->w - 3, GUI_DefFont.FontHeight, 0, 0);
 				else
-					gui_lable(gui_CurList->items[i].text, gui_CurList->x + 1, ry + (i - gui_CurList->selectedItem + maxC/2)*GUI_DefFont.FontHeight, gui_CurList->w - 3, GUI_DefFont.FontHeight, 1, 0);
+					gui_lable(gui_CurList->items[i].getScrollOffset(), gui_CurList->x + 1, ry + (i - gui_CurList->selectedItem + maxC/2)*GUI_DefFont.FontHeight, gui_CurList->w - 3, GUI_DefFont.FontHeight, 1, 0);
 			}
 		}
 	}

@@ -184,15 +184,11 @@ uint32_t startBadge() {
 	return true;
 }
 
-uint32_t nextTickToScanKeyBoard = 0;
-
 void loopBadge() {
 
 	//check to see if keyboard should be ignored
 	uint32_t tick = HAL_GetTick();
-	if (tick > nextTickToScanKeyBoard) {
-		KB.scan();
-	}
+	KB.scan();
 
 	ReturnStateContext rsc = CurrentState->run(KB);
 
@@ -200,7 +196,6 @@ void loopBadge() {
 		if (CurrentState != rsc.NextMenuToRun) {
 			//on state switches reset keyboard and give a 1 second pause on reading from keyboard.
 			KB.reset();
-			nextTickToScanKeyBoard = tick + 1000;
 			//did we just switch to the IR pairing state?
 		}
 		CurrentState = rsc.NextMenuToRun;

@@ -72,7 +72,7 @@ public:
 		void setAgentname(const char name[AGENT_NAME_LENGTH]);
 		void setPublicKey(const uint8_t key[PUBLIC_KEY_LENGTH]);
 		void setPairingSignature(const uint8_t sig[SIGNATURE_LENGTH]);
-		Contact(uint32_t startAddress);
+		Contact(uint32_t startAddress=0);
 	protected:
 		uint32_t StartAddress;
 	};

@@ -113,21 +113,6 @@ private:
 };
 
 
-class AddressState: public StateBase {
-public:
-	AddressState();
-	virtual ~AddressState();
-protected:
-	virtual ErrorType onInit();
-	virtual ReturnStateContext onRun(QKeyboard &kb);
-	virtual ErrorType onShutdown();
-	void setNext4Items(uint16_t startAt);
-private:
-	GUI_ListData AddressList;
-	GUI_ListItemData Items[4];
-	uint8_t ContactIndex;
-};
-
 class SendMsgState: public StateBase {
 public:
 	static const int16_t NO_CONTACT = -1;

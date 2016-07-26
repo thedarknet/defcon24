@@ -73,17 +73,27 @@ void gui_ticker(GUI_TickerData *dt);
 
 
 struct GUI_ListItemData {
-	GUI_ListItemData(uint8_t id, const char *msg) {
+	GUI_ListItemData(uint8_t id1, const char *msg, bool scroll, uint16_t timeBetwenScrolls) :
+		id(id1), text(msg), Scrollable(scroll), TimeBetweenScroll(timeBetwenScrolls), LastScrollTime(0), LastScrollPosition(0){
+
+	}
+	GUI_ListItemData(uint8_t id, const char *msg) : Scrollable(0), TimeBetweenScroll(1000), LastScrollTime(0), LastScrollPosition(0) {
 		this->id = id;
 		text = msg;
 	}
-	GUI_ListItemData() : id(0), text(0) {}
+	GUI_ListItemData() : id(0), text(0), Scrollable(0), TimeBetweenScroll(1000), LastScrollTime(0), LastScrollPosition(0) {}
 	void set(uint8_t n, const char *msg) {
 		id=n;
 		text = msg;
 	}
 	uint16_t id; /*!< Item's id */
 	const char* text;  /*!< Item's text*/
+	uint16_t Scrollable : 1;
+	uint16_t TimeBetweenScroll : 12;
+	uint32_t LastScrollTime;
+	uint8_t LastScrollPosition;
+	const char *getScrollOffset();
+	void resetScrollable() {Scrollable = 1;LastScrollTime=0;LastScrollPosition=0;}
 };
 
 struct GUI_ListData {
