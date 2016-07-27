@@ -4,7 +4,7 @@
 #include <uECC.h>
 #include <sha256.h>
 #include "ir.h"
-#include "menus/EventState.h"
+#include "menus/MessageState.h"
 
 ////////////////////////////////////////////////////
 typedef struct SHA256_HashContext {

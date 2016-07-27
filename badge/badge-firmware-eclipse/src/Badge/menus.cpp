@@ -6,7 +6,7 @@
 #include <sha256.h>
 #include "menus/irmenu.h"
 #include "menus/GameOfLife.h"
-#include "menus/EventState.h"
+#include "menus/MessageState.h"
 #include "menus/AddressState.h"
 #include "menus/EnigmaState.h"
 
@@ -83,20 +83,6 @@ ErrorType DisplayMessageState::onShutdown() {
 
 MenuState::MenuState() :
 		StateBase(), MenuList("Main Menu", Items, 0, 10, 128, 64, 0, (sizeof(Items) / sizeof(Items[0]))) {
-	Items[0].id = 0;
-	Items[0].text = (const char *) "Settings";
-	Items[1].id = 1;
-	Items[1].text = (const char *) "IR Pair";
-	Items[2].id = 2;
-	Items[2].text = (const char *) "Address Book";
-	Items[3].id = 3;
-	Items[3].text = (const char *) "Send Message";
-	Items[4].id = 4;
-	Items[4].text = (const char *) "Enigma";
-	Items[5].id = 5;
-	Items[5].text = (const char *) "Badge Info";
-	Items[6].id = 6;
-	Items[6].text = (const char *) "Radio Info";
 }
 
 MenuState::~MenuState() {
@@ -105,6 +91,22 @@ MenuState::~MenuState() {
 
 ErrorType MenuState::onInit() {
 	gui_set_curList(&MenuList);
+	Items[0].id = 0;
+	Items[0].text = (const char *) "Settings";
+	Items[1].id = 1;
+	Items[1].text = (const char *) "IR Pair";
+	Items[2].id = 2;
+	Items[2].text = (const char *) "Address Book";
+	Items[3].id = 3;
+	Items[3].text = (const char *) "Check Messages";
+	Items[4].id = 4;
+	Items[4].text = (const char *) "Enigma";
+	Items[5].id = 5;
+	Items[5].text = (const char *) "Badge Info";
+	Items[6].id = 6;
+	Items[6].text = (const char *) "Radio Info";
+	Items[7].id = 7;
+	Items[7].text = (const char *) "Event Log";
 	return ErrorType();
 }
 
@@ -144,7 +146,7 @@ ReturnStateContext MenuState::onRun(QKeyboard &kb) {
 			nextState = StateFactory::getAddressBookState();
 			break;
 		case 3:
-			nextState = StateFactory::getSendMessageState();
+			nextState = StateFactory::getMessageState();
 			break;
 		case 4:
 			nextState = StateFactory::getEnigmaState();
@@ -155,6 +157,8 @@ ReturnStateContext MenuState::onRun(QKeyboard &kb) {
 		case 6:
 			nextState = StateFactory::getRadioInfoState();
 			break;
+		case 7:
+			nextState = StateFactory::getEventState();
 		}
 	}
 		break;
@@ -186,7 +190,6 @@ SettingState::SettingState() :
 SettingState::~SettingState() {
 
 }
-
 
 ErrorType SettingState::onInit() {
 	gui_set_curList(&SettingList);
@@ -232,7 +235,7 @@ ReturnStateContext SettingState::onRun(QKeyboard & kb) {
 				getKeyboardContext().init(&AgentName[0], sizeof(AgentName));
 				break;
 			case 101:
-				sprintf(&AgentName[0],"Current:  %d",getContactStore().getSettings().getScreenSaverType()+1);
+				sprintf(&AgentName[0], "Current:  %d", getContactStore().getSettings().getScreenSaverType() + 1);
 				break;
 			case 102:
 				InputPos = getContactStore().getSettings().getSleepTime();
@@ -305,9 +308,9 @@ ReturnStateContext SettingState::onRun(QKeyboard & kb) {
 		gui_lable_multiline((const char*) "Reset to factory defaults?", 0, 10, 128, 64, 0, 0);
 		gui_lable_multiline((const char*) "Press # to Cancel", 0, 30, 128, 64, 0, 0);
 		gui_lable_multiline((const char*) "Press enter to do it", 0, 40, 128, 64, 0, 0);
-		if(kb.getLastKeyReleased()==9) {
+		if (kb.getLastKeyReleased() == 9) {
 			nextState = StateFactory::getMenuState();
-		} else if (kb.getLastKeyReleased()==11){
+		} else if (kb.getLastKeyReleased() == 11) {
 			getContactStore().resetToFactory();
 			nextState = StateFactory::getMenuState();
 		}
@@ -322,7 +325,6 @@ ErrorType SettingState::onShutdown() {
 	memset(&AgentName[0], 0, sizeof(AgentName));
 	return ErrorType();
 }
-
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 SendMsgState::SendMsgState() :
@@ -510,7 +512,7 @@ ErrorType RadioInfoState::onShutdown() {
 //============================================================
 DisplayMessageState Display_Message_State(3000, 0);
 MenuState MenuState;
-IRState TheIRPairingState(2000,5);
+IRState TheIRPairingState(2000, 5);
 SettingState TheSettingState;
 EngimaState TheEnginmaState;
 AddressState TheAddressState;
@@ -518,6 +520,7 @@ SendMsgState TheSendMsgState;
 RadioInfoState TheRadioInfoState;
 BadgeInfoState TheBadgeInfoState;
 GameOfLife TheGameOfLifeState;
+MessageState TheMessageState;
 EventState TheEventState;
 
 bool StateFactory::init() {
@@ -565,6 +568,10 @@ StateBase* StateFactory::getRadioInfoState() {
 
 StateBase *StateFactory::getGameOfLifeState() {
 	return &TheGameOfLifeState;
+}
+
+MessageState *StateFactory::getMessageState() {
+	return &TheMessageState;
 }
 
 EventState *StateFactory::getEventState() {

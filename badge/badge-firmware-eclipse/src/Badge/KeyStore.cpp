@@ -331,6 +331,20 @@ bool ContactStore::getContactAt(uint16_t numContact, Contact &c) {
 	return false;
 }
 
+bool ContactStore::findContactByID(uint16_t uid, Contact &c) {
+	if(uid==0) return false;
+	uint8_t currentContacts = Settings.getNumContacts();
+	for(int i=0;i<currentContacts;i++) {
+		if(getContactAt(i,c)) {
+			if(uid==c.getUniqueID()) {
+				return true;
+			}
+		}
+	}
+	c.StartAddress = 0;
+	return false;
+}
+
 bool ContactStore::addContact(uint16_t uid, char agentName[AGENT_NAME_LENGTH], uint8_t key[PUBLIC_KEY_LENGTH],
 		uint8_t sig[SIGNATURE_LENGTH]) {
 	uint8_t currentContacts = Settings.getNumContacts();

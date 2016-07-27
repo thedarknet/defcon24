@@ -84,16 +84,7 @@ protected:
 	virtual ErrorType onShutdown();
 private:
 	GUI_ListData MenuList;
-	GUI_ListItemData Items[7];
-	/*
-	 * SETTINGS,
-	 IR_PAIR,
-	 ADDRESS_BOOK,
-	 SEND_MESSAGE,
-	 CHALLENGES
-	 Badge Info
-	 Radio Info
-	 */
+	GUI_ListItemData Items[8];
 };
 
 class SettingState: public StateBase {
@@ -161,8 +152,9 @@ private:
 	char ListBuffer[5][20];
 };
 
-class EventState;
+class MessageState;
 class IRState;
+class EventState;
 //=============================
 class StateFactory {
 public:
@@ -177,7 +169,8 @@ public:
 	static StateBase *getBadgeInfoState();
 	static StateBase *getRadioInfoState();
 	static StateBase *getGameOfLifeState();
-	static EventState *getEventState();
+	static MessageState *getMessageState();
+	static EventState* getEventState();
 
 };
 

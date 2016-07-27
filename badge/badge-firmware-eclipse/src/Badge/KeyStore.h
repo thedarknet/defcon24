@@ -139,6 +139,7 @@ public:
 			uint8_t sig[SIGNATURE_LENGTH]);
 	uint8_t getNumContactsThatCanBeStored();
 	bool getContactAt(uint16_t numContact, Contact &c);
+	bool findContactByID(uint16_t uid, Contact &c);
 	void resetToFactory();
 private:
 	SettingsInfo Settings;
