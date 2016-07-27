@@ -8,6 +8,7 @@
 #include "menus/GameOfLife.h"
 #include "menus/EventState.h"
 #include "menus/AddressState.h"
+#include "menus/EnigmaState.h"
 
 StateBase::StateBase() :
 		StateData(0), StateStartTime(0) {
@@ -186,7 +187,6 @@ SettingState::~SettingState() {
 
 }
 
-KeyBoardLetterCtx KCTX;
 
 ErrorType SettingState::onInit() {
 	gui_set_curList(&SettingList);
@@ -229,7 +229,7 @@ ReturnStateContext SettingState::onRun(QKeyboard & kb) {
 			switch (SubState) {
 			case 100:
 				memset(&AgentName[0], 0, sizeof(AgentName));
-				KCTX.init(&AgentName[0], sizeof(AgentName));
+				getKeyboardContext().init(&AgentName[0], sizeof(AgentName));
 				break;
 			case 101:
 				sprintf(&AgentName[0],"Current:  %d",getContactStore().getSettings().getScreenSaverType()+1);
@@ -255,7 +255,7 @@ ReturnStateContext SettingState::onRun(QKeyboard & kb) {
 			gui_lable_multiline(getContactStore().getSettings().getAgentName(), 0, 20, 128, 64, 0, 0);
 		}
 		gui_lable_multiline((const char*) "Set agent name:", 0, 30, 128, 64, 0, 0);
-		kb.updateContext(KCTX);
+		kb.updateContext(getKeyboardContext());
 		if (kb.getLastKeyReleased() == 11 && AgentName[0] != '\0' && AgentName[0] != ' ') {
 			//done
 			if (getContactStore().getSettings().setAgentname(&AgentName[0])) {
@@ -340,7 +340,7 @@ ErrorType SendMsgState::onInit() {
 	if (shouldReset()) {
 		memset(&MsgBuffer[0], 0, sizeof(MsgBuffer));
 		InputPos = 0;
-		KCTX.init(&MsgBuffer[0], sizeof(MsgBuffer));
+		getKeyboardContext().init(&MsgBuffer[0], sizeof(MsgBuffer));
 	} else {
 		clearState(DONT_RESET);
 	}
@@ -355,7 +355,7 @@ ReturnStateContext SendMsgState::onRun(QKeyboard &kb) {
 		gui_lable_multiline("Send Message: ", 0, 10, 128, 64, 0, 0);
 		gui_lable_multiline(&MsgBuffer[0], 0, 20, 128, 64, 0, 0);
 		//keyboard entry
-		kb.updateContext(KCTX);
+		kb.updateContext(getKeyboardContext());
 		uint8_t pin = kb.getLastKeyReleased();
 		if (pin == 11) { //return has been pushed
 			InternalState = INTERNAL_STATE::CONFIRM_SEND;
@@ -404,131 +404,6 @@ ErrorType SendMsgState::onShutdown() {
 	return ErrorType();
 }
 
-////////////////////////////////////////////////////////////
-EngimaState::EngimaState() :
-		InternalState(SET_WHEELS), EntryBuffer(), Wheels(), EncryptResult() {
-
-}
-EngimaState::~EngimaState() {
-
-}
-
-ErrorType EngimaState::onInit() {
-	gui_set_curList(0);
-	memset(&EntryBuffer[0], 0, sizeof(EntryBuffer));
-	memset(&Wheels[0], 0, sizeof(Wheels));
-	Wheels[0] = 'A', Wheels[1] = 'B', Wheels[2] = 'C';
-	memset(&EncryptResult[0], 0, sizeof(EncryptResult));
-	InternalState = SET_WHEELS;
-	return ErrorType();
-}
-
-ReturnStateContext EngimaState::onRun(QKeyboard &kb) {
-	StateBase* nextState = this;
-	gui_lable_multiline("EngimaState not implemented", 0, 10, 128, 64, 0, 0);
-	uint8_t pin = kb.getLastKeyReleased();
-	if (pin == 11) {
-		nextState = StateFactory::getMenuState();
-	}
-	return ReturnStateContext(nextState);
-}
-
-const char alpha[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-static const uint32_t NUM_ROTORS = 13;
-const char rotors[NUM_ROTORS][27] = { "DVOARQWTUZJCNFLSPMBHEYIGKX", "GHQZUJFWLVMTKOPIRSDEACXYBN",
-		"AKUOCLVJYIXMQPERBWSNGFZHTD", "BKLOSUDPJIRHZEXCGQMNVYFATW", "LICFJPORWQVHANKEBUDYMGZXTS",
-		"CAWFYLKXSZTGHPINMDREUQBJVO", "PYVREUXHKIWDNQAZTLSMBOJGFC", "LQRHNSTPAFIVJYMDGUOZKECWXB",
-		"JAUMCWHXTIZDYORQNSKBEFGLPV", "VRKNGZQOUXTMDIECJYPFSAWBLH", "LUHMZRVEGYSPJFADQCWTKBNXIO",
-		"SDIJUOBALVMYRNGWKHPQCXTFZE", "LIVPNYCUGSRFBXKQHMOEWZTDAJ" };
-
-long EngimaState::mod26(long a) {
-	return (a % 26 + 26) % 26;
-}
-
-int EngimaState::li(char l) {
-// Letter index
-	return l - 'A';
-}
-
-int EngimaState::indexof(const char* array, int find) {
-	return strchr(array, find) - array;
-}
-
-void EngimaState::doPlug(char *r, const char *swapChars, int s) {
-	for (int l = 0; l < s; l += 2) {
-		int first = strchr(r, swapChars[l]) - r;
-		int second = strchr(r, swapChars[l + 1]) - r;
-		char tmp = r[first];
-		r[first] = r[second];
-		r[second] = tmp;
-	}
-}
-
-int islower(int __c) {
-	return __c >= 'a' && __c <= 'z';
-}
-
-int toupper(int __c) {
-	return islower(__c) ? (__c & ~32) : __c;
-}
-
-const char* EngimaState::crypt(char *Wheels, const char *plugBoard, int plugBoardSize, const char *ct) {
-	static const char reflector[] = "YRUHQSLDPXNGOKMIEBFZCWVJAT";
-// Sets initial permutation
-	int L = li(toupper(Wheels[1]));
-	int M = li(toupper(Wheels[3]));
-	int R = li(toupper(Wheels[5]));
-
-	memset(&EncryptResult[0], 0, sizeof(EncryptResult));
-	char *outPtr = &EncryptResult[0];
-
-	int rotorIdx0 = li(toupper(Wheels[0])) % NUM_ROTORS;
-	int rotorIdx1 = li(toupper(Wheels[2])) % NUM_ROTORS;
-	int rotorIdx2 = li(toupper(Wheels[4])) % NUM_ROTORS;
-
-	char r0[27] = { '\0' };
-	strcpy(&r0[0], rotors[rotorIdx0]);
-	doPlug(&r0[0], plugBoard, plugBoardSize);
-	char r1[27] = { '\0' };
-	strcpy(&r1[0], rotors[rotorIdx1]);
-	doPlug(&r1[0], plugBoard, plugBoardSize);
-	char r2[27] = { '\0' };
-	strcpy(&r2[0], rotors[rotorIdx2]);
-	doPlug(&r2[0], plugBoard, plugBoardSize);
-
-	for (uint16_t x = 0; x < strlen(ct) && x < sizeof(EncryptResult); x++) {
-		if (ct[x] == ' ')
-			continue;
-
-		int ct_letter = li(toupper(ct[x]));
-
-		// Step right rotor on every iteration
-		R = mod26(R + 1);
-
-		// Pass through rotors
-		char a = r2[mod26(R + ct_letter)];
-		char b = r1[mod26(M + li(a) - R)];
-		char c = r0[mod26(L + li(b) - M)];
-
-		// Pass through reflector
-		char ref = reflector[mod26(li(c) - L)];
-
-		// Inverse rotor pass
-		int d = mod26(indexof(&r0[0], alpha[mod26(li(ref) + L)]) - L);
-		int e = mod26(indexof(&r1[0], alpha[mod26(d + M)]) - M);
-		char f = alpha[mod26(indexof(&r2[0], alpha[mod26(e + R)]) - R)];
-
-		*outPtr = f;
-		outPtr++;
-	}
-
-	return &EncryptResult[0];
-}
-
-ErrorType EngimaState::onShutdown() {
-	return ErrorType();
-}
-
 //////////////////////////////////////////////////////////////
 
 BadgeInfoState::BadgeInfoState() :
@@ -547,12 +422,13 @@ BadgeInfoState::~BadgeInfoState() {
 ErrorType BadgeInfoState::onInit() {
 	gui_set_curList(&BadgeInfoList);
 	memset(&ListBuffer[0], 0, sizeof(ListBuffer));
-	sprintf(&ListBuffer[0][0], "SW Version: %s", "1.0.0");
-	sprintf(&ListBuffer[1][0], "DEVID: %lu", HAL_GetDEVID());
-	sprintf(&ListBuffer[2][0], "REVID: %lu", HAL_GetREVID());
-	sprintf(&ListBuffer[3][0], "HAL Version: %lu", HAL_GetHalVersion());
-	sprintf(&ListBuffer[4][0], "UID: %u", getContactStore().getMyInfo().getUniqueID());
-	sprintf(&ListBuffer[5][0], "Num contacts: %u", getContactStore().getSettings().getNumContacts());
+	sprintf(&ListBuffer[0][0], "N: %s", getContactStore().getSettings().getAgentName());
+	sprintf(&ListBuffer[1][0], "Num contacts: %u", getContactStore().getSettings().getNumContacts());
+	sprintf(&ListBuffer[2][0], "DEVID: %lu", HAL_GetDEVID());
+	sprintf(&ListBuffer[3][0], "REVID: %lu", HAL_GetREVID());
+	sprintf(&ListBuffer[4][0], "HAL Version: %lu", HAL_GetHalVersion());
+	sprintf(&ListBuffer[5][0], "UID: %u", getContactStore().getMyInfo().getUniqueID());
+	sprintf(&ListBuffer[6][0], "SVer: %s", "dc24.1.0");
 	for (uint32_t i = 0; i < (sizeof(Items) / sizeof(Items[0])); i++) {
 		Items[i].text = &ListBuffer[i][0];
 	}
@@ -618,6 +494,7 @@ ReturnStateContext RadioInfoState::onRun(QKeyboard &kb) {
 	sprintf(&ListBuffer[1][0], "RSSI: %d", getRadio().readRSSI());
 	sprintf(&ListBuffer[2][0], "RSSI Threshold: %u", getRadio().getRSSIThreshHold());
 	sprintf(&ListBuffer[3][0], "Gain: %u", getRadio().getCurrentGain());
+	sprintf(&ListBuffer[4][0], "Temp: %u", getRadio().readTemperature());
 	uint8_t pin = kb.getLastKeyReleased();
 	if (pin == 9) {
 		nextState = StateFactory::getMenuState();

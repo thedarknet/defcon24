@@ -26,8 +26,12 @@ public:
 	void setCurrentLetterInBufferAndInc();
 	void blinkLetter();
 	KeyBoardLetterCtx();
+	void resetChar();
+	void finalize();
 	void init(char *b, uint16_t s);
 };
+
+KeyBoardLetterCtx &getKeyboardContext();
 
 class QKeyboard {
 public:

@@ -72,7 +72,7 @@ bool exists(const std::string& name) {
 
 void usage() {
 	cout
-			<< "BadgeGen -u <make uber init file> -c <create daemon keys> -n <number of badge keys to generate> -w <3 letter string to set wheels> -m <message to encrypt/decrypt>"
+			<< "BadgeGen -u <make uber init file> -c <create daemon keys> -n <number of badge keys to generate> -w <set in pairs> -p <plug board> -m <message to encrypt/decrypt>"
 			<< endl;
 }
 

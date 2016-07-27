@@ -134,31 +134,6 @@ private:
 
 };
 
-class EngimaState: public StateBase {
-public:
-	EngimaState();
-	enum INTERNAL_STATE {
-		SET_WHEELS, ENTER_MESSAGE
-	};
-	virtual ~EngimaState();
-protected:
-	virtual ErrorType onInit();
-	virtual ReturnStateContext onRun(QKeyboard &kb);
-	virtual ErrorType onShutdown();
-protected:
-	long mod26(long a);
-	int li(char l);
-	int indexof (const char* array, int find);
-	const char* crypt(char *Wheels, const char *plugBoard, int plugBoardSize, const char *ct);
-	void doPlug(char *r, const char *swapChars, int s);
-private:
-	static const uint16_t MAX_ENCRYPTED_LENGTH = 200;
-	INTERNAL_STATE InternalState;
-	char EntryBuffer[MAX_ENCRYPTED_LENGTH];
-	char Wheels[6];
-	char EncryptResult[MAX_ENCRYPTED_LENGTH];
-};
-
 class BadgeInfoState: public StateBase {
 public:
 	BadgeInfoState();
@@ -169,10 +144,9 @@ protected:
 	virtual ErrorType onShutdown();
 private:
 	GUI_ListData BadgeInfoList;
-	GUI_ListItemData Items[6];
-	char ListBuffer[6][20]; //height then width
+	GUI_ListItemData Items[7];
+	char ListBuffer[7][20]; //height then width
 };
-
 class RadioInfoState: public StateBase {
 public:
 	RadioInfoState();
@@ -183,8 +157,8 @@ protected:
 	virtual ErrorType onShutdown();
 private:
 	GUI_ListData RadioInfoList;
-	GUI_ListItemData Items[4];
-	char ListBuffer[4][20];
+	GUI_ListItemData Items[5];
+	char ListBuffer[5][20];
 };
 
 class EventState;

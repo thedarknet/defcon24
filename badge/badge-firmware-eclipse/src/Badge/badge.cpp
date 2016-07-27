@@ -174,10 +174,18 @@ uint32_t startBadge() {
 	DrawList.ItemsCount++;
 	delay(TIME_BETWEEN_INITS);
 	gui_draw();
+	delay(1000);
+
+	gui_set_curList(0);
+
+	gui_lable_multiline("#dcdn16", 0, 10, 128, 64, 0, 0);
+	gui_lable_multiline("><>", 0, 40, 128, 64, 0, 0);
+	gui_lable_multiline("Cyberez Inc", 0, 50, 128, 64, 0, 0);
+	gui_draw();
+	delay(3000);
 
 	////////
 	state = INITIAL_STATE;
-	gui_set_curList(0);
 
 	StateFactory::getIRPairingState()->BeTheBob();
 	CurrentState = StateFactory::getMenuState();

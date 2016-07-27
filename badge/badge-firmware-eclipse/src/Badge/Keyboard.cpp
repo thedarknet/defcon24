@@ -2,6 +2,12 @@
 #include <gpio.h>
 #include <string.h>
 
+KeyBoardLetterCtx KCTX;
+
+KeyBoardLetterCtx &getKeyboardContext() {
+	return KCTX;
+}
+
 KeyBoardLetterCtx::KeyBoardLetterCtx() {
 }
 
@@ -13,7 +19,9 @@ void KeyBoardLetterCtx::processButtonPush(uint8_t button, const char *buttonLett
 		}
 	} else {
 		LetterSelection = 0;
-		setCurrentLetterInBufferAndInc();
+		if(Started) {
+			setCurrentLetterInBufferAndInc();
+		}
 	}
 	if (buttonLetters[LetterSelection] == '\b') {
 		Buffer[CursorPosition] = '\0';
@@ -48,6 +56,10 @@ void KeyBoardLetterCtx::decPosition() {
 	}
 }
 
+void KeyBoardLetterCtx::finalize() {
+	Buffer[CursorPosition] = CurrentLetter;
+}
+
 void KeyBoardLetterCtx::incPosition() {
 	if (++CursorPosition >= BufferSize) {
 		CursorPosition = BufferSize - 1;
@@ -69,12 +81,18 @@ void KeyBoardLetterCtx::blinkLetter() {
 		UnderBar = !UnderBar;
 	}
 	int16_t pos = CursorPosition;
-	if(pos<0) pos = 0;
+	if (pos < 0)
+		pos = 0;
 	if (UnderBar) {
 		Buffer[pos] = '_';
 	} else {
 		Buffer[pos] = CurrentLetter;
 	}
+}
+
+void KeyBoardLetterCtx::resetChar() {
+	LastPin = QKeyboard::NO_PIN_SELECTED;
+	CurrentLetter = ' ';
 }
 void KeyBoardLetterCtx::init(char *b, uint16_t s) {
 	Buffer = b;
@@ -82,7 +100,7 @@ void KeyBoardLetterCtx::init(char *b, uint16_t s) {
 	UnderBar = true;
 	CurrentLetter = ' ';
 	BufferSize = s;
-	CursorPosition = -1;
+	CursorPosition = 0;
 	LastTimeLetterWasPushed = 0;
 	LetterSelection = 0;
 	LastBlinkTime = 0;
@@ -134,7 +152,7 @@ void QKeyboard::scan() {
 	}
 	if (selectedPin == LastSelectedPin) {
 		TimesLastPinSelected++;
-		if(KeyJustReleased!=NO_PIN_SELECTED && selectedPin==NO_PIN_SELECTED) {
+		if (KeyJustReleased != NO_PIN_SELECTED && selectedPin == NO_PIN_SELECTED) {
 			KeyJustReleased = NO_PIN_SELECTED;
 		}
 	} else {
@@ -158,7 +176,7 @@ uint8_t QKeyboard::getLastKeyReleased() {
 }
 
 bool QKeyboard::wasKeyReleased() {
-	return KeyJustReleased!=NO_PIN_SELECTED;
+	return KeyJustReleased != NO_PIN_SELECTED;
 }
 
 void QKeyboard::reset() {
@@ -169,6 +187,7 @@ void QKeyboard::reset() {
 void QKeyboard::updateContext(KeyBoardLetterCtx &ctx) {
 	if (ctx.isKeySelectionTimedOut() && !wasKeyReleased()) {
 		ctx.setCurrentLetterInBufferAndInc();
+		ctx.resetChar();
 		ctx.timerStop();
 	} else if (wasKeyReleased()) {
 		const char *current = 0;
