@@ -131,7 +131,8 @@ class flashProgrammer(object):
             No more differences found.
         '''
 
-        if 'verified' in lines[3]:
+        # Last line has the 'verified' result 
+        if 'verified' in lines[len(lines)-1]:
             return True
         else:
             return False
