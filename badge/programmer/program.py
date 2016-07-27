@@ -116,7 +116,7 @@ def programKeyfile(flasher, key_filename):
 
     flasher.erase(FLASH_BASE + KEY_FLASH_OFFSET, roundToSectorSize(key_flash_size))
 
-    flasher.flashFile(key_filename, KEY_FLASH_OFFSET)
+    flasher.flashFile(key_filename, FLASH_BASE + KEY_FLASH_OFFSET)
 
     if flasher.verifyFile(key_filename, KEY_FLASH_OFFSET):
         return True
