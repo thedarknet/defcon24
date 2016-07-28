@@ -106,7 +106,8 @@ ErrorType MenuState::onInit() {
 	Items[6].id = 6;
 	Items[6].text = (const char *) "Radio Info";
 	Items[7].id = 7;
-	Items[7].text = (const char *) "Event Log";
+	Items[7].text = "";
+	//Items[7].text = (const char *) "Event Log";
 	return ErrorType();
 }
 
@@ -157,8 +158,9 @@ ReturnStateContext MenuState::onRun(QKeyboard &kb) {
 		case 6:
 			nextState = StateFactory::getRadioInfoState();
 			break;
-		case 7:
-			nextState = StateFactory::getEventState();
+		//case 7:
+		//	nextState = StateFactory::getEventState();
+		//	break;
 		}
 	}
 		break;
@@ -521,7 +523,7 @@ RadioInfoState TheRadioInfoState;
 BadgeInfoState TheBadgeInfoState;
 GameOfLife TheGameOfLifeState;
 MessageState TheMessageState;
-EventState TheEventState;
+//EventState TheEventState;
 
 bool StateFactory::init() {
 	return true;
@@ -573,7 +575,8 @@ StateBase *StateFactory::getGameOfLifeState() {
 MessageState *StateFactory::getMessageState() {
 	return &TheMessageState;
 }
-
+/*
 EventState *StateFactory::getEventState() {
 	return &TheEventState;
 }
+*/

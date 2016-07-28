@@ -121,11 +121,11 @@ void IRState::ListenForAlice() {
 							&atbs->signature[0])) {
 						char displayBuf[24];
 						sprintf(&displayBuf[0], "New Contact: %s", &AIC.AliceName[0]);
-						StateFactory::getEventState()->addMessage(&displayBuf[0]);
+						//StateFactory::getEventState()->addMessage(&displayBuf[0]);
 					} else {
 						char displayBuf[24];
 						sprintf(&displayBuf[0], "New Contact: %s", &AIC.AliceName[0]);
-						StateFactory::getEventState()->addMessage(&displayBuf[0]);
+						//StateFactory::getEventState()->addMessage(&displayBuf[0]);
 					}
 				}
 				IRStartRx();
@@ -214,16 +214,16 @@ ReturnStateContext IRState::onRun(QKeyboard &kb) {
 						char displayBuf[24];
 						sprintf(&displayBuf[0], "New Contact: %s", &brti->BobAgentName[0]);
 						gui_lable_multiline(msg4, 0, 40, 128, 64, 0, 0);
-						StateFactory::getEventState()->addMessage(&displayBuf[0]);
+						//StateFactory::getEventState()->addMessage(&displayBuf[0]);
 					} else {
 						char displayBuf[24];
 						sprintf(&displayBuf[0], "Failed to save contact: %s", &brti->BobAgentName[0]);
-						StateFactory::getEventState()->addMessage(&displayBuf[0]);
+						//StateFactory::getEventState()->addMessage(&displayBuf[0]);
 					}
 				} else {
 					char displayBuf[24];
 					sprintf(&displayBuf[0], "Signature Check Failed with %s", &brti->BobAgentName[0]);
-					StateFactory::getEventState()->addMessage(&displayBuf[0]);
+					//StateFactory::getEventState()->addMessage(&displayBuf[0]);
 				}
 			}
 			return ReturnStateContext(StateFactory::getMenuState());

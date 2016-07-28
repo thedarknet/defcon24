@@ -30,7 +30,7 @@ private:
 	GUI_ListItemData Items[5];
 	uint8_t CurrentPos;
 };
-
+/*
 class EventState: public StateBase {
 public:
 	struct MessageData {
@@ -51,5 +51,5 @@ private:
 	GUI_ListData EventList;
 	GUI_ListItemData Items[5];
 };
-
+*/
 #endif

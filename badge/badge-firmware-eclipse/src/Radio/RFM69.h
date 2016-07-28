@@ -133,7 +133,9 @@ class RFM69 {
     // allow hacking registers by making these public
     uint8_t readReg(uint8_t addr);
     void writeReg(uint8_t addr, uint8_t val);
+#ifdef READ_ALL_REGS
     void readAllRegs();
+#endif
     virtual ~RFM69();
   protected:
     static void isr0();

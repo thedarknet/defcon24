@@ -68,7 +68,7 @@ ReturnStateContext EngimaState::onRun(QKeyboard &kb) {
 			InternalState = QUEST_COMPLETION;
 			ShaOBJ sha;
 			sha256_init(&sha);
-			sha256_add(&sha, (const uint8_t *) "ZEROWILDKRUXCMD", 15);
+			sha256_add(&sha, (const uint8_t*) getContactStore().getMyInfo().getPrivateKey(),8);
 			sha256_add(&sha, (const uint8_t*) &EncryptResult[0], strlen(&EncryptResult[0]));
 			sha256_digest(&sha, &ResultHash[0]);
 			memset(&EntryBuffer[0], 0, sizeof(EntryBuffer));

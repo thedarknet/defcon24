@@ -209,6 +209,26 @@ void loopBadge() {
 		CurrentState = rsc.NextMenuToRun;
 	}
 	StateFactory::getIRPairingState()->ListenForAlice();
+	//configure 1 time listen RegListen1, RegListen2, RegListen3
+	//defaults are good except for ListenCriteria should be 1 not 0
+
+	//how to stop listen mode
+	// Program RegOpMode with ListenOn=0, ListenAbort=1, and the desired setting for the Mode bits (Sleep, Stdby, FS, Rx
+	//	or Tx mode) in a single SPI access
+	//Program RegOpMode with ListenOn=0, ListenAbort=0, and the desired setting for the Mode bits (Sleep, Stdby, FS, Rx
+	//	or Tx mode) in a second SPI access
+	//
+	// Cycle:
+	//	Set mode to standby with listen on
+	//		If interrupt fires grab data, stop listen mode, start listen mode.
+	//	if you need to transmit
+	//		stop listen mode
+	//		Transmit
+	//		go back into listen mode
+	//goto standby and listen
+
+	//getRadio().setListen();
+
 	gui_draw();
 }
 

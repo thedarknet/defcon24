@@ -452,11 +452,11 @@ void RFM69::receiveBegin() {
 }
 
 void noInterrupts() {
-
+	//HAL_NVIC_DisableIRQ(EXTI0_IRQn);
 }
 
 void interrupts() {
-
+	//HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 }
 
 // checks if a packet was received and/or puts transceiver in receive (ie RX or listen) mode
@@ -537,6 +537,7 @@ void RFM69::select() {
 	SPI.setClockDivider(SPI_CLOCK_DIV4);// decided to slow down from DIV2 after SPI stalling in some instances, especially visible on mega1284p when RFM69 and FLASH chip both present
 	digitalWrite(_slaveSelectPin, LOW);
 #else
+	noInterrupts();
 	HAL_GPIO_WritePin(GPIOA, RFM69_SPI_NSS_Pin, GPIO_PIN_RESET);
 #endif
 
@@ -554,6 +555,7 @@ void RFM69::unselect() {
 	maybeInterrupts();
 #else
 	HAL_GPIO_WritePin(GPIOA, RFM69_SPI_NSS_Pin, GPIO_PIN_SET);
+	maybeInterrupts();
 #endif
 }
 
@@ -606,6 +608,7 @@ void SerialPrint_P(PGM_P str, void (*f)(uint8_t) = SerialWrite ) {
 }
 #endif
 
+#ifdef READ_ALL_REGS
 void RFM69::readAllRegs() {
 	uint8_t regVal;
 #if REGISTER_DETAIL
@@ -869,6 +872,8 @@ void RFM69::readAllRegs() {
 	}
 	unselect();
 }
+
+#endif
 
 uint8_t RFM69::readTemperature(uint8_t calFactor) // returns centigrade
 		{

@@ -87,7 +87,7 @@ ErrorType MessageState::onShutdown() {
 }
 
 /////////////////////
-
+/*
 EventState::MessageData::MessageData() {
 	memset(&Msg[0], 0, sizeof(Msg));
 }
@@ -148,3 +148,4 @@ ErrorType EventState::onShutdown() {
 	gui_set_curList(0);
 	return ErrorType();
 }
+*/
