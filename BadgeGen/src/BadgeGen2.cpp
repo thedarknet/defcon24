@@ -221,6 +221,7 @@ int main(int argc, char *argv[]) {
 			cerr << "Error generating key" << endl;
 		}
 	} else if (1 == generate) {
+		std::ofstream sqlFile("badge-info.sql");
 		for (int i = 0; i < numberToGen; i++) {
 			if (makeKey(privateKey, unCompressPubKey, compressPubKey)) {
 				uECC_RNG_Function f = uECC_get_rng();
@@ -250,6 +251,13 @@ int main(int argc, char *argv[]) {
 					of.write((const char *) &privateKey[0], sizeof(privateKey));
 					of.write((const char *) &reserveFlags, sizeof(reserveFlags));  //just zero-ing out memory
 					of.flush();
+					unsigned short rid = (*(unsigned short *)&RadioID[0]);
+					sqlFile << "INSERT INTO BADGE(RADIO_ID, PRIV_KEY, FLAGS) VALUES (" << rid << ",'"
+							<< std::hex;
+					for(int j=0;j<24;j++) {
+						sqlFile << int(privateKey[j]);
+					}
+					sqlFile << "'," << reserveFlags << ");" << std::endl;
 				}
 			}
 		}
