@@ -334,8 +334,9 @@ ErrorType SettingState::onShutdown() {
 //////////////////////////////////////////////////////////////
 
 BadgeInfoState::BadgeInfoState() :
-		StateBase(), BadgeInfoList("Badge Info:", Items, 0, 0, 128, 64, 0, (sizeof(Items) / sizeof(Items[0]))) {
+		StateBase(), BadgeInfoList("Badge Info:", Items, 0, 0, 128, 64, 0, (sizeof(Items) / sizeof(Items[0]))), RegCode() {
 
+	memset(&RegCode,0,sizeof(RegCode));
 	for (uint32_t i = 0; i < (sizeof(Items) / sizeof(Items[0])); i++) {
 		Items[i].id = i;
 	}
@@ -346,19 +347,38 @@ BadgeInfoState::~BadgeInfoState() {
 
 }
 
+
+
+const char *BadgeInfoState::getRegCode() {
+	if(RegCode[0]==0) {
+		ShaOBJ hashObj;
+		sha256_init(&hashObj);
+		sha256_add(&hashObj,getContactStore().getMyInfo().getPrivateKey(),ContactStore::PRIVATE_KEY_LENGTH);
+		uint16_t id = getContactStore().getMyInfo().getUniqueID();
+		sha256_add(&hashObj,(uint8_t *) &id,sizeof(id));
+		uint8_t rH[SHA256_HASH_SIZE];
+		sha256_digest(&hashObj,&rH[0]);
+		sprintf(&RegCode[0],"%x%x%x%x%x%x%x%x", rH[0],rH[1],rH[2],rH[3],rH[4],rH[5],rH[6],
+				rH[7]);
+	}
+	return &RegCode[0];
+}
+
 ErrorType BadgeInfoState::onInit() {
 	gui_set_curList(&BadgeInfoList);
 	memset(&ListBuffer[0], 0, sizeof(ListBuffer));
 	sprintf(&ListBuffer[0][0], "N: %s", getContactStore().getSettings().getAgentName());
 	sprintf(&ListBuffer[1][0], "Num contacts: %u", getContactStore().getSettings().getNumContacts());
-	sprintf(&ListBuffer[2][0], "DEVID: %lu", HAL_GetDEVID());
-	sprintf(&ListBuffer[3][0], "REVID: %lu", HAL_GetREVID());
-	sprintf(&ListBuffer[4][0], "HAL Version: %lu", HAL_GetHalVersion());
-	sprintf(&ListBuffer[5][0], "UID: %u", getContactStore().getMyInfo().getUniqueID());
-	sprintf(&ListBuffer[6][0], "SVer: %s", "dc24.1.0");
+	sprintf(&ListBuffer[2][0], "REG: %s", getRegCode());
+	sprintf(&ListBuffer[3][0], "DEVID: %lu", HAL_GetDEVID());
+	sprintf(&ListBuffer[4][0], "REVID: %lu", HAL_GetREVID());
+	sprintf(&ListBuffer[5][0], "HAL Version: %lu", HAL_GetHalVersion());
+	sprintf(&ListBuffer[6][0], "UID: %u", getContactStore().getMyInfo().getUniqueID());
+	sprintf(&ListBuffer[7][0], "SVer: %s", "dc24.1.0");
 	for (uint32_t i = 0; i < (sizeof(Items) / sizeof(Items[0])); i++) {
 		Items[i].text = &ListBuffer[i][0];
 	}
+	Items[2].setShouldScroll();
 	return ErrorType();
 }
 

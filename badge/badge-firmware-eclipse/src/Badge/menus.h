@@ -111,10 +111,12 @@ protected:
 	virtual ErrorType onInit();
 	virtual ReturnStateContext onRun(QKeyboard &kb);
 	virtual ErrorType onShutdown();
+	const char *getRegCode();
 private:
 	GUI_ListData BadgeInfoList;
-	GUI_ListItemData Items[7];
-	char ListBuffer[7][20]; //height then width
+	GUI_ListItemData Items[8];
+	char ListBuffer[8][24]; //height then width
+	char RegCode[17];
 };
 class RadioInfoState: public StateBase {
 public:
