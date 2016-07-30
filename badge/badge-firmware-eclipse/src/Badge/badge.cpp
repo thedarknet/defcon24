@@ -8,6 +8,7 @@
 #include <tim.h>
 #include <usart.h>
 #include "menus/irmenu.h"
+#include "menus/MessageState.h"
 
 char sendingBuf[64] = { '\0' };
 char receivingBuf[64] = { '\0' };
@@ -145,32 +146,25 @@ uint32_t startBadge() {
 	}
 	gui_draw();
 	delay(TIME_BETWEEN_INITS);
-#if 1
-#define INITIAL_STATE 6
-	if (Radio.initialize(RF69_915MHZ, 1)) {
-#elif 0
-#define INITIAL_STATE 7
-		if(Radio.initialize(RF69_915MHZ, 2)) {
-#else
-#define INITIAL_STATE 1
-#endif
-		items[1].set(1, "RADIO INIT");
-		Radio.setPowerLevel(31);
-		retVal |= COMPONENTS_ITEMS::RADIO;
+	if (MyContacts.init()) {
+		items[1].set(2, "FLASH MEM INIT");
+		retVal |= COMPONENTS_ITEMS::FLASH_MEM;
 	} else {
-		items[1].set(1, "RADIO FAILED");
+		items[1].set(2, "FLASH FAILED");
 	}
 	DrawList.ItemsCount++;
 	gui_draw();
 	delay(TIME_BETWEEN_INITS);
 
-	if (MyContacts.init()) {
-		items[2].set(2, "Flash mem INIT");
-		retVal |= COMPONENTS_ITEMS::FLASH_MEM;
-	} else {
-		items[2].set(2, "Flash mem FAILED");
-	}
 	//test for IR??
+	if (Radio.initialize(RF69_915MHZ, getContactStore().getMyInfo().getUniqueID())) {
+		items[2].set(1, "RADIO INIT");
+		Radio.setPowerLevel(31);
+		retVal |= COMPONENTS_ITEMS::RADIO;
+	} else {
+		items[2].set(1, "RADIO FAILED");
+	}
+
 	DrawList.ItemsCount++;
 	delay(TIME_BETWEEN_INITS);
 	gui_draw();
@@ -183,9 +177,6 @@ uint32_t startBadge() {
 	gui_lable_multiline("Cyberez Inc", 0, 50, 128, 64, 0, 0);
 	gui_draw();
 	delay(3000);
-
-	////////
-	state = INITIAL_STATE;
 
 	StateFactory::getIRPairingState()->BeTheBob();
 	CurrentState = StateFactory::getMenuState();
@@ -209,6 +200,20 @@ void loopBadge() {
 		CurrentState = rsc.NextMenuToRun;
 	}
 	StateFactory::getIRPairingState()->ListenForAlice();
+
+
+	static uint32_t lastSendTime = 0;
+#if 1
+	if (tick - lastSendTime > 10) {
+#else
+		if(lastSendTime==0) {
+#endif
+		lastSendTime = tick;
+		if (Radio.receiveDone()) {
+			StateFactory::getMessageState()->addRadioMessage((const char *) &Radio.DATA[0], Radio.DATALEN,
+					Radio.SENDERID, Radio.RSSI);
+		}
+	}
 	//configure 1 time listen RegListen1, RegListen2, RegListen3
 	//defaults are good except for ListenCriteria should be 1 not 0
 

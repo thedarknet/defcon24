@@ -313,9 +313,6 @@ bool ContactStore::init() {
 }
 
 bool ContactStore::getContactAt(uint16_t numContact, Contact &c) {
-	if (numContact == 0)
-		return false;
-	numContact--;
 	uint8_t currentContacts = Settings.getNumContacts();
 	if (numContact < currentContacts) {
 		//determine page
@@ -354,7 +351,7 @@ bool ContactStore::addContact(uint16_t uid, char agentName[AGENT_NAME_LENGTH], u
 		return false;
 	}
 	Contact c(0xFFFFFFFF);
-	if (getContactAt(newNumContacts, c)) {
+	if (getContactAt(currentContacts, c)) {
 		c.setUniqueID(uid);
 		c.setAgentname(agentName);
 		c.setPublicKey(key);

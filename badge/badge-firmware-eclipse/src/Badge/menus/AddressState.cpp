@@ -1,6 +1,7 @@
 #include "AddressState.h"
 #include <KeyStore.h>
 #include <gui.h>
+#include "SendMsgState.h"
 
 ////////////////////////////////////////////////
 AddressState::AddressState() :
@@ -103,8 +104,9 @@ ReturnStateContext AddressState::onRun(QKeyboard &kb) {
 			DetailItems[3].text = &SignatureKey[0];
 			DetailItems[3].resetScrollable();
 			ContactDetails.selectedItem = sizeof(DetailItems) / sizeof(DetailItems[0]) - 1;
-			//nextState = StateFactory::getSendMessageState();
-			//((SendMsgState*) nextState)->setContactToMessage(Items[AddressList.selectedItem].id);
+			StateFactory::getSendMessageState()->setContactToMessage(
+					CurrentContactList[AddressList.selectedItem].getUniqueID(),
+					CurrentContactList[AddressList.selectedItem].getAgentName());
 			break;
 		}
 	} else {
@@ -130,8 +132,10 @@ ReturnStateContext AddressState::onRun(QKeyboard &kb) {
 			break;
 		case 9:
 			gui_set_curList(&AddressList);
+			DetailItems[0].id = 0;
 			break;
 		case 11:
+			nextState = StateFactory::getSendMessageState();
 			break;
 		}
 	}

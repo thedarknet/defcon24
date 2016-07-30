@@ -63,17 +63,20 @@ bool RFM69::initialize(uint8_t freqBand, RadioAddrType nodeID, uint8_t networkID
 					freqBand == RF69_315MHZ ?
 							RF_FRFMSB_315 :
 							(freqBand == RF69_433MHZ ?
-									RF_FRFMSB_433 : (freqBand == RF69_868MHZ ? RF_FRFMSB_868 : RF_FRFMSB_915))) },
+							RF_FRFMSB_433 :
+														(freqBand == RF69_868MHZ ? RF_FRFMSB_868 : RF_FRFMSB_915))) },
 			/* 0x08 */{ REG_FRFMID, (uint8_t) (
 					freqBand == RF69_315MHZ ?
 							RF_FRFMID_315 :
 							(freqBand == RF69_433MHZ ?
-									RF_FRFMID_433 : (freqBand == RF69_868MHZ ? RF_FRFMID_868 : RF_FRFMID_915))) },
+							RF_FRFMID_433 :
+														(freqBand == RF69_868MHZ ? RF_FRFMID_868 : RF_FRFMID_915))) },
 			/* 0x09 */{ REG_FRFLSB, (uint8_t) (
 					freqBand == RF69_315MHZ ?
 							RF_FRFLSB_315 :
 							(freqBand == RF69_433MHZ ?
-									RF_FRFLSB_433 : (freqBand == RF69_868MHZ ? RF_FRFLSB_868 : RF_FRFLSB_915))) },
+							RF_FRFLSB_433 :
+														(freqBand == RF69_868MHZ ? RF_FRFLSB_868 : RF_FRFLSB_915))) },
 
 			// looks like PA1 and PA2 are not implemented on RFM69W, hence the max output power is 13dBm
 			// +17dBm and +20dBm are possible on RFM69HW
@@ -110,14 +113,14 @@ bool RFM69::initialize(uint8_t freqBand, RadioAddrType nodeID, uint8_t networkID
 			/* 0x29 */{ REG_RSSITHRESH, 190 }, // default test values
 			/* 0x3c */{ REG_FIFOTHRESH, 0x8F }, //
 			/* 0x6f */{ REG_TESTDAGC, 0x30 }, //
-			{REG_LNA,RF_LNA_GAINSELECT_MAXMINUS48}, //we are not using AGC so let's set the gain
+			{ REG_LNA, RF_LNA_GAINSELECT_MAXMINUS48 }, //we are not using AGC so let's set the gain
 			//SHOULD WE USE ADDRESS FILTERING???
 			/* 0x39 */// NO FOR NOW{ REG_NODEADRS, nodeID },
 			{ 255, 0 } };
 
 	//digitalWrite(_slaveSelectPin, HIGH);
 	HAL_GPIO_WritePin(GPIOA, RFM69_SPI_NSS_Pin, GPIO_PIN_SET);
-	if(readReg(REG_VERSION)!=0x24) {
+	if (readReg(REG_VERSION) != 0x24) {
 		return false;
 	}
 	//pinMode(_slaveSelectPin, OUTPUT);
@@ -384,7 +387,6 @@ void RFM69::sendFrame(RFM69::RadioAddrType toAddress, const void* buffer, uint8_
 void RFM69::interruptHandler() {
 	//pinMode(4, OUTPUT);
 	//digitalWrite(4, 1);
-	gui_lable_multiline("HANDLE INTERRUPT", 0, 40, 120, 50, SSD1306_COLOR_BLACK, 0);
 	if (_mode == RF69_MODE_RX && (readReg(REG_IRQFLAGS2) & RF_IRQFLAGS2_PAYLOADREADY)) {
 		//RSSI = readRSSI();
 		setMode(RF69_MODE_STANDBY);
@@ -461,8 +463,9 @@ void interrupts() {
 
 // checks if a packet was received and/or puts transceiver in receive (ie RX or listen) mode
 bool RFM69::receiveDone() {
-//ATOMIC_BLOCK(ATOMIC_FORCEON)
-//{
+	if (_mode == RF69_MODE_TX) {
+		return false;
+	}
 	noInterrupts(); // re-enabled in unselect() via setMode() or via receiveBegin()
 	if (_mode == RF69_MODE_RX && PAYLOADLEN > 0) {
 		setMode(RF69_MODE_STANDBY); // enables interrupts
@@ -474,7 +477,6 @@ bool RFM69::receiveDone() {
 	}
 	receiveBegin();
 	return false;
-//}
 }
 
 // To enable encryption: radio.encrypt("ABCDEFGHIJKLMNOP");
@@ -502,7 +504,7 @@ int16_t RFM69::readRSSI(bool forceTrigger) {
 			; // wait for RSSI_Ready
 	}
 	rssi = -readReg(REG_RSSIVALUE);
-	rssi/=2;
+	rssi /= 2;
 	//rssi >>= 1;
 	return rssi;
 }

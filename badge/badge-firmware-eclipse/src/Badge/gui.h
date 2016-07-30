@@ -93,6 +93,7 @@ struct GUI_ListItemData {
 	uint32_t LastScrollTime;
 	uint8_t LastScrollPosition;
 	const char *getScrollOffset();
+	void setShouldScroll();
 	void resetScrollable() {Scrollable = 1;LastScrollTime=0;LastScrollPosition=0;}
 };
 

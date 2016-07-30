@@ -70,7 +70,8 @@
 
 #define null                  0
 #define COURSE_TEMP_COEF    -90 // puts the temperature reading in the ballpark, user can fine tune the returned value
-#define RF69_BROADCAST_ADDR 255
+//#define RF69_BROADCAST_ADDR 255
+#define RF69_BROADCAST_ADDR 0xFFFF
 #define RF69_CSMA_LIMIT_MS 1000
 #define RF69_TX_LIMIT_MS   1000
 #define RF69_FSTEP  61.03515625 // == FXOSC / 2^19 = 32MHz / 2^19 (p13 in datasheet)
@@ -152,10 +153,7 @@ class RFM69 {
     bool _promiscuousMode;
     uint8_t _powerLevel;
     bool _isRFM69HW;
-#if defined (SPCR) && defined (SPSR)
-    uint8_t _SPCR;
-    uint8_t _SPSR;
-#endif
+
 
     virtual void receiveBegin();
     virtual void setMode(uint8_t mode);

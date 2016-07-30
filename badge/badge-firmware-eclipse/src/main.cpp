@@ -84,7 +84,7 @@ int main(void) {
 	MX_SPI1_Init();
 	MX_TIM2_Init();
 	//MX_USART2_UART_Init();
-	MX_USART3_UART_Init();
+	//MX_USART3_UART_Init();
 	IRInit();
 	//MX_USB_DEVICE_Init();
 

@@ -18,16 +18,16 @@ public:
 public:
 	MessageState();
 	virtual ~MessageState();
-	void addRadioMessage(const char *msg, uint16_t uid, uint8_t rssi);
+	void addRadioMessage(const char *msg, uint16_t msgSize, uint16_t uid, uint8_t rssi);
 protected:
 	virtual ErrorType onInit();
 	virtual ReturnStateContext onRun(QKeyboard &kb);
 	virtual ErrorType onShutdown();
 private:
-	RadioMessage RMsgs[5];
+	RadioMessage RMsgs[8];
 	uint8_t InternalState;
 	GUI_ListData RadioList;
-	GUI_ListItemData Items[5];
+	GUI_ListItemData Items[8];
 	uint8_t CurrentPos;
 };
 /*

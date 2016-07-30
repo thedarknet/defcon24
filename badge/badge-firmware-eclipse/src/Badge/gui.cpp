@@ -4,6 +4,14 @@
 GUI_ListData *gui_CurList;
 
 
+void GUI_ListItemData::setShouldScroll() {
+	if(strlen(text)>14) {
+		resetScrollable();
+	} else {
+		Scrollable = 0;
+	}
+}
+
 bool gui_init()
 {
 	gui_CurList = 0;

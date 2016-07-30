@@ -15,15 +15,20 @@ MessageState::~MessageState() {
 
 }
 
-void MessageState::addRadioMessage(const char *msg, uint16_t uid, uint8_t rssi) {
-	strncpy((char *) &RMsgs[CurrentPos].Msg[0], msg, sizeof(RMsgs[CurrentPos].Msg));
+uint32_t min(uint32_t one, uint32_t two) {
+	if(one<two) return one;
+	return two;
+}
+
+void MessageState::addRadioMessage(const char *msg, uint16_t msgSize, uint16_t uid, uint8_t rssi) {
+	memset(&RMsgs[CurrentPos].Msg[0],0,sizeof(RMsgs[CurrentPos].Msg));
+	memcpy(&RMsgs[CurrentPos].Msg[0],msg,min(msgSize,sizeof(RMsgs[CurrentPos].Msg)));
 	RMsgs[CurrentPos].Rssi = rssi;
 	RMsgs[CurrentPos].FromUID = uid;
 	CurrentPos++;
 	CurrentPos = CurrentPos % ((sizeof(RMsgs) / sizeof(RMsgs[0])));
 }
 
-static const char *UNKNOWN = "UNKNOWN";
 
 uint8_t msgdec(uint8_t c, uint8_t m) {
 	if(c==0) {
@@ -33,22 +38,26 @@ uint8_t msgdec(uint8_t c, uint8_t m) {
 }
 
 ErrorType MessageState::onInit() {
-	uint8_t v = CurrentPos;
-	for(int i=0;i<5;i++) {
+	InternalState = MESSAGE_LIST;
+	uint8_t v = CurrentPos==0?0:CurrentPos-1;
+	for(int i=0;i<(sizeof(RMsgs) / sizeof(RMsgs[0]));i++) {
 		Items[i].id = RMsgs[v].FromUID;
 		ContactStore::Contact c;
 		if(getContactStore().findContactByID(RMsgs[v].FromUID,c)) {
 			Items[i].text = c.getAgentName();
+			Items[i].setShouldScroll();
 		} else {
-			Items[i].text = UNKNOWN;
+			Items[i].text = "";
 		}
-		Items[i].resetScrollable();
 		v = msgdec(v,4);
 	}
 
 	gui_set_curList(&RadioList);
 	return ErrorType();
 }
+
+static char MsgDisplayBuffer[62] = {'\0'};
+static char FromBuffer[20] = {'\0'};
 
 ReturnStateContext MessageState::onRun(QKeyboard &kb) {
 	StateBase *nextState = this;
@@ -74,9 +83,36 @@ ReturnStateContext MessageState::onRun(QKeyboard &kb) {
 			case 9: {
 				nextState = StateFactory::getMenuState();
 			}
+				break;
+			case 11: {
+				if(Items[RadioList.selectedItem].id!=0) {
+					uint8_t pos = 0xFF;
+					MsgDisplayBuffer[0]='\0';
+					for(int i=0;i<(sizeof(RMsgs) / sizeof(RMsgs[0]));i++) {
+						if(RMsgs[i].FromUID==Items[RadioList.selectedItem].id) {
+							strncpy(&MsgDisplayBuffer[0],RMsgs[i].Msg,sizeof(RMsgs[i].Msg));
+						}
+					}
+					if(MsgDisplayBuffer[0]=='\0') {
+						sprintf(&MsgDisplayBuffer[0],"Message from %s is gone only 8 stored in memory.",Items[RadioList.selectedItem].text);
+						nextState = StateFactory::getDisplayMessageState(StateFactory::getMessageState(), &MsgDisplayBuffer[0],5000);
+					} else {
+						InternalState = DETAIL;
+						sprintf(&FromBuffer[0],"F: %s",Items[RadioList.selectedItem].text);
+					}
+					gui_set_curList(0);
+				}
+				break;
+			}
 		}
 	} else {
-
+		//find message in array:
+		gui_lable_multiline(&FromBuffer[0],0,10,128,64,1,0);
+		gui_lable_multiline(&MsgDisplayBuffer[0],0,20,128,64,0,0);
+		if(key==9 || key==11) {
+			InternalState = MESSAGE_LIST;
+			gui_set_curList(&RadioList);
+		}
 	}
 	return ReturnStateContext(nextState);
 }

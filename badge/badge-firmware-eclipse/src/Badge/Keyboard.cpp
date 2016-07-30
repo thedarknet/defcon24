@@ -223,7 +223,7 @@ void QKeyboard::updateContext(KeyBoardLetterCtx &ctx) {
 			current = "##+";
 			break;
 		case 10:
-			current = "0\b";
+			current = "0 \b";
 			break;
 		}
 		if (getLastKeyReleased() < 11) {

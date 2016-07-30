@@ -9,6 +9,7 @@
 #include "menus/MessageState.h"
 #include "menus/AddressState.h"
 #include "menus/EnigmaState.h"
+#include "menus/SendMsgState.h"
 
 StateBase::StateBase() :
 		StateData(0), StateStartTime(0) {
@@ -329,84 +330,6 @@ ErrorType SettingState::onShutdown() {
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
-SendMsgState::SendMsgState() :
-		StateBase(), ContactID(SendMsgState::NO_CONTACT), MsgBuffer(), InputPos(0), InternalState(TYPE_MESSAGE) {
-
-}
-SendMsgState::~SendMsgState() {
-
-}
-void SendMsgState::setContactToMessage(const uint8_t &cid) {
-	ContactID = cid;
-}
-
-ErrorType SendMsgState::onInit() {
-	if (shouldReset()) {
-		memset(&MsgBuffer[0], 0, sizeof(MsgBuffer));
-		InputPos = 0;
-		getKeyboardContext().init(&MsgBuffer[0], sizeof(MsgBuffer));
-	} else {
-		clearState(DONT_RESET);
-	}
-	InternalState = TYPE_MESSAGE;
-	return ErrorType();
-}
-
-ReturnStateContext SendMsgState::onRun(QKeyboard &kb) {
-	StateBase *nextState = this;
-	switch (InternalState) {
-	case TYPE_MESSAGE: {
-		gui_lable_multiline("Send Message: ", 0, 10, 128, 64, 0, 0);
-		gui_lable_multiline(&MsgBuffer[0], 0, 20, 128, 64, 0, 0);
-		//keyboard entry
-		kb.updateContext(getKeyboardContext());
-		uint8_t pin = kb.getLastKeyReleased();
-		if (pin == 11) { //return has been pushed
-			InternalState = INTERNAL_STATE::CONFIRM_SEND;
-		}
-	}
-		break;
-	case CONFIRM_SEND: {
-		gui_lable_multiline("Send by pressing #", 0, 10, 128, 64, 0, 0);
-		gui_lable_multiline(&MsgBuffer[0], 0, 20, 128, 64, 0, 0);
-		uint8_t pin = kb.getLastKeyReleased();
-		if (pin == 9) {
-			InternalState = TYPE_MESSAGE;
-		} else if (pin == 11) {
-			InternalState = INTERNAL_STATE::SENDING;
-		}
-	}
-		break;
-	case SENDING: {
-		char buf[32];
-		ContactStore::Contact c(0);
-		if (getContactStore().getContactAt(this->ContactID, c)) {
-			sprintf(&buf[0], "Sending Message to: %s", c.getAgentName());
-			gui_lable_multiline(&buf[0], 0, 10, 128, 64, 0, 0);
-			if (getRadio().sendWithRetry(c.getUniqueID(), &MsgBuffer[0], strlen(&MsgBuffer[0]), 3, 100)) {
-				nextState = StateFactory::getDisplayMessageState(StateFactory::getMenuState(),
-						"Message Sent Successfully!", 5000);
-			} else {
-				nextState = StateFactory::getDisplayMessageState(StateFactory::getSendMessageState(),
-						"Failed to send to address!", 10000);
-				setState(DONT_RESET);
-			}
-		} else {
-			nextState = StateFactory::getDisplayMessageState(StateFactory::getAddressBookState(),
-					"Could not find Contact!", 10000);
-		}
-	}
-		break;
-	}
-	return ReturnStateContext(nextState);
-}
-
-ErrorType SendMsgState::onShutdown() {
-	if (shouldReset()) {
-		ContactID = NO_CONTACT;
-	}
-	return ErrorType();
-}
 
 //////////////////////////////////////////////////////////////
 
@@ -552,7 +475,7 @@ StateBase *StateFactory::getAddressBookState() {
 	return &TheAddressState;
 }
 
-StateBase *StateFactory::getSendMessageState() {
+SendMsgState *StateFactory::getSendMessageState() {
 	return &TheSendMsgState;
 }
 

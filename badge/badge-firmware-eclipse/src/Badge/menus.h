@@ -103,28 +103,6 @@ private:
 	uint8_t SubState;
 };
 
-
-class SendMsgState: public StateBase {
-public:
-	static const int16_t NO_CONTACT = -1;
-	enum INTERNAL_STATE {
-		TYPE_MESSAGE, CONFIRM_SEND, SENDING
-	};
-	SendMsgState();
-	virtual ~SendMsgState();
-	void setContactToMessage(const uint8_t &cid);
-protected:
-	virtual ErrorType onInit();
-	virtual ReturnStateContext onRun(QKeyboard &kb);
-	virtual ErrorType onShutdown();
-private:
-	int16_t ContactID;
-	char MsgBuffer[60];
-	uint16_t InputPos;
-	INTERNAL_STATE InternalState;
-
-};
-
 class BadgeInfoState: public StateBase {
 public:
 	BadgeInfoState();
@@ -155,6 +133,7 @@ private:
 class MessageState;
 class IRState;
 class EventState;
+class SendMsgState;
 //=============================
 class StateFactory {
 public:
@@ -164,7 +143,7 @@ public:
 	static StateBase *getSettingState();
 	static IRState 	 *getIRPairingState();
 	static StateBase *getAddressBookState();
-	static StateBase *getSendMessageState();
+	static SendMsgState *getSendMessageState();
 	static StateBase *getEnigmaState();
 	static StateBase *getBadgeInfoState();
 	static StateBase *getRadioInfoState();
