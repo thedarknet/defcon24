@@ -251,13 +251,24 @@ int main(int argc, char *argv[]) {
 					of.write((const char *) &privateKey[0], sizeof(privateKey));
 					of.write((const char *) &reserveFlags, sizeof(reserveFlags));  //just zero-ing out memory
 					of.flush();
+					//generate registration ID
+					ShaOBJ shaCtx;
+					sha256_init(&shaCtx);
+					sha256_add(&shaCtx,&privateKey[0],sizeof(privateKey));
+					sha256_add(&shaCtx,&RadioID[0],sizeof(RadioID));
+					uint8_t digest[32];
+					sha256_digest(&shaCtx,digest);
 					unsigned short rid = (*(unsigned short *)&RadioID[0]);
-					sqlFile << "INSERT INTO BADGE(RADIO_ID, PRIV_KEY, FLAGS) VALUES (" << rid << ",'"
-							<< std::hex;
+					sqlFile << "INSERT INTO BADGE(RADIO_ID, PRIV_KEY, FLAGS, REG_KEY) VALUES (" << rid  << ",'" << std::hex;
 					for(int j=0;j<24;j++) {
 						sqlFile << int(privateKey[j]);
 					}
-					sqlFile << "'," << reserveFlags << ");" << std::endl;
+					sqlFile << "'," <<  std::dec << reserveFlags << ",'"  
+					<< std::hex; 
+					for(unsigned int j=0;j<sizeof(digest);j++) {
+						sqlFile << int(digest[j]);
+					}
+					sqlFile << std::dec << "');";
 				}
 			}
 		}
