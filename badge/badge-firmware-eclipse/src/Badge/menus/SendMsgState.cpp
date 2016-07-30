@@ -34,6 +34,7 @@ ReturnStateContext SendMsgState::onRun(QKeyboard &kb) {
 		kb.updateContext(getKeyboardContext());
 		uint8_t pin = kb.getLastKeyReleased();
 		if (pin == 11) { //return has been pushed
+			getKeyboardContext().finalize();
 			InternalState = INTERNAL_STATE::CONFIRM_SEND;
 		}
 	}
