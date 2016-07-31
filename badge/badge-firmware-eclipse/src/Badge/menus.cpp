@@ -99,15 +99,17 @@ ErrorType MenuState::onInit() {
 	Items[2].id = 2;
 	Items[2].text = (const char *) "Address Book";
 	Items[3].id = 3;
-	Items[3].text = (const char *) "Check Messages";
+	Items[3].text = (const char *) "DCDN Net Msgs";
 	Items[4].id = 4;
 	Items[4].text = (const char *) "Enigma";
 	Items[5].id = 5;
-	Items[5].text = (const char *) "Badge Info";
+	Items[5].text = (const char *) "Screen Saver";
 	Items[6].id = 6;
-	Items[6].text = (const char *) "Radio Info";
+	Items[6].text = (const char *) "Badge Info";
 	Items[7].id = 7;
-	Items[7].text = "";
+	Items[7].text = (const char *) "Radio Info";
+	Items[8].id = 8;
+	Items[8].text = "";
 	//Items[7].text = (const char *) "Event Log";
 	return ErrorType();
 }
@@ -154,12 +156,15 @@ ReturnStateContext MenuState::onRun(QKeyboard &kb) {
 			nextState = StateFactory::getEnigmaState();
 			break;
 		case 5:
-			nextState = StateFactory::getBadgeInfoState();
+			nextState = StateFactory::getGameOfLifeState();
 			break;
 		case 6:
+			nextState = StateFactory::getBadgeInfoState();
+			break;
+		case 7:
 			nextState = StateFactory::getRadioInfoState();
 			break;
-		//case 7:
+		//case 8:
 		//	nextState = StateFactory::getEventState();
 		//	break;
 		}
@@ -183,11 +188,12 @@ SettingState::SettingState() :
 	Items[0].id = 0;
 	Items[0].text = (const char *) "Set Agent Name";
 	Items[1].id = 1;
-	Items[1].text = (const char *) "Set Screen Saver";
-	Items[2].id = 2;
-	Items[2].text = (const char *) "Set Sleep Time";
-	Items[3].id = 3;
-	Items[3].text = (const char *) "Reset Badge";
+	//Items[1].text = (const char *) "Set Screen Saver";
+	//Items[2].id = 2;
+	Items[1].text = (const char *) "Set Screen Saver Time";
+	Items[1].setShouldScroll();
+	Items[2].id = 3;
+	Items[2].text = (const char *) "Reset Badge";
 }
 
 SettingState::~SettingState() {
@@ -237,13 +243,13 @@ ReturnStateContext SettingState::onRun(QKeyboard & kb) {
 				memset(&AgentName[0], 0, sizeof(AgentName));
 				getKeyboardContext().init(&AgentName[0], sizeof(AgentName));
 				break;
+			//case 101:
+			//	sprintf(&AgentName[0], "Current:  %d", getContactStore().getSettings().getScreenSaverType() + 1);
+			//	break;
 			case 101:
-				sprintf(&AgentName[0], "Current:  %d", getContactStore().getSettings().getScreenSaverType() + 1);
+				InputPos = getContactStore().getSettings().getScreenSaverTime();
 				break;
 			case 102:
-				InputPos = getContactStore().getSettings().getSleepTime();
-				break;
-			case 103:
 				kb.reset();
 				break;
 			}
@@ -274,6 +280,7 @@ ReturnStateContext SettingState::onRun(QKeyboard & kb) {
 		}
 		break;
 	}
+	/*
 	case 101: {
 		gui_lable_multiline((const char*) "Screen Saver:", 0, 10, 128, 64, 0, 0);
 		gui_lable_multiline(&AgentName[0], 0, 20, 128, 64, 0, 0);
@@ -290,24 +297,28 @@ ReturnStateContext SettingState::onRun(QKeyboard & kb) {
 		}
 		break;
 	}
-	case 102:
-		gui_lable_multiline((const char*) "Time until badge goes to sleep:", 0, 10, 128, 64, 0, 0);
+	*/
+	case 101:
+		gui_lable_multiline((const char*) "Time until badge\ngoes to sleep:", 0, 10, 128, 64, 0, 0);
 		if (kb.getLastKeyReleased() == 9 || kb.getLastKeyReleased() == 10
 				|| kb.getLastKeyReleased() == QKeyboard::NO_PIN_SELECTED) {
 			//InputPos = 4;
 		} else if (kb.getLastKeyReleased() == 11) {
-			if (getContactStore().getSettings().setSleepTime(InputPos)) {
+			if (getContactStore().getSettings().setScreenSaverTime(InputPos)) {
 				nextState = StateFactory::getDisplayMessageState(StateFactory::getMenuState(), "Setting saved", 2000);
 			} else {
 				nextState = StateFactory::getDisplayMessageState(StateFactory::getMenuState(), "Save FAILED!", 4000);
 			}
 		} else {
 			InputPos = kb.getLastKeyReleased();
+			if(InputPos > 8) {
+				InputPos = 8;
+			}
 		}
 		sprintf(&AgentName[0], "%c Minutes", NUMBERS[InputPos]);
-		gui_lable_multiline(&AgentName[0], 0, 30, 128, 64, 0, 0);
+		gui_lable_multiline(&AgentName[0], 0, 40, 128, 64, 0, 0);
 		break;
-	case 103:
+	case 102:
 		gui_lable_multiline((const char*) "Reset to factory defaults?", 0, 10, 128, 64, 0, 0);
 		gui_lable_multiline((const char*) "Press # to Cancel", 0, 30, 128, 64, 0, 0);
 		gui_lable_multiline((const char*) "Press enter to do it", 0, 40, 128, 64, 0, 0);
@@ -353,9 +364,11 @@ const char *BadgeInfoState::getRegCode() {
 	if(RegCode[0]==0) {
 		ShaOBJ hashObj;
 		sha256_init(&hashObj);
-		sha256_add(&hashObj,getContactStore().getMyInfo().getPrivateKey(),ContactStore::PRIVATE_KEY_LENGTH);
+		const char *p = "this is my message";
+		sha256_add(&hashObj,(const uint8_t*)p,strlen(p));
+		//sha256_add(&hashObj,getContactStore().getMyInfo().getPrivateKey(),ContactStore::PRIVATE_KEY_LENGTH);
 		uint16_t id = getContactStore().getMyInfo().getUniqueID();
-		sha256_add(&hashObj,(uint8_t *) &id,sizeof(id));
+		//sha256_add(&hashObj,(uint8_t *) &id,sizeof(id));
 		uint8_t rH[SHA256_HASH_SIZE];
 		sha256_digest(&hashObj,&rH[0]);
 		sprintf(&RegCode[0],"%x%x%x%x%x%x%x%x", rH[0],rH[1],rH[2],rH[3],rH[4],rH[5],rH[6],

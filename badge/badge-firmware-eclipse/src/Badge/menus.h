@@ -24,12 +24,12 @@ public:
 	StateBase();
 	ReturnStateContext run(QKeyboard &kb);
 	uint32_t timeInState();
+	ErrorType shutdown();
 	virtual ~StateBase();
 protected:
 	static const uint32_t INIT_BIT = 0x01;
 	static const uint32_t DONT_RESET = 0x02;
 	ErrorType init();
-	ErrorType shutdown();
 	virtual ErrorType onInit()=0;
 	virtual ReturnStateContext onRun(QKeyboard &kb)=0;
 	virtual ErrorType onShutdown()=0;
@@ -84,7 +84,7 @@ protected:
 	virtual ErrorType onShutdown();
 private:
 	GUI_ListData MenuList;
-	GUI_ListItemData Items[8];
+	GUI_ListItemData Items[9];
 };
 
 class SettingState: public StateBase {
@@ -97,7 +97,7 @@ protected:
 	virtual ErrorType onShutdown();
 private:
 	GUI_ListData SettingList;
-	GUI_ListItemData Items[4];
+	GUI_ListItemData Items[3];
 	char AgentName[ContactStore::AGENT_NAME_LENGTH];
 	uint8_t InputPos;
 	uint8_t SubState;

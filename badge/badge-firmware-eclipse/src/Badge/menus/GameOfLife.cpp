@@ -14,28 +14,40 @@ ErrorType GameOfLife::onInit() {
 	return ErrorType();
 }
 
+static uint32_t displayMessageUntil = 0;
+bool ReInitGame = false;
+
 ReturnStateContext GameOfLife::onRun(QKeyboard &kb) {
-	uint16_t count = 0;
-	for (uint16_t j = 1; j < height - 1; j++) {
-		for (uint16_t k = 1; k < width - 1; k++) {
-			if ((gol[j] & (k << CurrentGeneration)) != 0) {
-				SSD1306_DrawPixel(k * 2, j, SSD1306_COLOR_WHITE);
-				count++;
-			}
-		}
-	}
-	if (0 == count) {
-		gui_lable_multiline((const char*) "ALL DEAD ", 0, 10, 128, 64, 0, 0);
-		sprintf(&UtilityBuf[0],"After %d generations", CurrentGeneration);
+	uint32_t now = HAL_GetTick();
+	if (now < displayMessageUntil) {
 		gui_lable_multiline(&UtilityBuf[0], 0, 10, 128, 64, 0, 0);
+	} else if (ReInitGame) {
 		initGame();
 	} else {
-		unsigned int tmp[sizeof(gol)];
-		life(&gol[0], Neighborhood, width, height, &tmp[0]);
-	}
-	CurrentGeneration++;
-	if(CurrentGeneration>=Generations) {
-		initGame();
+		uint16_t count = 0;
+		uint8_t bitToCheck = CurrentGeneration%32;
+		for (uint16_t j = 1; j < height - 1; j++) {
+			for (uint16_t k = 1; k < width - 1; k++) {
+				if ((gol[j] & (k << bitToCheck)) != 0) {
+					SSD1306_DrawPixel(k, j, SSD1306_COLOR_WHITE);
+					count++;
+				}
+			}
+		}
+		if (0 == count) {
+			sprintf(&UtilityBuf[0], "ALL DEAD\nAfter %d\ngenerations", CurrentGeneration);
+			displayMessageUntil = now + 3000;
+			ReInitGame = true;
+		} else {
+			unsigned int tmp[sizeof(gol)];
+			life(&gol[0], Neighborhood, width, height, &tmp[0]);
+		}
+		if (now % 3 == 0) {
+			CurrentGeneration++;
+			if (CurrentGeneration >= Generations) {
+				ReInitGame = true;
+			}
+		}
 	}
 	if (kb.getLastPinSeleted() == QKeyboard::NO_PIN_SELECTED) {
 		return ReturnStateContext(this);
@@ -49,8 +61,12 @@ ErrorType GameOfLife::onShutdown() {
 }
 
 void GameOfLife::initGame() {
+	ReInitGame = false;
 	uint32_t start = HAL_GetTick();
+	displayMessageUntil = start + 3000;
+	CurrentGeneration = 0;
 	Neighborhood = (start & 1) == 0 ? 'm' : 'v';
+	srand(start);
 	short chanceToBeAlive = rand() % 25;
 	memset(&gol[0], 0, sizeof(gol));
 	unsigned int tmp[height];
@@ -63,9 +79,9 @@ void GameOfLife::initGame() {
 			}
 		}
 	}
-	Generations = 100 + (rand() % 25);
+	Generations = 50 + (rand() % 75);
 	gui_lable_multiline((const char*) "Max Generations: ", 0, 10, 128, 64, 0, 0);
-	sprintf(&UtilityBuf[0], "%d", Generations);
+	sprintf(&UtilityBuf[0], "Max\nGenerations:\n%d", Generations);
 }
 //The life function is the most important function in the program.
 //It counts the number of cells surrounding the center cell, and

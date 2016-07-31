@@ -19,7 +19,7 @@ void KeyBoardLetterCtx::processButtonPush(uint8_t button, const char *buttonLett
 		}
 	} else {
 		LetterSelection = 0;
-		if(Started) {
+		if (Started) {
 			setCurrentLetterInBufferAndInc();
 		}
 	}
@@ -109,7 +109,8 @@ void KeyBoardLetterCtx::init(char *b, uint16_t s) {
 
 QKeyboard::QKeyboard(PinConfig Y1Pin, PinConfig Y2Pin, PinConfig Y3Pin, PinConfig X1Pin, PinConfig X2Pin,
 		PinConfig X3Pin, PinConfig X4Pin) :
-		LastSelectedPin(NO_PIN_SELECTED), TimesLastPinSelected(0), KeyJustReleased(NO_PIN_SELECTED) {
+		LastSelectedPin(NO_PIN_SELECTED), TimesLastPinSelected(0), KeyJustReleased(NO_PIN_SELECTED), LastPinSelectedTick(
+				HAL_GetTick()), LightAll(true) {
 	YPins[0] = Y1Pin;
 	YPins[1] = Y2Pin;
 	YPins[2] = Y3Pin;
@@ -119,10 +120,12 @@ QKeyboard::QKeyboard(PinConfig Y1Pin, PinConfig Y2Pin, PinConfig Y3Pin, PinConfi
 	XPins[3] = X4Pin;
 }
 
-bool lightAll = true;
+void QKeyboard::resetLastPinTick() {
+	LastPinSelectedTick = HAL_GetTick();
+}
 
 void QKeyboard::setAllLightsOn(bool b) {
-	lightAll = b;
+	LightAll = b;
 }
 
 void QKeyboard::scan() {
@@ -146,6 +149,7 @@ void QKeyboard::scan() {
 		for (uint8_t y = 0; y < yPins; y++) {
 			if (HAL_GPIO_ReadPin(YPins[y].Port, YPins[y].Pin) == GPIO_PIN_RESET) {
 				selectedPin = r * yPins + y;
+				LastPinSelectedTick = HAL_GetTick();
 				break;
 			}
 		}
@@ -160,7 +164,7 @@ void QKeyboard::scan() {
 		LastSelectedPin = selectedPin;
 		TimesLastPinSelected = 0;
 	}
-	if (lightAll) {
+	if (getAllLightsOn()) {
 		for (uint8_t x = 0; x < xPins; ++x) {
 			HAL_GPIO_WritePin(XPins[x].Port, XPins[x].Pin, GPIO_PIN_RESET);
 		}

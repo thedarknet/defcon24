@@ -180,6 +180,7 @@ uint32_t startBadge() {
 
 	StateFactory::getIRPairingState()->BeTheBob();
 	CurrentState = StateFactory::getMenuState();
+	KB.resetLastPinTick();
 	return true;
 }
 
@@ -195,24 +196,25 @@ void loopBadge() {
 		if (CurrentState != rsc.NextMenuToRun) {
 			//on state switches reset keyboard and give a 1 second pause on reading from keyboard.
 			KB.reset();
-			//did we just switch to the IR pairing state?
 		}
 		CurrentState = rsc.NextMenuToRun;
 	}
 	StateFactory::getIRPairingState()->ListenForAlice();
 
-
 	static uint32_t lastSendTime = 0;
-#if 1
 	if (tick - lastSendTime > 10) {
-#else
-		if(lastSendTime==0) {
-#endif
 		lastSendTime = tick;
 		if (Radio.receiveDone()) {
 			StateFactory::getMessageState()->addRadioMessage((const char *) &Radio.DATA[0], Radio.DATALEN,
 					Radio.SENDERID, Radio.RSSI);
 		}
+	}
+
+	if (CurrentState != StateFactory::getGameOfLifeState()
+			&& tick - KB.getLastPinSelectedTick()
+					> (1000 * 60 * getContactStore().getSettings().getScreenSaverTime())) {
+		CurrentState->shutdown();
+		CurrentState = StateFactory::getGameOfLifeState();
 	}
 	//configure 1 time listen RegListen1, RegListen2, RegListen3
 	//defaults are good except for ListenCriteria should be 1 not 0

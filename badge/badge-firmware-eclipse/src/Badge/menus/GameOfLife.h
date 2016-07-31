@@ -8,7 +8,7 @@ public:
 	GameOfLife();
 	virtual ~GameOfLife();
 public:
-	static const int width = 64;
+	static const int width = 128;
 	static const int height = 64;
 protected:
 	virtual ErrorType onInit();
@@ -21,7 +21,7 @@ private:
 	uint16_t CurrentGeneration;
 	uint8_t Neighborhood;
 	unsigned int gol[height];
-	char UtilityBuf[24];
+	char UtilityBuf[64];
 };
 
 #endif

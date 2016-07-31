@@ -41,9 +41,9 @@ bool ContactStore::SettingsInfo::init() {
 	DataStructure ds;
 	ds.Reserved1 = 0;
 	ds.Reserved2 = 0;
-	ds.ScreenSaverTime = 3;
+	ds.ScreenSaverTime = 1;
 	ds.ScreenSaverType = 0;
-	ds.SleepTimer = 5;
+	ds.SleepTimer = 2;
 	ds.NumContacts = 0;
 	return writeSettings(ds);
 }
@@ -156,7 +156,7 @@ bool ContactStore::SettingsInfo::setScreenSaverTime(uint8_t value) {
 }
 
 uint8_t ContactStore::SettingsInfo::getScreenSaverTime() {
-	return getSettings().ScreenSaverTime;
+	return getSettings().ScreenSaverTime+1;
 }
 
 bool ContactStore::SettingsInfo::setSleepTime(uint8_t n) {

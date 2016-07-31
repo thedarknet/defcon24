@@ -62,6 +62,9 @@ public:
 	void updateContext(KeyBoardLetterCtx &ctx);
 	void reset();
 	void setAllLightsOn(bool b);
+	bool getAllLightsOn() {return LightAll;}
+	uint32_t getLastPinSelectedTick() {return LastPinSelectedTick;}
+	void resetLastPinTick();
 protected:
 	void setLetter();
 private:
@@ -70,6 +73,8 @@ private:
 	uint8_t LastSelectedPin;
 	uint8_t TimesLastPinSelected;
 	uint8_t KeyJustReleased;
+	uint32_t LastPinSelectedTick;
+	bool LightAll;
 };
 
 #endif
