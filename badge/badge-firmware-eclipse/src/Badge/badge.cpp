@@ -174,7 +174,7 @@ uint32_t startBadge() {
 
 	gui_lable_multiline("#dcdn16", 0, 10, 128, 64, 0, 0);
 	gui_lable_multiline("><>", 0, 40, 128, 64, 0, 0);
-	gui_lable_multiline("Cyberez Inc", 0, 50, 128, 64, 0, 0);
+	gui_lable_multiline("   Cyberez Inc", 0, 50, 128, 64, 0, 0);
 	gui_draw();
 	delay(3000);
 
@@ -197,7 +197,16 @@ void loopBadge() {
 			//on state switches reset keyboard and give a 1 second pause on reading from keyboard.
 			KB.reset();
 		}
-		CurrentState = rsc.NextMenuToRun;
+		if (CurrentState != StateFactory::getGameOfLifeState()
+				&& (tick - KB.getLastPinSelectedTick()
+						> (1000 * 60 * getContactStore().getSettings().getScreenSaverTime()))) {
+			CurrentState->shutdown();
+			CurrentState = StateFactory::getGameOfLifeState();
+		} else {
+			CurrentState = rsc.NextMenuToRun;
+		}
+	} else {
+		CurrentState = StateFactory::getDisplayMessageState(StateFactory::getMenuState(), "Run State Error....", 2000);
 	}
 	StateFactory::getIRPairingState()->ListenForAlice();
 
@@ -208,13 +217,6 @@ void loopBadge() {
 			StateFactory::getMessageState()->addRadioMessage((const char *) &Radio.DATA[0], Radio.DATALEN,
 					Radio.SENDERID, Radio.RSSI);
 		}
-	}
-
-	if (CurrentState != StateFactory::getGameOfLifeState()
-			&& tick - KB.getLastPinSelectedTick()
-					> (1000 * 60 * getContactStore().getSettings().getScreenSaverTime())) {
-		CurrentState->shutdown();
-		CurrentState = StateFactory::getGameOfLifeState();
 	}
 	//configure 1 time listen RegListen1, RegListen2, RegListen3
 	//defaults are good except for ListenCriteria should be 1 not 0

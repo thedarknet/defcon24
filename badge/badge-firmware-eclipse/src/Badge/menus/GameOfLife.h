@@ -8,7 +8,7 @@ public:
 	GameOfLife();
 	virtual ~GameOfLife();
 public:
-	static const int width = 128;
+	static const int width = 64;
 	static const int height = 64;
 protected:
 	virtual ErrorType onInit();

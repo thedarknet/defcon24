@@ -15,9 +15,11 @@ ErrorType GameOfLife::onInit() {
 }
 
 static uint32_t displayMessageUntil = 0;
-bool ReInitGame = false;
+static bool ReInitGame = false;
+static uint32_t RunCount = 0;
 
 ReturnStateContext GameOfLife::onRun(QKeyboard &kb) {
+	RunCount++;
 	uint32_t now = HAL_GetTick();
 	if (now < displayMessageUntil) {
 		gui_lable_multiline(&UtilityBuf[0], 0, 10, 128, 64, 0, 0);
@@ -25,11 +27,11 @@ ReturnStateContext GameOfLife::onRun(QKeyboard &kb) {
 		initGame();
 	} else {
 		uint16_t count = 0;
-		uint8_t bitToCheck = CurrentGeneration%32;
+		uint8_t bitToCheck = CurrentGeneration % 32;
 		for (uint16_t j = 1; j < height - 1; j++) {
 			for (uint16_t k = 1; k < width - 1; k++) {
 				if ((gol[j] & (k << bitToCheck)) != 0) {
-					SSD1306_DrawPixel(k, j, SSD1306_COLOR_WHITE);
+					SSD1306_DrawPixel(k * 2, j, SSD1306_COLOR_WHITE);
 					count++;
 				}
 			}
@@ -42,14 +44,14 @@ ReturnStateContext GameOfLife::onRun(QKeyboard &kb) {
 			unsigned int tmp[sizeof(gol)];
 			life(&gol[0], Neighborhood, width, height, &tmp[0]);
 		}
-		if (now % 3 == 0) {
+		if (RunCount % 3 == 0) {
 			CurrentGeneration++;
 			if (CurrentGeneration >= Generations) {
 				ReInitGame = true;
 			}
 		}
 	}
-	if (kb.getLastPinSeleted() == QKeyboard::NO_PIN_SELECTED) {
+	if (kb.getLastKeyReleased() == QKeyboard::NO_PIN_SELECTED) {
 		return ReturnStateContext(this);
 	} else {
 		return ReturnStateContext(StateFactory::getMenuState());
