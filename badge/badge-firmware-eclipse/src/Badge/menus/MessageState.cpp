@@ -30,17 +30,11 @@ void MessageState::addRadioMessage(const char *msg, uint16_t msgSize, uint16_t u
 }
 
 
-uint8_t msgdec(uint8_t c, uint8_t m) {
-	if(c==0) {
-		return m;
-	}
-	return (c-1);
-}
-
 ErrorType MessageState::onInit() {
 	InternalState = MESSAGE_LIST;
-	uint8_t v = CurrentPos==0?0:CurrentPos-1;
-	for(int i=0;i<(sizeof(RMsgs) / sizeof(RMsgs[0]));i++) {
+	//look at the newest message (the one just before cur pos bc currentpos is inc'ed after adding a message
+	uint8_t v = CurrentPos==0? MAX_R_MSGS-1:CurrentPos-1;
+	for(uint16_t i=0;i<MAX_R_MSGS;i++) {
 		Items[i].id = RMsgs[v].FromUID;
 		ContactStore::Contact c;
 		if(getContactStore().findContactByID(RMsgs[v].FromUID,c)) {
@@ -49,7 +43,7 @@ ErrorType MessageState::onInit() {
 		} else {
 			Items[i].text = "";
 		}
-		v = msgdec(v,4);
+		v = v==0? (MAX_R_MSGS-1):v-1;
 	}
 
 	gui_set_curList(&RadioList);
@@ -58,6 +52,7 @@ ErrorType MessageState::onInit() {
 
 static char MsgDisplayBuffer[62] = {'\0'};
 static char FromBuffer[20] = {'\0'};
+
 
 ReturnStateContext MessageState::onRun(QKeyboard &kb) {
 	StateBase *nextState = this;
@@ -86,9 +81,8 @@ ReturnStateContext MessageState::onRun(QKeyboard &kb) {
 				break;
 			case 11: {
 				if(Items[RadioList.selectedItem].id!=0) {
-					uint8_t pos = 0xFF;
 					MsgDisplayBuffer[0]='\0';
-					for(int i=0;i<(sizeof(RMsgs) / sizeof(RMsgs[0]));i++) {
+					for(uint16_t i=0;i<(sizeof(RMsgs) / sizeof(RMsgs[0]));i++) {
 						if(RMsgs[i].FromUID==Items[RadioList.selectedItem].id) {
 							strncpy(&MsgDisplayBuffer[0],RMsgs[i].Msg,sizeof(RMsgs[i].Msg));
 						}

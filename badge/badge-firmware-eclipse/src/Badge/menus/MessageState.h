@@ -29,6 +29,8 @@ private:
 	GUI_ListData RadioList;
 	GUI_ListItemData Items[8];
 	uint8_t CurrentPos;
+public:
+	static const uint16_t MAX_R_MSGS = (sizeof(RMsgs) / sizeof(RMsgs[0]));
 };
 /*
 class EventState: public StateBase {
