@@ -144,7 +144,11 @@ ReturnStateContext MenuState::onRun(QKeyboard &kb) {
 			nextState = StateFactory::getSettingState();
 			break;
 		case 1:
-			nextState = StateFactory::getIRPairingState();
+			if(getContactStore().getSettings().getAgentName()[0]!='\0') {
+				nextState = StateFactory::getIRPairingState();
+			} else {
+				nextState = StateFactory::getDisplayMessageState(StateFactory::getMenuState(),(const char *)"You must set your agent name first",3000);
+			}
 			break;
 		case 2:
 			nextState = StateFactory::getAddressBookState();
