@@ -43,7 +43,7 @@ bool ContactStore::SettingsInfo::init() {
 	ds.Reserved2 = 0;
 	ds.ScreenSaverTime = 1;
 	ds.ScreenSaverType = 0;
-	ds.SleepTimer = 2;
+	ds.SleepTimer = 3;
 	ds.NumContacts = 0;
 	return writeSettings(ds);
 }

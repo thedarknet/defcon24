@@ -9,51 +9,65 @@ GameOfLife::~GameOfLife() {
 
 }
 
-ErrorType GameOfLife::onInit() {
-	initGame();
-	return ErrorType();
-}
-
 static uint32_t displayMessageUntil = 0;
 static bool ReInitGame = false;
 static uint32_t RunCount = 0;
+enum INTERNAL_STATE {
+	GAME, SLEEP
+};
+static INTERNAL_STATE InternalState = GAME;
+static uint8_t TIMES_SCREEN_SAVER=3; //due to lack of code space to put in configurable sleep time
+
+
+ErrorType GameOfLife::onInit() {
+	initGame();
+	InternalState = GAME;
+	return ErrorType();
+}
 
 ReturnStateContext GameOfLife::onRun(QKeyboard &kb) {
-	RunCount++;
-	uint32_t now = HAL_GetTick();
-	if (now < displayMessageUntil) {
-		gui_lable_multiline(&UtilityBuf[0], 0, 10, 128, 64, 0, 0);
-	} else if (ReInitGame) {
-		initGame();
-	} else {
-		uint16_t count = 0;
-		uint8_t bitToCheck = CurrentGeneration % 32;
-		for (uint16_t j = 1; j < height - 1; j++) {
-			for (uint16_t k = 1; k < width - 1; k++) {
-				if ((gol[j] & (k << bitToCheck)) != 0) {
-					SSD1306_DrawPixel(k * 2, j, SSD1306_COLOR_WHITE);
-					count++;
+	if(InternalState==GAME ) {
+		RunCount++;
+		uint32_t now = HAL_GetTick();
+		if (now < displayMessageUntil) {
+			gui_lable_multiline(&UtilityBuf[0], 0, 10, 128, 64, 0, 0);
+		} else if (ReInitGame) {
+			initGame();
+		} else {
+			uint16_t count = 0;
+			uint8_t bitToCheck = CurrentGeneration % 32;
+			for (uint16_t j = 1; j < height - 1; j++) {
+				for (uint16_t k = 1; k < width - 1; k++) {
+					if ((gol[j] & (k << bitToCheck)) != 0) {
+						SSD1306_DrawPixel(k * 2, j, SSD1306_COLOR_WHITE);
+						count++;
+					}
+				}
+			}
+			if (0 == count) {
+				sprintf(&UtilityBuf[0], "ALL DEAD\nAfter %d\ngenerations", CurrentGeneration);
+				displayMessageUntil = now + 3000;
+				ReInitGame = true;
+			} else {
+				unsigned int tmp[sizeof(gol)];
+				life(&gol[0], Neighborhood, width, height, &tmp[0]);
+			}
+			if (RunCount % 3 == 0) {
+				CurrentGeneration++;
+				if (CurrentGeneration >= Generations) {
+					ReInitGame = true;
 				}
 			}
 		}
-		if (0 == count) {
-			sprintf(&UtilityBuf[0], "ALL DEAD\nAfter %d\ngenerations", CurrentGeneration);
-			displayMessageUntil = now + 3000;
-			ReInitGame = true;
-		} else {
-			unsigned int tmp[sizeof(gol)];
-			life(&gol[0], Neighborhood, width, height, &tmp[0]);
-		}
-		if (RunCount % 3 == 0) {
-			CurrentGeneration++;
-			if (CurrentGeneration >= Generations) {
-				ReInitGame = true;
-			}
+		if((now-kb.getLastPinSelectedTick())>(1000*60*TIMES_SCREEN_SAVER*getContactStore().getSettings().getScreenSaverTime())) {
+			kb.setAllLightsOn(false);
+			InternalState = SLEEP;
 		}
 	}
 	if (kb.getLastKeyReleased() == QKeyboard::NO_PIN_SELECTED) {
 		return ReturnStateContext(this);
 	} else {
+		kb.setAllLightsOn(true);
 		return ReturnStateContext(StateFactory::getMenuState());
 	}
 }
