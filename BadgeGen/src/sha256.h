@@ -6,7 +6,7 @@
 
 #define uint_64 long long unsigned int
 
-#define uint32 unsigned long
+#define uint32 unsigned int
 
 struct ShaOBJ {
 	uint32 state[8];

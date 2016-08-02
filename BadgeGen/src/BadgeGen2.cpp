@@ -282,6 +282,7 @@ int main(int argc, char *argv[]) {
 #else
 
 int main() {
+	cout << sizeof(uint32) << std::endl;
 	cout << "uECC_secp160r1" << endl;
 	cout << uECC_curve_private_key_size(uECC_secp160r1()) << endl;
 	cout << uECC_curve_public_key_size(uECC_secp160r1()) << endl;
