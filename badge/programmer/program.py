@@ -33,6 +33,9 @@ FLASH_BASE = 0x8000000
 KEY_FLASH_OFFSET = 0xffd4
 SECTOR_SIZE = 0x400
 
+FLASH_FILENAME = '../badge-firmware-eclipse/Debug/badge-firmware-eclipse.hex'
+
+
 def initialSetup():
     """ Make sure all required files and directories are present """
 
@@ -116,12 +119,36 @@ def programKeyfile(flasher, key_filename):
 
     flasher.erase(FLASH_BASE + KEY_FLASH_OFFSET, roundToSectorSize(key_flash_size))
 
-    flasher.flashFile(key_filename, KEY_FLASH_OFFSET)
+    flasher.flashFile(key_filename, FLASH_BASE + KEY_FLASH_OFFSET)
 
     if flasher.verifyFile(key_filename, KEY_FLASH_OFFSET):
         return True
     else:
         return False
+
+
+def programMainFlash():
+    if FLASH_FILENAME is not None:
+        print('Programming main flash')
+
+        flasher._sendCmd('reset halt')  # Make sure the processor is stopped
+
+        # Erase everything until the key
+        flasher.erase(FLASH_BASE, KEY_FLASH_OFFSET)
+
+        if '.bin' in FLASH_FILENAME:
+            # If a .bin file is used, we need to specify the base address
+            flasher.flashFile(FLASH_FILENAME, FLASH_BASE)
+        else:
+            # .elf and .hex files have address informatino in them so use 0
+            flasher.flashFile(FLASH_FILENAME, 0)
+
+        if flasher.verifyFile(FLASH_FILENAME, 0):
+            print('Flash programmed succesfully')
+            return True
+        else:
+            print('Error prorgamming flash')
+            return False
 
 
 initialSetup()
@@ -163,6 +190,8 @@ try:
 
         else:
             print('Key already programmed')
+
+        programMainFlash()
 
     else:        
         raise IOError('Could not connect to flash programmer')

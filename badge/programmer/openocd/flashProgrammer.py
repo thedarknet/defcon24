@@ -101,8 +101,8 @@ class flashProgrammer(object):
         # TODO - verify output
         print(lines)
 
-    def flashFile(self, filename, address, bank=0):
-        lines = self._sendCmd('flash write_bank ' + str(bank) + 
+    def flashFile(self, filename, address):
+        lines = self._sendCmd('flash write_image ' +  
                     ' ' + filename + ' ' + str(address), timeout=60)
         # TODO - verify output
         print(lines)
@@ -131,7 +131,8 @@ class flashProgrammer(object):
             No more differences found.
         '''
 
-        if 'verified' in lines[3]:
+        # Last line has the 'verified' result 
+        if 'verified' in lines[len(lines)-1]:
             return True
         else:
             return False
