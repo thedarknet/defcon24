@@ -54,15 +54,15 @@
 							<tool id="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler.1057603791" name="Cross ARM GNU Assembler" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler">
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.usepreprocessor.1219068056" name="Use preprocessor" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.usepreprocessor" value="true" valueType="boolean"/>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.include.paths.1675348104" name="Include paths (-I)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="/home/cmdc0de/dev/defcon/defcon24/badge/badge-firmware-eclipse/include"/>
-									<listOptionValue builtIn="false" value="/home/cmdc0de/dev/defcon/defcon24/badge/badge-firmware-eclipse/system/include"/>
-									<listOptionValue builtIn="false" value="/home/cmdc0de/dev/defcon/defcon24/badge/badge-firmware-eclipse/system/include/cmsis"/>
-									<listOptionValue builtIn="false" value="/home/cmdc0de/dev/defcon/defcon24/badge/badge-firmware-eclipse/system/include/stm32f1xx"/>
-									<listOptionValue builtIn="false" value="/home/cmdc0de/dev/defcon/defcon24/badge/badge-firmware-eclipse/system/include/cmsis/device"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/badge-firmware-eclipse/src/crypto}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/badge-firmware-eclipse/src/crypto/micro-ecc}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/badge-firmware-eclipse/src/Badge}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/badge-firmware-eclipse/src/Radio}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/system/include/cmsis/device}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/system/include/stm32f1xx}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/system/include/cmsis}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/system/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/src/Radio}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/src/Badge}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/src/crypto/micro-ecc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/src/crypto}&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.defs.403339569" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.defs" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="DEBUG"/>
@@ -75,15 +75,15 @@
 							</tool>
 							<tool id="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.1747625236" name="Cross ARM C Compiler" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler">
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.include.paths.528049194" name="Include paths (-I)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="/home/cmdc0de/dev/defcon/defcon24/badge/badge-firmware-eclipse/include"/>
-									<listOptionValue builtIn="false" value="/home/cmdc0de/dev/defcon/defcon24/badge/badge-firmware-eclipse/system/include"/>
-									<listOptionValue builtIn="false" value="/home/cmdc0de/dev/defcon/defcon24/badge/badge-firmware-eclipse/system/include/cmsis"/>
-									<listOptionValue builtIn="false" value="/home/cmdc0de/dev/defcon/defcon24/badge/badge-firmware-eclipse/system/include/stm32f1xx"/>
-									<listOptionValue builtIn="false" value="/home/cmdc0de/dev/defcon/defcon24/badge/badge-firmware-eclipse/system/include/cmsis/device"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/src/Radio}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/src/crypto}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/src/crypto/micro-ecc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/src/Badge}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/system/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/system/include/cmsis/device}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/system/include/stm32f1xx}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/system/include/cmsis}&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs.1484968343" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="DEBUG"/>
@@ -96,15 +96,15 @@
 							</tool>
 							<tool id="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.524646608" name="Cross ARM C++ Compiler" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler">
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.include.paths.1928357118" name="Include paths (-I)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="/home/cmdc0de/dev/defcon/defcon24/badge/badge-firmware-eclipse/include"/>
-									<listOptionValue builtIn="false" value="/home/cmdc0de/dev/defcon/defcon24/badge/badge-firmware-eclipse/system/include"/>
-									<listOptionValue builtIn="false" value="/home/cmdc0de/dev/defcon/defcon24/badge/badge-firmware-eclipse/system/include/cmsis"/>
-									<listOptionValue builtIn="false" value="/home/cmdc0de/dev/defcon/defcon24/badge/badge-firmware-eclipse/system/include/stm32f1xx"/>
-									<listOptionValue builtIn="false" value="/home/cmdc0de/dev/defcon/defcon24/badge/badge-firmware-eclipse/system/include/cmsis/device"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/src/crypto}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/src/crypto/micro-ecc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/src/Badge}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/src/Radio}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/system/include/cmsis/device}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/system/include/stm32f1xx}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/system/include/cmsis}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/system/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/badge-firmware-eclipse/include}&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.noexceptions.1497239819" name="Do not use exceptions (-fno-exceptions)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.noexceptions" useByScannerDiscovery="true" value="true" valueType="boolean"/>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.nortti.643717371" name="Do not use RTTI (-fno-rtti)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.nortti" useByScannerDiscovery="true" value="true" valueType="boolean"/>
