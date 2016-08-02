@@ -368,11 +368,11 @@ const char *BadgeInfoState::getRegCode() {
 	if(RegCode[0]==0) {
 		ShaOBJ hashObj;
 		sha256_init(&hashObj);
-		const char *p = "this is my message";
-		sha256_add(&hashObj,(const uint8_t*)p,strlen(p));
-		//sha256_add(&hashObj,getContactStore().getMyInfo().getPrivateKey(),ContactStore::PRIVATE_KEY_LENGTH);
+		//const char *p = "this is my message";
+		//sha256_add(&hashObj,(const uint8_t*)p,strlen(p));
+		sha256_add(&hashObj,getContactStore().getMyInfo().getPrivateKey(),ContactStore::PRIVATE_KEY_LENGTH);
 		uint16_t id = getContactStore().getMyInfo().getUniqueID();
-		//sha256_add(&hashObj,(uint8_t *) &id,sizeof(id));
+		sha256_add(&hashObj,(uint8_t *) &id,sizeof(id));
 		uint8_t rH[SHA256_HASH_SIZE];
 		sha256_digest(&hashObj,&rH[0]);
 		sprintf(&RegCode[0],"%x%x%x%x%x%x%x%x", rH[0],rH[1],rH[2],rH[3],rH[4],rH[5],rH[6],
