@@ -1,9 +1,8 @@
 #include "EnigmaState.h"
 
-
 ////////////////////////////////////////////////////////////
 EngimaState::EngimaState() :
-		InternalState(SET_WHEEL), EntryBuffer(), Wheels(), EncryptResult() {
+		InternalState(SET_WHEEL), EntryBuffer(), Wheels(), EncryptResult(), DisplayOffset(0) {
 
 }
 EngimaState::~EngimaState() {
@@ -18,12 +17,14 @@ ErrorType EngimaState::onInit() {
 	memset(&PlugBoard[0], 0, sizeof(PlugBoard));
 	memset(&ResultHash[0], 0, sizeof(ResultHash));
 	InternalState = SET_WHEEL;
+	DisplayOffset = 0;
 	getKeyboardContext().init(&Wheels[0], sizeof(Wheels));
 	return ErrorType();
 }
 
 ReturnStateContext EngimaState::onRun(QKeyboard &kb) {
 	StateBase* nextState = this;
+	static uint32_t LastScrollTime = HAL_GetTick();
 	switch (InternalState) {
 	case SET_WHEEL:
 		gui_lable_multiline("Enter password (for rotors)", 0, 10, 128, 64, 0, 0);
@@ -49,42 +50,55 @@ ReturnStateContext EngimaState::onRun(QKeyboard &kb) {
 			nextState = StateFactory::getMenuState();
 		}
 		break;
-	case ENTER_MESSAGE:
+	case ENTER_MESSAGE: {
 		gui_lable_multiline("Enter cipher text: ", 0, 10, 128, 64, 0, 0);
 		kb.updateContext(getKeyboardContext());
-		gui_lable_multiline(&EntryBuffer[0], 0, 20, 128, 64, 0, 0);
+		uint16_t offset =
+				getKeyboardContext().getCursorPosition() > 37 ? getKeyboardContext().getCursorPosition() - 32 : 0;
+		gui_lable_multiline(&EntryBuffer[offset], 0, 30, 128, 64, 0, 0);
 		if (kb.getLastKeyReleased() == 11) {
 			InternalState = DECRYPT;
 			getKeyboardContext().finalize();
 			crypt(&Wheels[0], &PlugBoard[0], strlen(&PlugBoard[0]), &EntryBuffer[0]);
+			DisplayOffset = 0;
+			LastScrollTime = HAL_GetTick();
 		} else if (kb.getLastKeyReleased() == 9) {
 			nextState = StateFactory::getMenuState();
 		}
+	}
 		break;
-	case DECRYPT:
-		gui_lable_multiline("Message:", 0, 10, 128, 64, 0, 0);
-		gui_lable_multiline(&EncryptResult[0], 0, 20, 128, 64, 0, 0);
+	case DECRYPT: {
+		gui_lable_multiline("Decodes to:", 0, 10, 128, 64, 0, 0);
+		uint32_t decryptedLen = strlen(&EncryptResult[0]);
+		if (decryptedLen > 48 && ((HAL_GetTick()-LastScrollTime)>500)) {
+			LastScrollTime = HAL_GetTick();
+			DisplayOffset = (DisplayOffset + 1) % decryptedLen;
+		}
+		gui_lable_multiline(&EncryptResult[DisplayOffset], 0, 20, 128, 64, 0, 0);
 		if (kb.getLastKeyReleased() == 11) {
 			InternalState = QUEST_COMPLETION;
 			ShaOBJ sha;
 			sha256_init(&sha);
-			sha256_add(&sha, (const uint8_t*) getContactStore().getMyInfo().getPrivateKey(),8);
+			sha256_add(&sha, (const uint8_t*) getContactStore().getMyInfo().getPrivateKey(), 8);
 			sha256_add(&sha, (const uint8_t*) &EncryptResult[0], strlen(&EncryptResult[0]));
 			sha256_digest(&sha, &ResultHash[0]);
 			memset(&EntryBuffer[0], 0, sizeof(EntryBuffer));
-			sprintf(&EntryBuffer[0],"%x%x%x%x%x%x%x%x",ResultHash[0],
-					ResultHash[1],ResultHash[2],ResultHash[3],ResultHash[4],ResultHash[5],ResultHash[6],ResultHash[7]);
-	} else if (kb.getLastKeyReleased() == 9) {
-		nextState = StateFactory::getMenuState();
+			sprintf(&EntryBuffer[0], "%x%x%x%x%x%x%x%x", ResultHash[0], ResultHash[1], ResultHash[2], ResultHash[3],
+					ResultHash[4], ResultHash[5], ResultHash[6], ResultHash[7]);
+		} else if (kb.getLastKeyReleased() == 9) {
+			nextState = StateFactory::getMenuState();
+		}
 	}
-	break;
-case QUEST_COMPLETION:
-	gui_lable_multiline("Send this to daemon: ", 0, 10, 128, 64, 0, 0);
-	gui_lable_multiline(&EntryBuffer[0], 0, 30, 128, 64, 0, 0);
-	if (kb.getLastKeyReleased()) {
-		nextState = StateFactory::getMenuState();
-	}
-	break;
+		break;
+	case QUEST_COMPLETION:
+		gui_lable_multiline("Daemon code: ", 0, 10, 128, 64, 0, 0);
+		gui_lable_multiline(&EntryBuffer[0], 0, 30, 128, 64, 0, 0);
+		if (kb.getLastKeyReleased()==11) {
+			nextState = StateFactory::getMenuState();
+		}
+		break;
+	default:
+		break;
 	}
 	return ReturnStateContext(nextState);
 }

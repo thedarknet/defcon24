@@ -197,7 +197,7 @@ void loopBadge() {
 			//on state switches reset keyboard and give a 1 second pause on reading from keyboard.
 			KB.reset();
 		}
-		if (CurrentState != StateFactory::getGameOfLifeState()
+		if (CurrentState != StateFactory::getGameOfLifeState() && (tick>KB.getLastPinSelectedTick())
 				&& (tick - KB.getLastPinSelectedTick()
 						> (1000 * 60 * getContactStore().getSettings().getScreenSaverTime()))) {
 			CurrentState->shutdown();

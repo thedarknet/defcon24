@@ -29,6 +29,7 @@ private:
 	char PlugBoard[6];
 	char EncryptResult[MAX_ENCRYPTED_LENGTH];
 	uint8_t ResultHash[SHA256_HASH_SIZE];
+	uint8_t DisplayOffset;
 };
 
 #endif
