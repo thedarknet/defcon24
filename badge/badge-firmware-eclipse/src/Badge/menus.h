@@ -116,7 +116,7 @@ private:
 	GUI_ListData BadgeInfoList;
 	GUI_ListItemData Items[8];
 	char ListBuffer[8][24]; //height then width
-	char RegCode[17];
+	char RegCode[18];
 };
 class RadioInfoState: public StateBase {
 public:

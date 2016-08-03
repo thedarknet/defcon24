@@ -352,10 +352,6 @@ BadgeInfoState::BadgeInfoState() :
 		StateBase(), BadgeInfoList("Badge Info:", Items, 0, 0, 128, 64, 0, (sizeof(Items) / sizeof(Items[0]))), RegCode() {
 
 	memset(&RegCode,0,sizeof(RegCode));
-	for (uint32_t i = 0; i < (sizeof(Items) / sizeof(Items[0])); i++) {
-		Items[i].id = i;
-	}
-//char ListBuffer[20][6];
 }
 
 BadgeInfoState::~BadgeInfoState() {
@@ -394,6 +390,7 @@ ErrorType BadgeInfoState::onInit() {
 	sprintf(&ListBuffer[7][0], "SVer: %s", "dc24.1.0");
 	for (uint32_t i = 0; i < (sizeof(Items) / sizeof(Items[0])); i++) {
 		Items[i].text = &ListBuffer[i][0];
+		Items[i].id = i;
 	}
 	Items[2].setShouldScroll();
 	return ErrorType();
