@@ -19,6 +19,7 @@ public:
 	MessageState();
 	virtual ~MessageState();
 	void addRadioMessage(const char *msg, uint16_t msgSize, uint16_t uid, uint8_t rssi);
+	bool hasNewMessage() {return NewMessage;}
 protected:
 	virtual ErrorType onInit();
 	virtual ReturnStateContext onRun(QKeyboard &kb);
@@ -28,7 +29,8 @@ private:
 	uint8_t InternalState;
 	GUI_ListData RadioList;
 	GUI_ListItemData Items[8];
-	uint8_t CurrentPos;
+	uint8_t CurrentPos:7;
+	uint8_t NewMessage:1;
 public:
 	static const uint16_t MAX_R_MSGS = (sizeof(RMsgs) / sizeof(RMsgs[0]));
 };

@@ -126,6 +126,8 @@ public:
 		bool isUberBadge();
 		uint8_t *getCompressedPublicKey();
 		MyInfo(uint32_t startAddress);
+	protected:
+		uint16_t getFlags();
 	private:
 		uint32_t StartAddress;
 	};

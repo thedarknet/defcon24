@@ -206,6 +206,15 @@ uint8_t *ContactStore::MyInfo::getCompressedPublicKey() {
 	return &compressedPublicKey[0];
 }
 
+bool ContactStore::MyInfo::isUberBadge() {
+	return (getFlags()&0x1!=0);
+}
+
+uint16_t ContactStore::MyInfo::getFlags() {
+	return *((uint16_t*) (StartAddress + sizeof(uint16_t) + sizeof(uint16_t)+PRIVATE_KEY_LENGTH));
+}
+
+/////////////////////////////////////////////////////////////////////////////////
 ContactStore::Contact::Contact(uint32_t startAddr) :
 		StartAddress(startAddr) {
 }

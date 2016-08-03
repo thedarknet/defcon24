@@ -30,7 +30,6 @@
 // **********************************************************************************
 #ifndef RFM69_h
 #define RFM69_h
-//#include <Arduino.h>            // assumes Arduino IDE v1.0 or greater
 #include <stm32f1xx.h>
 
 #define RF69_MAX_DATA_LEN       61 // to take advantage of the built in AES/CRC we want to limit the frame size to the internal FIFO size (66 bytes - 3 bytes overhead - 2 bytes crc)
@@ -95,15 +94,7 @@ class RFM69 {
     static volatile int16_t RSSI; // most accurate RSSI during reception (closest to the reception)
     static volatile uint8_t _mode; // should be protected?
 
-    RFM69(uint8_t slaveSelectPin=RF69_SPI_CS, uint8_t interruptPin=RF69_IRQ_PIN, bool isRFM69HW=false, uint8_t interruptNum=RF69_IRQ_NUM) {
-      _slaveSelectPin = slaveSelectPin;
-      _interruptPin = interruptPin;
-      _interruptNum = interruptNum;
-      _mode = RF69_MODE_STANDBY;
-      _promiscuousMode = false;
-      _powerLevel = 31;
-      _isRFM69HW = isRFM69HW;
-    }
+    RFM69(uint8_t slaveSelectPin=RF69_SPI_CS, uint8_t interruptPin=RF69_IRQ_PIN, bool isRFM69HW=false, uint8_t interruptNum=RF69_IRQ_NUM);
 
     bool initialize(uint8_t freqBand, RadioAddrType ID, uint8_t networkID=1);
     //this is to use the radio's address filtering
@@ -141,7 +132,6 @@ class RFM69 {
   protected:
     static void isr0();
     void virtual interruptHandler();
-    virtual void interruptHook(uint8_t CTLbyte);
     static volatile bool _inISR;
     virtual void sendFrame(RadioAddrType toAddress, const void* buffer, uint8_t size, bool requestACK=false, bool sendACK=false);
 

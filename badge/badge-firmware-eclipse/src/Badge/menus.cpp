@@ -90,6 +90,9 @@ MenuState::~MenuState() {
 
 }
 
+const char *HasMessage = "DCDN Net Msgs *";
+const char *NoHasMessage = "DCDN Net Msgs";
+
 ErrorType MenuState::onInit() {
 	gui_set_curList(&MenuList);
 	Items[0].id = 0;
@@ -99,7 +102,11 @@ ErrorType MenuState::onInit() {
 	Items[2].id = 2;
 	Items[2].text = (const char *) "Address Book";
 	Items[3].id = 3;
-	Items[3].text = (const char *) "DCDN Net Msgs";
+	if(StateFactory::getMessageState()->hasNewMessage()) {
+		Items[3].text = HasMessage;
+	} else {
+		Items[3].text = NoHasMessage;
+	}
 	Items[4].id = 4;
 	Items[4].text = (const char *) "Enigma";
 	Items[5].id = 5;

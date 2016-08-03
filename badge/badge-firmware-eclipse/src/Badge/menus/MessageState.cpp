@@ -7,7 +7,7 @@ MessageState::RadioMessage::RadioMessage() :
 
 MessageState::MessageState() :
 		RMsgs(), InternalState(MESSAGE_LIST), RadioList("Radio Msgs", Items, 0, 0, 128, 64, 0,
-				(sizeof(Items) / sizeof(Items[0]))), CurrentPos(0) {
+				(sizeof(Items) / sizeof(Items[0]))), CurrentPos(0), NewMessage(0) {
 	memset(&RMsgs[0],0,sizeof(RMsgs));
 }
 
@@ -27,6 +27,7 @@ void MessageState::addRadioMessage(const char *msg, uint16_t msgSize, uint16_t u
 	RMsgs[CurrentPos].FromUID = uid;
 	CurrentPos++;
 	CurrentPos = CurrentPos % ((sizeof(RMsgs) / sizeof(RMsgs[0])));
+	NewMessage = true;
 }
 
 
@@ -58,6 +59,7 @@ ReturnStateContext MessageState::onRun(QKeyboard &kb) {
 	StateBase *nextState = this;
 	uint8_t key = kb.getLastKeyReleased();
 	if (InternalState == MESSAGE_LIST) {
+		NewMessage = false;
 		switch (key) {
 			case 1: {
 				if (RadioList.selectedItem == 0) {

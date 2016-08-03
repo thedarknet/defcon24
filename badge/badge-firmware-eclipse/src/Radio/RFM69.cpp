@@ -49,6 +49,17 @@ RFM69* RFM69::selfPointer;
 
 extern void attachInterrupt(uint8_t pin, void (*handler)(void), int mode);
 
+RFM69::RFM69(uint8_t slaveSelectPin, uint8_t interruptPin, bool isRFM69HW, uint8_t interruptNum) {
+	_slaveSelectPin = slaveSelectPin;
+	_interruptPin = interruptPin;
+	_interruptNum = interruptNum;
+	_mode = RF69_MODE_STANDBY;
+	_promiscuousMode = false;
+	_powerLevel = 31;
+	_isRFM69HW = isRFM69HW;
+	_address = 0;
+}
+
 bool RFM69::initialize(uint8_t freqBand, RadioAddrType nodeID, uint8_t networkID) {
 	const uint8_t CONFIG[][2] = {
 	/* 0x01 */{ REG_OPMODE, RF_OPMODE_SEQUENCER_ON | RF_OPMODE_LISTEN_OFF | RF_OPMODE_STANDBY },
@@ -330,14 +341,6 @@ void RFM69::sendACK(const void* buffer, uint8_t bufferSize) {
 	RSSI = _RSSI; // restore payload RSSI
 }
 
-int digitalRead(uint8_t p) {
-	UNUSED(p);
-	return HAL_GPIO_ReadPin(GPIOA, RFM69_SPI_NSS_Pin);
-}
-
-void RFM69::interruptHook(uint8_t CTLbyte) {
-	UNUSED(CTLbyte);
-}
 
 // internal function
 void RFM69::sendFrame(RFM69::RadioAddrType toAddress, const void* buffer, uint8_t bufferSize, bool requestACK,
@@ -374,13 +377,6 @@ void RFM69::sendFrame(RFM69::RadioAddrType toAddress, const void* buffer, uint8_
 	// no need to wait for transmit mode to be ready since its handled by the radio
 	setMode(RF69_MODE_TX);
 
-#ifdef BEFORE_DAC
-	uint32_t txStart = millis();
-	while (digitalRead(_interruptPin) == 0 && millis() - txStart < RF69_TX_LIMIT_MS); // wait for DIO0 to turn HIGH signalling transmission finish
-
-	//while (readReg(REG_IRQFLAGS2) & RF_IRQFLAGS2_PACKETSENT == 0x00); // wait for ModeReady
-	setMode(RF69_MODE_STANDBY);
-#endif
 }
 
 // internal function - interrupt gets called when a packet is received
@@ -414,7 +410,7 @@ void RFM69::interruptHandler() {
 		ACK_RECEIVED = CTLbyte & RFM69_CTL_SENDACK; // extract ACK-received flag
 		ACK_REQUESTED = CTLbyte & RFM69_CTL_REQACK; // extract ACK-requested flag
 
-		interruptHook(CTLbyte);     // TWS: hook to derived class interrupt function
+		//interruptHook(CTLbyte);     // TWS: hook to derived class interrupt function
 
 		for (uint8_t i = 0; i < DATALEN; i++) {
 			DATA[i] = SPI.transfer(0);

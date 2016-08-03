@@ -51,19 +51,19 @@ to be word aligned on architectures that do not support unaligned accesses. */
 
 /* Curve support selection. Set to 0 to remove that curve. */
 #ifndef uECC_SUPPORTS_secp160r1
-    #define uECC_SUPPORTS_secp160r1 1
+    //#define uECC_SUPPORTS_secp160r1 1
 #endif
 #ifndef uECC_SUPPORTS_secp192r1
     #define uECC_SUPPORTS_secp192r1 1
 #endif
 #ifndef uECC_SUPPORTS_secp224r1
-    #define uECC_SUPPORTS_secp224r1 1
+    //#define uECC_SUPPORTS_secp224r1 1
 #endif
 #ifndef uECC_SUPPORTS_secp256r1
-    #define uECC_SUPPORTS_secp256r1 1
+    //#define uECC_SUPPORTS_secp256r1 1
 #endif
 #ifndef uECC_SUPPORTS_secp256k1
-    #define uECC_SUPPORTS_secp256k1 1
+    //#define uECC_SUPPORTS_secp256k1 1
 #endif
 
 /* Specifies whether compressed point format is supported.
