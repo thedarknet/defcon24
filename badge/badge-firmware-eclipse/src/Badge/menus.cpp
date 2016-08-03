@@ -375,7 +375,7 @@ const char *BadgeInfoState::getRegCode() {
 		sha256_add(&hashObj,(uint8_t *) &id,sizeof(id));
 		uint8_t rH[SHA256_HASH_SIZE];
 		sha256_digest(&hashObj,&rH[0]);
-		sprintf(&RegCode[0],"%x%x%x%x%x%x%x%x", rH[0],rH[1],rH[2],rH[3],rH[4],rH[5],rH[6],
+		sprintf(&RegCode[0],"%02x%02x%02x%02x%02x%02x%02x%02x", rH[0],rH[1],rH[2],rH[3],rH[4],rH[5],rH[6],
 				rH[7]);
 	}
 	return &RegCode[0];

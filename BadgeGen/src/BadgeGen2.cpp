@@ -261,12 +261,12 @@ int main(int argc, char *argv[]) {
 					unsigned short rid = (*(unsigned short *)&RadioID[0]);
 					sqlFile << "INSERT INTO BADGE(RADIO_ID, PRIV_KEY, FLAGS, REG_KEY) VALUES (" << rid  << ",'" << std::hex;
 					for(int j=0;j<24;j++) {
-						sqlFile << int(privateKey[j]);
+						sqlFile << std::setfill('0') << std::setw(2) << int(privateKey[j]);
 					}
 					sqlFile << "'," <<  std::dec << reserveFlags << ",'"  
 					<< std::hex; 
 					for(unsigned int j=0;j<sizeof(digest);j++) {
-						sqlFile << int(digest[j]);
+						sqlFile << std::setfill('0') << std::setw(2) << int(digest[j]);
 					}
 					sqlFile << std::dec << "');";
 				}

@@ -83,7 +83,7 @@ ReturnStateContext EngimaState::onRun(QKeyboard &kb) {
 			sha256_add(&sha, (const uint8_t*) &EncryptResult[0], strlen(&EncryptResult[0]));
 			sha256_digest(&sha, &ResultHash[0]);
 			memset(&EntryBuffer[0], 0, sizeof(EntryBuffer));
-			sprintf(&EntryBuffer[0], "%x%x%x%x%x%x%x%x", ResultHash[0], ResultHash[1], ResultHash[2], ResultHash[3],
+			sprintf(&EntryBuffer[0], "%02x%02x%02x%02x%02x%02x%02x%02x", ResultHash[0], ResultHash[1], ResultHash[2], ResultHash[3],
 					ResultHash[4], ResultHash[5], ResultHash[6], ResultHash[7]);
 		} else if (kb.getLastKeyReleased() == 9) {
 			nextState = StateFactory::getMenuState();
