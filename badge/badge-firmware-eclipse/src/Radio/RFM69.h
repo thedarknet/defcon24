@@ -32,6 +32,8 @@
 #define RFM69_h
 #include <stm32f1xx.h>
 
+#define DONT_USE_ACK
+
 #define RF69_MAX_DATA_LEN       61 // to take advantage of the built in AES/CRC we want to limit the frame size to the internal FIFO size (66 bytes - 3 bytes overhead - 2 bytes crc)
 #define RF69_SPI_CS             GPIO_PIN_4 // SS is the SPI slave select pin, for instance D10 on ATmega328
 
@@ -54,7 +56,7 @@
 #endif
 
 
-#define CSMA_LIMIT              -90 // upper RX signal sensitivity threshold in dBm for carrier sense access
+#define CSMA_LIMIT              -45 // upper RX signal sensitivity threshold in dBm for carrier sense access
 #define RF69_MODE_SLEEP         0 // XTAL OFF
 #define RF69_MODE_STANDBY       1 // XTAL ON
 #define RF69_MODE_SYNTH         2 // PLL ON

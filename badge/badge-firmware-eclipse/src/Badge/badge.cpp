@@ -216,6 +216,11 @@ void loopBadge() {
 		if (Radio.receiveDone()) {
 			StateFactory::getMessageState()->addRadioMessage((const char *) &Radio.DATA[0], Radio.DATALEN,
 					Radio.SENDERID, Radio.RSSI);
+#ifndef DONT_USE_ACK
+			if(Radio.ACK_REQUESTED && Radio.SENDERID!=RF69_BROADCAST_ADDR) {
+				Radio.sendACK("ACK",4);
+			}
+#endif
 		}
 	}
 	//configure 1 time listen RegListen1, RegListen2, RegListen3
