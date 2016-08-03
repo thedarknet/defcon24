@@ -53,17 +53,18 @@ ReturnStateContext SendMsgState::onRun(QKeyboard &kb) {
 		break;
 	case SENDING: {
 		static char buf[32];
-		static char ResultBuf[64];
 		sprintf(&buf[0], "Sending Message to: %s", AgentName);
 		gui_lable_multiline(&buf[0], 0, 10, 128, 64, 0, 0);
 #ifdef DONT_USE_ACK
 		getRadio().send(RadioID, &MsgBuffer[0], strlen(&MsgBuffer[0]), false);
+		nextState = StateFactory::getDisplayMessageState(StateFactory::getMenuState(), "Message Sent!", 5000);
 #else
 		//TODO get ack working
 		if (getRadio().sendWithRetry(RadioID, &MsgBuffer[0], strlen(&MsgBuffer[0]), 1, 400)) {
 			nextState = StateFactory::getDisplayMessageState(StateFactory::getMenuState(), "Message Sent Successfully!",
 					5000);
 		} else {
+			static char ResultBuf[64];
 			sprintf(&ResultBuf[0],"Failed to send: \nAddress: %d\n N: %s", RadioID,AgentName);
 			nextState = StateFactory::getDisplayMessageState(StateFactory::getSendMessageState(),
 					&ResultBuf[0], 8000);
