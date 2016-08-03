@@ -254,15 +254,21 @@ void ContactStore::Contact::setPublicKey(const uint8_t key[PUBLIC_KEY_LENGTH]) {
 void ContactStore::Contact::setPairingSignature(const uint8_t sig[SIGNATURE_LENGTH]) {
 	uint32_t s = StartAddress + sizeof(uint16_t) + PUBLIC_KEY_LENGTH;
 	FLASH_LOCKER f;
-	for(uint32_t i=0;i<sizeof(sig);i+=4) {
-		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, s+i, (*((uint32_t *) &sig[i])));
-	}
-	//HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, s + 4, (*((uint32_t *) &sig[4])));
-	//HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, s + 8, (*((uint32_t *) &sig[8])));
-	//HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, s + 12, (*((uint32_t *) &sig[12])));
-	//HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, s + 16, (*((uint32_t *) &sig[16])));
-	//HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, s + 20, (*((uint32_t *) &sig[20])));
-	//HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, s + 24, (*((uint32_t *) &sig[24])));
+	//for(uint32_t i=0;i<sizeof(sig);i+=4) {
+	//	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, s+i, (*((uint32_t *) &sig[i])));
+	//}
+	//if you look at the assembler being generated the loop will only run twice so we'll run roll it due to time
+	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, s + 4, (*((uint32_t *) &sig[4])));
+	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, s + 8, (*((uint32_t *) &sig[8])));
+	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, s + 12, (*((uint32_t *) &sig[12])));
+	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, s + 16, (*((uint32_t *) &sig[16])));
+	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, s + 20, (*((uint32_t *) &sig[20])));
+	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, s + 24, (*((uint32_t *) &sig[24])));
+	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, s + 28, (*((uint32_t *) &sig[28])));
+	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, s + 32, (*((uint32_t *) &sig[32])));
+	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, s + 36, (*((uint32_t *) &sig[36])));
+	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, s + 40, (*((uint32_t *) &sig[40])));
+	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, s + 44, (*((uint32_t *) &sig[44])));
 }
 
 //====================================================
