@@ -55,7 +55,9 @@ ErrorType MessageState::onInit() {
 	for (uint16_t i = 0; i < MAX_R_MSGS; i++) {
 		Items[i].id = RMsgs[v].FromUID;
 		ContactStore::Contact c;
-		if (getContactStore().findContactByID(RMsgs[v].FromUID, c)) {
+		if (RMsgs[v].FromUID==RF69_BROADCAST_ADDR) {
+			Items[i].text = "Broadcast Msg";
+		} else if (getContactStore().findContactByID(RMsgs[v].FromUID, c)) {
 			Items[i].text = c.getAgentName();
 			Items[i].setShouldScroll();
 		} else {
