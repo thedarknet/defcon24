@@ -197,7 +197,7 @@ void loopBadge() {
 			//on state switches reset keyboard and give a 1 second pause on reading from keyboard.
 			KB.reset();
 		}
-		if (CurrentState != StateFactory::getGameOfLifeState() && (tick>KB.getLastPinSelectedTick())
+		if (CurrentState != StateFactory::getGameOfLifeState() && (tick > KB.getLastPinSelectedTick())
 				&& (tick - KB.getLastPinSelectedTick()
 						> (1000 * 60 * getContactStore().getSettings().getScreenSaverTime()))) {
 			CurrentState->shutdown();
@@ -209,7 +209,7 @@ void loopBadge() {
 		CurrentState = StateFactory::getDisplayMessageState(StateFactory::getMenuState(), "Run State Error....", 2000);
 	}
 
-	if(getContactStore().getSettings().isNameSet()) {
+	if (getContactStore().getSettings().isNameSet()) {
 		StateFactory::getIRPairingState()->ListenForAlice();
 	}
 	StateFactory::getMessageState()->blink();
@@ -218,8 +218,13 @@ void loopBadge() {
 	if (tick - lastSendTime > 10) {
 		lastSendTime = tick;
 		if (Radio.receiveDone()) {
-			StateFactory::getMessageState()->addRadioMessage((const char *) &Radio.DATA[0], Radio.DATALEN,
-					Radio.SENDERID, Radio.RSSI);
+			if (Radio.TARGETID == RF69_BROADCAST_ADDR) {
+				StateFactory::getMessageState()->addRadioMessage((const char *) &Radio.DATA[0], Radio.DATALEN,
+						RF69_BROADCAST_ADDR, Radio.RSSI);
+			} else {
+				StateFactory::getMessageState()->addRadioMessage((const char *) &Radio.DATA[0], Radio.DATALEN,
+						Radio.SENDERID, Radio.RSSI);
+			}
 #ifndef DONT_USE_ACK
 			if(Radio.ACK_REQUESTED && Radio.SENDERID!=RF69_BROADCAST_ADDR) {
 				Radio.sendACK("ACK",4);
