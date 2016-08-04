@@ -117,7 +117,7 @@ def programKeyfile(flasher, key_filename):
 
     key_flash_size = os.path.getsize(key_filename)
 
-    flasher.erase(FLASH_BASE + KEY_FLASH_OFFSET, roundToSectorSize(key_flash_size))
+    # flasher.erase(FLASH_BASE + KEY_FLASH_OFFSET, roundToSectorSize(key_flash_size))
 
     flasher.flashFile(key_filename, FLASH_BASE + KEY_FLASH_OFFSET)
 
@@ -134,7 +134,7 @@ def programMainFlash():
         flasher._sendCmd('reset halt')  # Make sure the processor is stopped
 
         # Erase everything until the key
-        flasher.erase(FLASH_BASE, KEY_FLASH_OFFSET)
+        # flasher.erase(FLASH_BASE, KEY_FLASH_OFFSET)
 
         if '.bin' in FLASH_FILENAME:
             # If a .bin file is used, we need to specify the base address
