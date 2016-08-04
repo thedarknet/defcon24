@@ -271,6 +271,7 @@ void ContactStore::Contact::setPairingSignature(const uint8_t sig[SIGNATURE_LENG
 	//	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, s+i, (*((uint32_t *) &sig[i])));
 	//}
 	//if you look at the assembler being generated the loop will only run twice so we'll run roll it due to time
+	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, s + 0, (*((uint32_t *) &sig[0])));
 	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, s + 4, (*((uint32_t *) &sig[4])));
 	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, s + 8, (*((uint32_t *) &sig[8])));
 	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, s + 12, (*((uint32_t *) &sig[12])));
