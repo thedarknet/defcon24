@@ -96,7 +96,11 @@ const char *NoHasMessage = "DCDN Net Msgs";
 ErrorType MenuState::onInit() {
 	gui_set_curList(&MenuList);
 	Items[0].id = 0;
-	Items[0].text = (const char *) "Settings";
+	if(getContactStore().getSettings().isNameSet()) {
+		Items[0].text = (const char *) "Settings";
+	} else {
+		Items[0].text = (const char *) "Settings *";
+	}
 	Items[1].id = 1;
 	Items[1].text = (const char *) "IR Pair";
 	Items[2].id = 2;
@@ -204,7 +208,8 @@ SettingState::SettingState() :
 	Items[1].text = (const char *) "Set Screen Saver Time";
 	Items[1].setShouldScroll();
 	Items[2].id = 3;
-	Items[2].text = (const char *) "Reset Badge";
+	Items[2].text = (const char *) "Reset Badge Contacts";
+	Items[2].setShouldScroll();
 }
 
 SettingState::~SettingState() {
@@ -279,7 +284,8 @@ ReturnStateContext SettingState::onRun(QKeyboard & kb) {
 		}
 		gui_lable_multiline((const char*) "Set agent name:", 0, 30, 128, 64, 0, 0);
 		kb.updateContext(getKeyboardContext());
-		if (kb.getLastKeyReleased() == 11 && AgentName[0] != '\0' && AgentName[0] != ' ') {
+		if (kb.getLastKeyReleased() == 11 && AgentName[0] != '\0' && AgentName[0] != ' '&& AgentName[0]!='_') {
+			getKeyboardContext().finalize();
 			//done
 			if (getContactStore().getSettings().setAgentname(&AgentName[0])) {
 				nextState = StateFactory::getDisplayMessageState(StateFactory::getMenuState(), "Save Successful", 2000);
@@ -330,13 +336,14 @@ ReturnStateContext SettingState::onRun(QKeyboard & kb) {
 		gui_lable_multiline(&AgentName[0], 0, 40, 128, 64, 0, 0);
 		break;
 	case 102:
-		gui_lable_multiline((const char*) "Reset to factory defaults?", 0, 10, 128, 64, 0, 0);
+		gui_lable_multiline((const char*) "ERASE ALL\nCONTACTS?", 0, 10, 128, 64, 0, 0);
 		gui_lable_multiline((const char*) "Press # to Cancel", 0, 30, 128, 64, 0, 0);
 		gui_lable_multiline((const char*) "Press enter to do it", 0, 40, 128, 64, 0, 0);
 		if (kb.getLastKeyReleased() == 9) {
 			nextState = StateFactory::getMenuState();
 		} else if (kb.getLastKeyReleased() == 11) {
 			getContactStore().resetToFactory();
+			StateFactory::getAddressBookState()->resetSelection();
 			nextState = StateFactory::getMenuState();
 		}
 		break;
@@ -512,7 +519,7 @@ IRState *StateFactory::getIRPairingState() {
 	return &TheIRPairingState;
 }
 
-StateBase *StateFactory::getAddressBookState() {
+AddressState *StateFactory::getAddressBookState() {
 	return &TheAddressState;
 }
 

@@ -131,10 +131,10 @@ void IRState::ListenForAlice() {
 				IRStartRx();
 			} else {
 				//reset buffers!
-				ReceiveInternalState = BOB_WAITING_FOR_FIRST_TRANSMIT;
 				IRStopRX();
 				IRStartRx();
 			}
+			ReceiveInternalState = BOB_WAITING_FOR_FIRST_TRANSMIT;
 		} else {
 			if ((HAL_GetTick() - TimeInState) > TimeoutMS) {
 				TransmitInternalState = BOB_WAITING_FOR_FIRST_TRANSMIT;
@@ -175,7 +175,7 @@ ReturnStateContext IRState::onRun(QKeyboard &kb) {
 		if (bytesAvailable >= 88) {
 			uint8_t *buf = IRGetBuff();
 			if (buf[0] == 2) {
-				//first stop recieving
+				//first stop receiving
 				IRStopRX();
 				BobReplyToInit *brti = (BobReplyToInit*) buf;
 				//using signature validate our data that bob signed
@@ -225,6 +225,7 @@ ReturnStateContext IRState::onRun(QKeyboard &kb) {
 					sprintf(&displayBuf[0], "Signature Check Failed with %s", &brti->BobAgentName[0]);
 					//StateFactory::getEventState()->addMessage(&displayBuf[0]);
 				}
+				IRStartRx();
 			}
 			return ReturnStateContext(StateFactory::getMenuState());
 		}

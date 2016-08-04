@@ -54,6 +54,10 @@ bool ContactStore::SettingsInfo::setAgentname(const char name[AGENT_NAME_LENGTH]
 	return writeSettings(ds);
 }
 
+bool ContactStore::SettingsInfo::isNameSet() {
+	return (AgentName[0]!='\0' && AgentName[0]!='_');
+}
+
 const char *ContactStore::SettingsInfo::getAgentName() {
 	return &AgentName[0];
 }

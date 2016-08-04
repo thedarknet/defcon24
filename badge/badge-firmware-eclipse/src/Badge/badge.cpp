@@ -208,7 +208,10 @@ void loopBadge() {
 	} else {
 		CurrentState = StateFactory::getDisplayMessageState(StateFactory::getMenuState(), "Run State Error....", 2000);
 	}
-	StateFactory::getIRPairingState()->ListenForAlice();
+
+	if(getContactStore().getSettings().isNameSet()) {
+		StateFactory::getIRPairingState()->ListenForAlice();
+	}
 	StateFactory::getMessageState()->blink();
 
 	static uint32_t lastSendTime = 0;

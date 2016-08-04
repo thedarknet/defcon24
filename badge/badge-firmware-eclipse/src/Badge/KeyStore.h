@@ -102,6 +102,7 @@ public:
 		bool setSleepTime(uint8_t n);
 		uint8_t getSleepTime();
 		const char *getAgentName();
+		bool isNameSet();
 		bool setAgentname(const char name[AGENT_NAME_LENGTH]);
 		void resetToFactory();
 	protected:

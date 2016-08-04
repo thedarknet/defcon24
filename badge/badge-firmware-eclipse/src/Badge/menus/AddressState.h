@@ -7,6 +7,7 @@ class AddressState: public StateBase {
 public:
 	AddressState();
 	virtual ~AddressState();
+	void resetSelection();
 protected:
 	virtual ErrorType onInit();
 	virtual ReturnStateContext onRun(QKeyboard &kb);

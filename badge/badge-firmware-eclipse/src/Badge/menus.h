@@ -136,6 +136,7 @@ class MessageState;
 class IRState;
 class EventState;
 class SendMsgState;
+class AddressState;
 //=============================
 class StateFactory {
 public:
@@ -144,7 +145,7 @@ public:
 	static StateBase *getMenuState();
 	static StateBase *getSettingState();
 	static IRState 	 *getIRPairingState();
-	static StateBase *getAddressBookState();
+	static AddressState *getAddressBookState();
 	static SendMsgState *getSendMessageState();
 	static StateBase *getEnigmaState();
 	static StateBase *getBadgeInfoState();
