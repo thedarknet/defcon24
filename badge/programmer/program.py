@@ -27,31 +27,30 @@ import sys
 from openocd.flashProgrammer import flashProgrammer
 
 
-KEY_DIR = '../../BadgeGen/Debug/keys'
-USED_KEY_DIR = KEY_DIR + '/used'
-KEY_DB_FILE = KEY_DIR + '/used_keys.csv'
-
 MAIN_FLASH_ADDR = 0x8000000
 FLASH_BASE = 0x8000000
 KEY_FLASH_OFFSET = 0xffd4
 SECTOR_SIZE = 0x400
 
-FLASH_FILENAME = '../badge-firmware-eclipse/Debug/badge-firmware-eclipse.hex'
+def get_used_key_dir(key_dir):
+    return key_dir + '/used'
 
+def get_key_db_file(key_dir):
+    return key_dir + '/used_keys.csv'
 
-def initialSetup():
+def initialSetup(key_dir, used_key_dir, key_db_file):
     """ Make sure all required files and directories are present """
 
-    if not os.path.exists(KEY_DIR):
-        raise IOError('Key directory not found: ' + KEY_DIR)
+    if not os.path.exists(key_dir):
+        raise IOError('Key directory not found: ' + key_dir)
 
-    if not os.path.exists(USED_KEY_DIR):
+    if not os.path.exists(used_key_dir):
         print('Used key dir not found, creating.')
-        os.makedirs(USED_KEY_DIR)
+        os.makedirs(used_key_dir)
 
-    if not os.path.exists(KEY_DB_FILE):
+    if not os.path.exists(key_db_file):
         print('Used key database file not found, creating.')
-        with open(KEY_DB_FILE, 'a') as dbfile:
+        with open(key_db_file, 'a') as dbfile:
             dbfile.write('uid,keyfile,timestamp\n')
             dbfile.close()
 
@@ -69,11 +68,13 @@ def readDB(filename):
     return dbdict
 
 
-def updateDB(filename, uid, key_file):
+def updateDB(key_dir, filename, uid, key_file):
     
+    used_key_dir = get_used_key_dir(key_dir)
+
     # Move file to used dir
-    key_filename = KEY_DIR + '/' + key_file
-    shutil.move(key_filename, USED_KEY_DIR + '/')
+    key_filename = key_dir + '/' + key_file
+    shutil.move(key_filename, used_key_dir + '/')
 
     # Update db file
     with open(filename, 'a') as dbfile:
@@ -155,18 +156,22 @@ def programMainFlash(flash_filename):
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--openocd_dir', action='store', default='/opt/gnuarmeclipse/openocd/0.10.0-201601101000-dev/', help='Open OCD dev directory')
+parser.add_argument('--key_dir', action='store', required=True, help='key directory')
 parser.add_argument('--flash', action='store', help='hex file to program')
+
 
 args, unknown = parser.parse_known_args()
 
-print args
+key_dir = args.key_dir
+used_key_dir = get_used_key_dir(key_dir)
+key_db_file = get_key_db_file(key_dir)
 
-initialSetup()
-dbdict = readDB(KEY_DB_FILE)
-unused_keys = readKeyFiles(KEY_DIR)
+initialSetup(key_dir, used_key_dir, key_db_file)
+dbdict = readDB(key_db_file)
+unused_keys = readKeyFiles(key_dir)
 
 try:
-    print args.openocd_dir
+
     flasher = flashProgrammer(args.openocd_dir)
 
     if flasher.connected is True:
@@ -184,7 +189,7 @@ try:
             if uid in dbdict:
                 # Already used
                 key_file = dbdict[uid]['filename']
-                key_filename = USED_KEY_DIR + '/' + key_file
+                key_filename = used_key_dir + '/' + key_file
                 if programKeyfile(flasher, key_filename) is True:
                     print('Key programmed successfully')
                 else:
@@ -192,9 +197,9 @@ try:
                 
             else:
                 key_file = unused_keys.pop()
-                key_filename = KEY_DIR + '/' + key_file
+                key_filename = key_dir + '/' + key_file
                 if programKeyfile(flasher, key_filename) is True:
-                    updateDB(KEY_DB_FILE, uid, key_file) 
+                    updateDB(key_dir, key_db_file, uid, key_file) 
                     print('Key programmed successfully')
                 else:
                     print('Error programming key')
