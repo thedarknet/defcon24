@@ -268,7 +268,7 @@ int main(int argc, char *argv[]) {
 					for(unsigned int j=0;j<sizeof(digest);j++) {
 						sqlFile << std::setfill('0') << std::setw(2) << int(digest[j]);
 					}
-					sqlFile << std::dec << "');";
+					sqlFile << std::dec << "');" << std::endl;
 				}
 			}
 		}

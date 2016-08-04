@@ -209,6 +209,7 @@ void loopBadge() {
 		CurrentState = StateFactory::getDisplayMessageState(StateFactory::getMenuState(), "Run State Error....", 2000);
 	}
 	StateFactory::getIRPairingState()->ListenForAlice();
+	StateFactory::getMessageState()->blink();
 
 	static uint32_t lastSendTime = 0;
 	if (tick - lastSendTime > 10) {

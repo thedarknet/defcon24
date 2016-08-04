@@ -9,6 +9,7 @@ KeyBoardLetterCtx &getKeyboardContext() {
 }
 
 KeyBoardLetterCtx::KeyBoardLetterCtx() {
+	init(0,0);
 }
 
 void KeyBoardLetterCtx::processButtonPush(uint8_t button, const char *buttonLetters) {
@@ -30,12 +31,14 @@ void KeyBoardLetterCtx::processButtonPush(uint8_t button, const char *buttonLett
 		decPosition();
 		CurrentLetter = ' ';
 		LastPin = QKeyboard::NO_PIN_SELECTED;
+		timerStop();
 	} else {
 		CurrentLetter = buttonLetters[LetterSelection];
 		LastPin = button;
 		timerStart();
 	}
 }
+
 bool KeyBoardLetterCtx::isKeySelectionTimedOut() {
 	if (Started && (HAL_GetTick() - LastTimeLetterWasPushed) > 3000) {
 		return true;

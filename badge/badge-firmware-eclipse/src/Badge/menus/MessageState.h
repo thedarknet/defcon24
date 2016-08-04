@@ -20,6 +20,7 @@ public:
 	virtual ~MessageState();
 	void addRadioMessage(const char *msg, uint16_t msgSize, uint16_t uid, uint8_t rssi);
 	bool hasNewMessage() {return NewMessage;}
+	void blink();
 protected:
 	virtual ErrorType onInit();
 	virtual ReturnStateContext onRun(QKeyboard &kb);
