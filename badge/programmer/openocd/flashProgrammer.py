@@ -5,7 +5,7 @@ import subprocess
 import threading
 import time
 
-OPENOCD_DIR = '/Applications/gnuarmeclipse/OpenOCD/0.10.0-201601101000-dev/'
+OPENOCD_DIR = '/opt/gnuarmeclipse/openocd/0.10.0-201601101000-dev/'
 
 cmd = [OPENOCD_DIR + 'bin/openocd']
 cmd += ['-f', OPENOCD_DIR + 'scripts/interface/stlink-v2.cfg']
