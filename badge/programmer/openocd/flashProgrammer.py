@@ -5,22 +5,21 @@ import subprocess
 import threading
 import time
 
-OPENOCD_DIR = '/opt/gnuarmeclipse/openocd/0.10.0-201601101000-dev/'
-
-cmd = [OPENOCD_DIR + 'bin/openocd']
-cmd += ['-f', OPENOCD_DIR + 'scripts/interface/stlink-v2.cfg']
-cmd += ['-f', OPENOCD_DIR + 'scripts/target/stm32f1x.cfg']
-
 class openOCDThread(threading.Thread):
     ''' Run openocd as subprocess and read output in separate thread
     '''
-    def __init__(self, verbose=False):
+    def __init__(self, openocd_dir, verbose=False):
         super(openOCDThread, self).__init__()
         self.proc = None
         self.ready = False
         self.verbose = verbose
+        self.openocd_dir = openocd_dir
 
     def run(self):
+        cmd = [self.openocd_dir + 'bin/openocd']
+        cmd += ['-f', self.openocd_dir + 'scripts/interface/stlink-v2.cfg']
+        cmd += ['-f', self.openocd_dir + 'scripts/target/stm32f1x.cfg']
+
         self.proc = subprocess.Popen(cmd, stderr=subprocess.PIPE)
 
         while self.proc.poll() is None:
@@ -40,12 +39,12 @@ class openOCDThread(threading.Thread):
 
 
 class flashProgrammer(object):
-    def __init__(self):
+    def __init__(self, openocd_dir):
 
         self.connected = False
 
         # Start openOCD as daemon so it will automatically close on program exit
-        self.openOCD = openOCDThread()
+        self.openOCD = openOCDThread(openocd_dir)
         self.openOCD.daemon = True
         self.openOCD.start()
 

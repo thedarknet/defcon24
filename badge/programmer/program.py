@@ -22,7 +22,10 @@ import re
 import shutil
 import time
 import math
+import argparse
+import sys
 from openocd.flashProgrammer import flashProgrammer
+
 
 KEY_DIR = '../../BadgeGen/Debug/keys'
 USED_KEY_DIR = KEY_DIR + '/used'
@@ -127,8 +130,8 @@ def programKeyfile(flasher, key_filename):
         return False
 
 
-def programMainFlash():
-    if FLASH_FILENAME is not None:
+def programMainFlash(flash_filename):
+    if flash_filename is not None:
         print('Programming main flash')
 
         flasher._sendCmd('reset halt')  # Make sure the processor is stopped
@@ -136,27 +139,35 @@ def programMainFlash():
         # Erase everything until the key
         # flasher.erase(FLASH_BASE, KEY_FLASH_OFFSET)
 
-        if '.bin' in FLASH_FILENAME:
+        if '.bin' in flash_filename:
             # If a .bin file is used, we need to specify the base address
-            flasher.flashFile(FLASH_FILENAME, FLASH_BASE)
+            flasher.flashFile(flash_filename, FLASH_BASE)
         else:
             # .elf and .hex files have address informatino in them so use 0
-            flasher.flashFile(FLASH_FILENAME, 0)
+            flasher.flashFile(flash_filename, 0)
 
-        if flasher.verifyFile(FLASH_FILENAME, 0):
+        if flasher.verifyFile(flash_filename, 0):
             print('Flash programmed succesfully')
             return True
         else:
             print('Error prorgamming flash')
             return False
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--openocd_dir', action='store', default='/opt/gnuarmeclipse/openocd/0.10.0-201601101000-dev/', help='Open OCD dev directory')
+parser.add_argument('--flash', action='store', help='hex file to program')
+
+args, unknown = parser.parse_known_args()
+
+print args
 
 initialSetup()
 dbdict = readDB(KEY_DB_FILE)
 unused_keys = readKeyFiles(KEY_DIR)
 
 try:
-    flasher = flashProgrammer()
+    print args.openocd_dir
+    flasher = flashProgrammer(args.openocd_dir)
 
     if flasher.connected is True:
         print('Connected to openOCD')
@@ -191,10 +202,16 @@ try:
         else:
             print('Key already programmed')
 
-        programMainFlash()
+        # programMainFlash()
+        if args.flash:
+            programMainFlash(args.flash)
 
     else:        
         raise IOError('Could not connect to flash programmer')
+
+except:
+    raise
+
 finally:
     # Make sure we kill the flasher process, otherwise openocd thread 
     # stays open in background
