@@ -4,6 +4,7 @@
 # This will erase the keys! (it will print them out before doing it though...)
 #
 
+import argparse
 from openocd.flashProgrammer import flashProgrammer
 
 MAIN_FLASH_ADDR = 0x8000000
@@ -12,9 +13,13 @@ KEY_FLASH_OFFSET = 0xffd4
 SECTOR_SIZE = 0x400
 KEY_BYTES = 30
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--openocd_dir', action='store', default='/opt/gnuarmeclipse/openocd/0.10.0-201601101000-dev/', help='Open OCD dev directory')
+
+args, unknown = parser.parse_known_args()
 
 try:
-    flasher = flashProgrammer()
+    flasher = flashProgrammer(args.openocd_dir)
 
     if flasher.connected is True:
         flasher._sendCmd('reset halt')
