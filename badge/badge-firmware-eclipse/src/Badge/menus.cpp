@@ -285,6 +285,7 @@ ReturnStateContext SettingState::onRun(QKeyboard & kb) {
 		gui_lable_multiline((const char*) "Set agent name:", 0, 30, 128, 64, 0, 0);
 		kb.updateContext(getKeyboardContext());
 		if (kb.getLastKeyReleased() == 11 && AgentName[0] != '\0' && AgentName[0] != ' '&& AgentName[0]!='_') {
+			AgentName[ContactStore::AGENT_NAME_LENGTH-1]='\0';
 			getKeyboardContext().finalize();
 			//done
 			if (getContactStore().getSettings().setAgentname(&AgentName[0])) {
