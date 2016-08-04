@@ -102,7 +102,7 @@ class flashProgrammer(object):
         print(lines)
 
     def flashFile(self, filename, address):
-        lines = self._sendCmd('flash write_image ' +  
+        lines = self._sendCmd('flash write_image erase ' +  
                     ' ' + filename + ' ' + str(address), timeout=60)
         # TODO - verify output
         print(lines)
