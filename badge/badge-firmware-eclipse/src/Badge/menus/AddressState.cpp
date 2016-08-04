@@ -156,7 +156,7 @@ ReturnStateContext AddressState::onRun(QKeyboard &kb) {
 			}
 			break;
 		case 7:
-			if (AddressList.selectedItem == (sizeof(DetailItems) / sizeof(DetailItems[0]) - 1)) {
+			if (ContactDetails.selectedItem == (sizeof(DetailItems) / sizeof(DetailItems[0]) - 1)) {
 				ContactDetails.selectedItem = 0;
 			} else {
 				ContactDetails.selectedItem++;
