@@ -22,6 +22,7 @@ private:
 	char RadioIDBuf[12];
 	char PublicKey[64];
 	char SignatureKey[128];
+	uint8_t Index;
 };
 
 

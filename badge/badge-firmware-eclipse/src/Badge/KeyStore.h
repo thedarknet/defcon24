@@ -9,10 +9,11 @@ public:
 	//should trait this in the future for different curves
 	static const uint8_t PUBLIC_KEY_LENGTH = 48; //uncompressed size
 	static const uint8_t PUBLIC_KEY_COMPRESSED_LENGTH = 25; //compressed size
+	static const uint8_t PUBLIC_KEY_COMPRESSED_STORAGE_LENGTH = 26;
 	static const uint8_t PRIVATE_KEY_LENGTH = 24;
 	static const uint8_t DaemonPublic[PUBLIC_KEY_LENGTH];
 	static const uint8_t SIGNATURE_LENGTH = 48;
-	static const uint8_t SIGNATURE_BYTES_USED = 16;
+	//sstatic const uint8_t SIGNATURE_BYTES_USED = 16;
 
 	static const uint8_t AGENT_NAME_LENGTH = 12;
 	static const uint8_t CURRENT_VERSION = 0xDC;
@@ -62,15 +63,16 @@ public:
 	class Contact {
 	public:
 		friend class ContactStore;
-		static const uint8_t SIZE = sizeof(uint16_t) + PUBLIC_KEY_LENGTH + SIGNATURE_LENGTH + AGENT_NAME_LENGTH;
+		static const uint8_t SIZE = sizeof(uint16_t) + PUBLIC_KEY_COMPRESSED_STORAGE_LENGTH + SIGNATURE_LENGTH + AGENT_NAME_LENGTH;
 
 		uint16_t getUniqueID();
 		const char *getAgentName();
-		uint8_t *getPublicKey();
+		uint8_t *getCompressedPublicKey();
+		void getUnCompressedPublicKey(uint8_t key[PUBLIC_KEY_LENGTH]);
 		uint8_t *getPairingSignature();
 		void setUniqueID(uint16_t id);
 		void setAgentname(const char name[AGENT_NAME_LENGTH]);
-		void setPublicKey(const uint8_t key[PUBLIC_KEY_LENGTH]);
+		void setCompressedPublicKey(const uint8_t key[PUBLIC_KEY_COMPRESSED_LENGTH]);
 		void setPairingSignature(const uint8_t sig[SIGNATURE_LENGTH]);
 		Contact(uint32_t startAddress=0);
 	protected:

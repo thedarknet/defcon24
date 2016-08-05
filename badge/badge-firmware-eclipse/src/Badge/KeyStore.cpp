@@ -55,7 +55,7 @@ bool ContactStore::SettingsInfo::setAgentname(const char name[AGENT_NAME_LENGTH]
 }
 
 bool ContactStore::SettingsInfo::isNameSet() {
-	return (AgentName[0]!='\0' && AgentName[0]!='_');
+	return (AgentName[0] != '\0' && AgentName[0] != '_');
 }
 
 const char *ContactStore::SettingsInfo::getAgentName() {
@@ -160,7 +160,7 @@ bool ContactStore::SettingsInfo::setScreenSaverTime(uint8_t value) {
 }
 
 uint8_t ContactStore::SettingsInfo::getScreenSaverTime() {
-	return getSettings().ScreenSaverTime+1;
+	return getSettings().ScreenSaverTime + 1;
 }
 
 bool ContactStore::SettingsInfo::setSleepTime(uint8_t n) {
@@ -204,18 +204,18 @@ uint8_t *ContactStore::MyInfo::getPublicKey() {
 	return 0;
 }
 
-uint8_t compressedPublicKey[ContactStore::PUBLIC_KEY_COMPRESSED_LENGTH] = { 0 };
+uint8_t compressedPublicKey[ContactStore::PUBLIC_KEY_COMPRESSED_STORAGE_LENGTH] = { 0 };
 uint8_t *ContactStore::MyInfo::getCompressedPublicKey() {
 	uECC_compress(getPublicKey(), &compressedPublicKey[0], THE_CURVE);
 	return &compressedPublicKey[0];
 }
 
 bool ContactStore::MyInfo::isUberBadge() {
-	return (getFlags()&0x1!=0);
+	return ((getFlags() & 0x1) != 0);
 }
 
 uint16_t ContactStore::MyInfo::getFlags() {
-	return *((uint16_t*) (StartAddress + sizeof(uint16_t) + sizeof(uint16_t)+PRIVATE_KEY_LENGTH));
+	return *((uint16_t*) (StartAddress + sizeof(uint16_t) + sizeof(uint16_t) + PRIVATE_KEY_LENGTH));
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -228,15 +228,19 @@ uint16_t ContactStore::Contact::getUniqueID() {
 }
 
 const char *ContactStore::Contact::getAgentName() {
-	return ((char*) (StartAddress + sizeof(uint16_t) + PUBLIC_KEY_LENGTH + SIGNATURE_LENGTH));
+	return ((char*) (StartAddress + sizeof(uint16_t) + PUBLIC_KEY_COMPRESSED_STORAGE_LENGTH + SIGNATURE_LENGTH));
 }
 
-uint8_t *ContactStore::Contact::getPublicKey() {
+uint8_t *ContactStore::Contact::getCompressedPublicKey() {
 	return ((uint8_t*) (StartAddress + sizeof(uint16_t)));
 }
 
+void ContactStore::Contact::getUnCompressedPublicKey(uint8_t key[PUBLIC_KEY_LENGTH]) {
+	uECC_decompress(getCompressedPublicKey(), &key[0], THE_CURVE);
+}
+
 uint8_t *ContactStore::Contact::getPairingSignature() {
-	return ((uint8_t*) (StartAddress + sizeof(uint16_t) + PUBLIC_KEY_LENGTH));
+	return ((uint8_t*) (StartAddress + sizeof(uint16_t) + PUBLIC_KEY_COMPRESSED_STORAGE_LENGTH));
 }
 
 void ContactStore::Contact::setUniqueID(uint16_t id) {
@@ -247,25 +251,30 @@ void ContactStore::Contact::setUniqueID(uint16_t id) {
 void ContactStore::Contact::setAgentname(const char name[AGENT_NAME_LENGTH]) {
 	//int len = strlen(name);
 	FLASH_LOCKER f;
-	uint32_t s = StartAddress + sizeof(uint16_t) + PUBLIC_KEY_LENGTH + SIGNATURE_LENGTH;
+	uint32_t s = StartAddress + sizeof(uint16_t) + PUBLIC_KEY_COMPRESSED_STORAGE_LENGTH + SIGNATURE_LENGTH;
 	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, s, (*((uint32_t *) &name[0])));
 	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, s + 4, (*((uint32_t *) &name[4])));
 	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, s + 8, (*((uint32_t *) &name[8])));
 }
 
-void ContactStore::Contact::setPublicKey(const uint8_t key[PUBLIC_KEY_LENGTH]) {
+void ContactStore::Contact::setCompressedPublicKey(const uint8_t key1[PUBLIC_KEY_COMPRESSED_LENGTH]) {
 	uint32_t s = StartAddress + sizeof(uint16_t);
+	uint8_t key[PUBLIC_KEY_COMPRESSED_STORAGE_LENGTH];
+	memset(&key[0],0,sizeof(key)); //set array to 0
+	memcpy(&key[0],&key1[0],PUBLIC_KEY_COMPRESSED_LENGTH); //copy over just the 25 bytes of the compressed public key
 	FLASH_LOCKER f;
+	//store all bits
 	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, s, (*((uint32_t *) &key[0])));
 	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, s + 4, (*((uint32_t *) &key[4])));
 	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, s + 8, (*((uint32_t *) &key[8])));
 	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, s + 12, (*((uint32_t *) &key[12])));
 	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, s + 16, (*((uint32_t *) &key[16])));
 	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, s + 20, (*((uint32_t *) &key[20])));
+	HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD, s + 24, (*((uint32_t *) &key[24])));
 }
 
 void ContactStore::Contact::setPairingSignature(const uint8_t sig[SIGNATURE_LENGTH]) {
-	uint32_t s = StartAddress + sizeof(uint16_t) + PUBLIC_KEY_LENGTH;
+	uint32_t s = StartAddress + sizeof(uint16_t) + PUBLIC_KEY_COMPRESSED_STORAGE_LENGTH;
 	FLASH_LOCKER f;
 	//for(uint32_t i=0;i<sizeof(sig);i+=4) {
 	//	HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, s+i, (*((uint32_t *) &sig[i])));
@@ -349,11 +358,12 @@ bool ContactStore::getContactAt(uint16_t numContact, Contact &c) {
 }
 
 bool ContactStore::findContactByID(uint16_t uid, Contact &c) {
-	if(uid==0) return false;
+	if (uid == 0)
+		return false;
 	uint8_t currentContacts = Settings.getNumContacts();
-	for(int i=0;i<currentContacts;i++) {
-		if(getContactAt(i,c)) {
-			if(uid==c.getUniqueID()) {
+	for (int i = 0; i < currentContacts; i++) {
+		if (getContactAt(i, c)) {
+			if (uid == c.getUniqueID()) {
 				return true;
 			}
 		}
@@ -362,7 +372,7 @@ bool ContactStore::findContactByID(uint16_t uid, Contact &c) {
 	return false;
 }
 
-bool ContactStore::addContact(uint16_t uid, char agentName[AGENT_NAME_LENGTH], uint8_t key[PUBLIC_KEY_LENGTH],
+bool ContactStore::addContact(uint16_t uid, char agentName[AGENT_NAME_LENGTH], uint8_t key[PUBLIC_KEY_COMPRESSED_LENGTH],
 		uint8_t sig[SIGNATURE_LENGTH]) {
 	uint8_t currentContacts = Settings.getNumContacts();
 	uint8_t newNumContacts = Settings.setNumContacts(currentContacts + 1);
@@ -374,7 +384,7 @@ bool ContactStore::addContact(uint16_t uid, char agentName[AGENT_NAME_LENGTH], u
 	if (getContactAt(currentContacts, c)) {
 		c.setUniqueID(uid);
 		c.setAgentname(agentName);
-		c.setPublicKey(key);
+		c.setCompressedPublicKey(key);
 		c.setPairingSignature(sig);
 		return true;
 	}

@@ -39,6 +39,7 @@
 #include "usart.h"
 #include "gpio.h"
 #include "Badge/menus/ir.h"
+#include <KeyStore.h>
 
 /* USER CODE BEGIN Includes */
 #include <badge.h>
@@ -100,6 +101,17 @@ int main(void) {
 			delay(400);
 		}
 	}
+#if 0
+	//this is broken;
+	const char *scratch = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	uint8_t key[ContactStore::PUBLIC_KEY_COMPRESSED_LENGTH] = {0};
+	uint8_t sigtmp[48] = {0};
+	for(uint16_t i=1;i<27;i++) {
+		char buf[ContactStore::AGENT_NAME_LENGTH] = {'\0'};
+		buf[0] = scratch[i%25];
+		getContactStore().addContact(i,&buf[0],&key[0],&sigtmp[0]);
+	}
+#endif
 	/* USER CODE END 2 */
 
 	/* Infinite loop */

@@ -96,7 +96,7 @@ const char *NoHasMessage = "DCDN Net Msgs";
 ErrorType MenuState::onInit() {
 	gui_set_curList(&MenuList);
 	Items[0].id = 0;
-	if(getContactStore().getSettings().isNameSet()) {
+	if (getContactStore().getSettings().isNameSet()) {
 		Items[0].text = (const char *) "Settings";
 	} else {
 		Items[0].text = (const char *) "Settings *";
@@ -106,7 +106,7 @@ ErrorType MenuState::onInit() {
 	Items[2].id = 2;
 	Items[2].text = (const char *) "Address Book";
 	Items[3].id = 3;
-	if(StateFactory::getMessageState()->hasNewMessage()) {
+	if (StateFactory::getMessageState()->hasNewMessage()) {
 		Items[3].text = HasMessage;
 	} else {
 		Items[3].text = NoHasMessage;
@@ -155,10 +155,11 @@ ReturnStateContext MenuState::onRun(QKeyboard &kb) {
 			nextState = StateFactory::getSettingState();
 			break;
 		case 1:
-			if(getContactStore().getSettings().getAgentName()[0]!='\0') {
+			if (getContactStore().getSettings().getAgentName()[0] != '\0') {
 				nextState = StateFactory::getIRPairingState();
 			} else {
-				nextState = StateFactory::getDisplayMessageState(StateFactory::getMenuState(),(const char *)"You must set your agent name first",3000);
+				nextState = StateFactory::getDisplayMessageState(StateFactory::getMenuState(),
+						(const char *) "You must set your agent name first", 3000);
 			}
 			break;
 		case 2:
@@ -179,9 +180,9 @@ ReturnStateContext MenuState::onRun(QKeyboard &kb) {
 		case 7:
 			nextState = StateFactory::getRadioInfoState();
 			break;
-		//case 8:
-		//	nextState = StateFactory::getEventState();
-		//	break;
+			//case 8:
+			//	nextState = StateFactory::getEventState();
+			//	break;
 		}
 	}
 		break;
@@ -259,9 +260,9 @@ ReturnStateContext SettingState::onRun(QKeyboard & kb) {
 				memset(&AgentName[0], 0, sizeof(AgentName));
 				getKeyboardContext().init(&AgentName[0], sizeof(AgentName));
 				break;
-			//case 101:
-			//	sprintf(&AgentName[0], "Current:  %d", getContactStore().getSettings().getScreenSaverType() + 1);
-			//	break;
+				//case 101:
+				//	sprintf(&AgentName[0], "Current:  %d", getContactStore().getSettings().getScreenSaverType() + 1);
+				//	break;
 			case 101:
 				InputPos = getContactStore().getSettings().getScreenSaverTime();
 				break;
@@ -284,8 +285,8 @@ ReturnStateContext SettingState::onRun(QKeyboard & kb) {
 		}
 		gui_lable_multiline((const char*) "Set agent name:", 0, 30, 128, 64, 0, 0);
 		kb.updateContext(getKeyboardContext());
-		if (kb.getLastKeyReleased() == 11 && AgentName[0] != '\0' && AgentName[0] != ' '&& AgentName[0]!='_') {
-			AgentName[ContactStore::AGENT_NAME_LENGTH-1]='\0';
+		if (kb.getLastKeyReleased() == 11 && AgentName[0] != '\0' && AgentName[0] != ' ' && AgentName[0] != '_') {
+			AgentName[ContactStore::AGENT_NAME_LENGTH - 1] = '\0';
 			getKeyboardContext().finalize();
 			//done
 			if (getContactStore().getSettings().setAgentname(&AgentName[0])) {
@@ -298,24 +299,24 @@ ReturnStateContext SettingState::onRun(QKeyboard & kb) {
 		}
 		break;
 	}
-	/*
-	case 101: {
-		gui_lable_multiline((const char*) "Screen Saver:", 0, 10, 128, 64, 0, 0);
-		gui_lable_multiline(&AgentName[0], 0, 20, 128, 64, 0, 0);
-		gui_lable_multiline((const char*) "1: Game of Life", 0, 30, 128, 64, 0, 0);
-		uint8_t ss = kb.getLastKeyReleased();
-		switch (ss) {
-		case 0:
-			if (getContactStore().getSettings().setScreenSaverType(ss)) {
-				nextState = StateFactory::getDisplayMessageState(StateFactory::getMenuState(), "Setting saved", 2000);
-			} else {
-				nextState = StateFactory::getDisplayMessageState(StateFactory::getMenuState(), "Save FAILED!", 4000);
-			}
-			break;
-		}
-		break;
-	}
-	*/
+		/*
+		 case 101: {
+		 gui_lable_multiline((const char*) "Screen Saver:", 0, 10, 128, 64, 0, 0);
+		 gui_lable_multiline(&AgentName[0], 0, 20, 128, 64, 0, 0);
+		 gui_lable_multiline((const char*) "1: Game of Life", 0, 30, 128, 64, 0, 0);
+		 uint8_t ss = kb.getLastKeyReleased();
+		 switch (ss) {
+		 case 0:
+		 if (getContactStore().getSettings().setScreenSaverType(ss)) {
+		 nextState = StateFactory::getDisplayMessageState(StateFactory::getMenuState(), "Setting saved", 2000);
+		 } else {
+		 nextState = StateFactory::getDisplayMessageState(StateFactory::getMenuState(), "Save FAILED!", 4000);
+		 }
+		 break;
+		 }
+		 break;
+		 }
+		 */
 	case 101:
 		gui_lable_multiline((const char*) "Time until badge\ngoes to sleep:", 0, 10, 128, 64, 0, 0);
 		if (kb.getLastKeyReleased() == 9 || kb.getLastKeyReleased() == 10
@@ -329,7 +330,7 @@ ReturnStateContext SettingState::onRun(QKeyboard & kb) {
 			}
 		} else {
 			InputPos = kb.getLastKeyReleased();
-			if(InputPos > 8) {
+			if (InputPos > 8) {
 				InputPos = 8;
 			}
 		}
@@ -366,31 +367,31 @@ ErrorType SettingState::onShutdown() {
 BadgeInfoState::BadgeInfoState() :
 		StateBase(), BadgeInfoList("Badge Info:", Items, 0, 0, 128, 64, 0, (sizeof(Items) / sizeof(Items[0]))), RegCode() {
 
-	memset(&RegCode,0,sizeof(RegCode));
+	memset(&RegCode, 0, sizeof(RegCode));
 }
 
 BadgeInfoState::~BadgeInfoState() {
 
 }
 
-
-
 const char *BadgeInfoState::getRegCode() {
-	if(RegCode[0]==0) {
+	if (RegCode[0] == 0) {
 		ShaOBJ hashObj;
 		sha256_init(&hashObj);
 		//const char *p = "this is my message";
 		//sha256_add(&hashObj,(const uint8_t*)p,strlen(p));
-		sha256_add(&hashObj,getContactStore().getMyInfo().getPrivateKey(),ContactStore::PRIVATE_KEY_LENGTH);
+		sha256_add(&hashObj, getContactStore().getMyInfo().getPrivateKey(), ContactStore::PRIVATE_KEY_LENGTH);
 		uint16_t id = getContactStore().getMyInfo().getUniqueID();
-		sha256_add(&hashObj,(uint8_t *) &id,sizeof(id));
+		sha256_add(&hashObj, (uint8_t *) &id, sizeof(id));
 		uint8_t rH[SHA256_HASH_SIZE];
-		sha256_digest(&hashObj,&rH[0]);
-		sprintf(&RegCode[0],"%02x%02x%02x%02x%02x%02x%02x%02x", rH[0],rH[1],rH[2],rH[3],rH[4],rH[5],rH[6],
+		sha256_digest(&hashObj, &rH[0]);
+		sprintf(&RegCode[0], "%02x%02x%02x%02x%02x%02x%02x%02x", rH[0], rH[1], rH[2], rH[3], rH[4], rH[5], rH[6],
 				rH[7]);
 	}
 	return &RegCode[0];
 }
+
+static const char *VERSION = "dc24.1.1";
 
 ErrorType BadgeInfoState::onInit() {
 	gui_set_curList(&BadgeInfoList);
@@ -398,16 +399,21 @@ ErrorType BadgeInfoState::onInit() {
 	sprintf(&ListBuffer[0][0], "N: %s", getContactStore().getSettings().getAgentName());
 	sprintf(&ListBuffer[1][0], "Num contacts: %u", getContactStore().getSettings().getNumContacts());
 	sprintf(&ListBuffer[2][0], "REG: %s", getRegCode());
-	sprintf(&ListBuffer[3][0], "DEVID: %lu", HAL_GetDEVID());
-	sprintf(&ListBuffer[4][0], "REVID: %lu", HAL_GetREVID());
-	sprintf(&ListBuffer[5][0], "HAL Version: %lu", HAL_GetHalVersion());
-	sprintf(&ListBuffer[6][0], "UID: %u", getContactStore().getMyInfo().getUniqueID());
-	sprintf(&ListBuffer[7][0], "SVer: %s", "dc24.1.0");
+	sprintf(&ListBuffer[3][0], "UID: %u", getContactStore().getMyInfo().getUniqueID());
+	uint8_t *pCP = getContactStore().getMyInfo().getCompressedPublicKey();
+	sprintf(&ListBuffer[4][0],
+			"PK: %02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
+			pCP[0], pCP[1], pCP[2], pCP[3], pCP[4], pCP[5], pCP[6], pCP[7], pCP[8], pCP[9], pCP[10], pCP[11], pCP[12],
+			pCP[13], pCP[14], pCP[15], pCP[16], pCP[17], pCP[18], pCP[19], pCP[20], pCP[21], pCP[22], pCP[23], pCP[24]);
+	sprintf(&ListBuffer[5][0], "DEVID: %lu", HAL_GetDEVID());
+	sprintf(&ListBuffer[6][0], "REVID: %lu", HAL_GetREVID());
+	sprintf(&ListBuffer[7][0], "HAL Version: %lu", HAL_GetHalVersion());
+	sprintf(&ListBuffer[8][0], "SVer: %s", VERSION);
 	for (uint32_t i = 0; i < (sizeof(Items) / sizeof(Items[0])); i++) {
 		Items[i].text = &ListBuffer[i][0];
 		Items[i].id = i;
+		Items[i].setShouldScroll();
 	}
-	Items[2].setShouldScroll();
 	return ErrorType();
 }
 
@@ -548,7 +554,7 @@ MessageState *StateFactory::getMessageState() {
 	return &TheMessageState;
 }
 /*
-EventState *StateFactory::getEventState() {
-	return &TheEventState;
-}
-*/
+ EventState *StateFactory::getEventState() {
+ return &TheEventState;
+ }
+ */

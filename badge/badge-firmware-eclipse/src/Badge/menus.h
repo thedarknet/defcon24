@@ -114,8 +114,8 @@ protected:
 	const char *getRegCode();
 private:
 	GUI_ListData BadgeInfoList;
-	GUI_ListItemData Items[8];
-	char ListBuffer[8][24]; //height then width
+	GUI_ListItemData Items[9];
+	char ListBuffer[9][64]; //height then width
 	char RegCode[18];
 };
 class RadioInfoState: public StateBase {

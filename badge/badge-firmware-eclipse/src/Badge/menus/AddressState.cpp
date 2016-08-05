@@ -9,7 +9,7 @@ AddressState::AddressState() :
 		StateBase(), AddressList((const char *) "Address Book", Items, 0, 0, 128, 64, 0,
 				sizeof(Items) / sizeof(Items[0])), CurrentContactList(), ContactDetails(
 				(const char *) "Contact Details: ", DetailItems, 0, 0, 128, 64, 0,
-				sizeof(DetailItems) / sizeof(DetailItems[0])) {
+				sizeof(DetailItems) / sizeof(DetailItems[0])), Index(0) {
 
 }
 
@@ -36,6 +36,7 @@ ErrorType AddressState::onInit() {
 	memset(&RadioIDBuf[0], 0, sizeof(RadioIDBuf));
 	memset(&PublicKey[0], 0, sizeof(PublicKey));
 	memset(&SignatureKey[0], 0, sizeof(SignatureKey));
+	Index = 0;
 	return ErrorType();
 }
 
@@ -53,7 +54,7 @@ void AddressState::setNext4Items(uint16_t startAt) {
 			}
 		} else if (i == num && getContactStore().getMyInfo().isUberBadge()) {
 			//add broadcast
-			Items[j].id = RF69_BROADCAST_ADDR;
+			Items[j].id = RF69_BROADCAST_ADDR; //BAD IDEA ID is used for determine offset into contact list!
 			Items[j].text = BROADCAST;
 		} else {
 			Items[j].id = 0;
@@ -72,26 +73,43 @@ ReturnStateContext AddressState::onRun(QKeyboard &kb) {
 		case 1:
 			if (AddressList.selectedItem == 0) {
 				//keep selection at 0 but load new values
-				uint16_t startAt = Items[AddressList.selectedItem].id;
+				int16_t startAt = Index - 4;
 				if (startAt > 0) {
-					setNext4Items(startAt - 1);
+					Index = startAt;
+					setNext4Items(startAt);
+				} else {
+					setNext4Items(0);
+					Index = 0;
+					AddressList.selectedItem=0;
 				}
 			} else {
 				AddressList.selectedItem--;
+				Index--;
 			}
 			break;
-		case 7:
-			if (AddressList.selectedItem == (sizeof(Items) / sizeof(Items[0]) - 1)) {
-				setNext4Items(Items[AddressList.selectedItem].id + 1);
-			} else {
-				AddressList.selectedItem++;
+		case 7: {
+			uint16_t num = getContactStore().getSettings().getNumContacts();
+			if (Index < num) {
+				if (AddressList.selectedItem == (sizeof(Items) / sizeof(Items[0]) - 1)) {
+					if (num > Index + 4) {
+						setNext4Items(Index);
+					} else {
+						Index = num-2;
+						setNext4Items(Index);
+					}
+					AddressList.selectedItem = 0;
+				} else {
+					AddressList.selectedItem++;
+					Index++;
+				}
 			}
+		}
 			break;
 		case 9:
 			nextState = StateFactory::getMenuState();
 			break;
 		case 11:
-			if(Items[AddressList.selectedItem].id != 0) {
+			if (Items[AddressList.selectedItem].id != 0) {
 				gui_set_curList(&ContactDetails);
 				if (Items[AddressList.selectedItem].id == RF69_BROADCAST_ADDR) {
 					DetailItems[0].id = 1;
@@ -115,15 +133,18 @@ ReturnStateContext AddressState::onRun(QKeyboard &kb) {
 					sprintf(&RadioIDBuf[0], "ID: %d", CurrentContactList[AddressList.selectedItem].getUniqueID());
 					DetailItems[1].text = &RadioIDBuf[0];
 					DetailItems[2].id = 1;
-					uint8_t *pk = CurrentContactList[AddressList.selectedItem].getPublicKey();
+					uint8_t *pk = CurrentContactList[AddressList.selectedItem].getCompressedPublicKey();
+					memset(&PublicKey[0], 0, sizeof(PublicKey));
 					sprintf(&PublicKey[0],
 							"PK: %02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
-							pk[0], pk[1], pk[2], pk[3], pk[4], pk[5], pk[6], pk[7], pk[8], pk[9], pk[10], pk[11], pk[12],
-							pk[13], pk[14], pk[15], pk[16], pk[17], pk[18], pk[19], pk[20], pk[21], pk[22], pk[23], pk[24]);
+							pk[0], pk[1], pk[2], pk[3], pk[4], pk[5], pk[6], pk[7], pk[8], pk[9], pk[10], pk[11],
+							pk[12], pk[13], pk[14], pk[15], pk[16], pk[17], pk[18], pk[19], pk[20], pk[21], pk[22],
+							pk[23], pk[24]);
 					DetailItems[2].text = &PublicKey[0];
 					DetailItems[2].resetScrollable();
 					DetailItems[3].id = 1;
 					uint8_t *sig = CurrentContactList[AddressList.selectedItem].getPairingSignature();
+					memset(&SignatureKey[0], 0, sizeof(SignatureKey));
 					sprintf(&SignatureKey[0],
 							"SIG: %02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
 							sig[0], sig[1], sig[2], sig[3], sig[4], sig[5], sig[6], sig[7], sig[8], sig[9], sig[10],
