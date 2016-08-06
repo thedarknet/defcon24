@@ -19,12 +19,13 @@
 static const int MAX_TIME_BETWEEN_DATA = 120;
 static const int MAX_TIME_FOR_CONNECTION = MAX_TIME_BETWEEN_DATA * 4;
 
-static const char *CYBEREZ[3][16] = { "Cyberez Inc.", "Cyb3r3z 1nc.", "cYber3z 11c" };
+static const char *CYBEREZ[64][7] = { "Cyberez Inc.", "Cyb3r3z 1nc.", "cYber3z", "debug: ok",
+		"error: memory invalid", "success", "jack of spades initialized" };
 
 static const char *HEX_STRING = "0123456789ABCDEF";
 
 void generateRandomShit(char *p, unsigned int n) {
-	bool addCyberez = ((rand() % 100) < 15 ? true : false);
+	bool addCyberez = ((rand() % 100) < 25 ? true : false);
 	int where = -1;
 	if (addCyberez) {
 		int loc = rand() % 3;
@@ -36,7 +37,7 @@ void generateRandomShit(char *p, unsigned int n) {
 			where = n / 2;
 			break;
 		case 3:
-			where = n - 16;
+			where = n - 32;
 			break;
 		default:
 			break;
@@ -44,9 +45,9 @@ void generateRandomShit(char *p, unsigned int n) {
 	}
 	for (unsigned int i = 0; i < n - 1; i++) {
 		if (i == where) {
-			int which = rand() % 3;
-			strncpy(&p[i], CYBEREZ[which][0],strlen(CYBEREZ[which][0]));
-			i += strlen(CYBEREZ[which][0]);
+			int which = rand() % 7;
+			strncpy(&p[i], CYBEREZ[0][which], strlen(CYBEREZ[0][which]));
+			i += strlen(CYBEREZ[0][which]);
 		} else {
 			p[i] = HEX_STRING[rand() % 16];
 		}
@@ -74,11 +75,11 @@ struct ClientInfo {
 			}
 		}
 	}
-	void bufferOut(char *b, int n) {
+	void bufferOut(const char *b, int n) {
 		OutputBuffer.append(b, n);
 	}
 	void sendAll() {
-		if(OutputBuffer.length()>0) {
+		if (OutputBuffer.length() > 0) {
 			int n = 0;
 			while (OutputBuffer.length() > 0 && (n = send(FD, OutputBuffer.data(), OutputBuffer.length(), 0)) > 0) {
 				OutputBuffer = OutputBuffer.substr(n);
@@ -154,7 +155,7 @@ int main(int arc, char *agrv[]) {
 							strlen(Results[(*it)->RightAnswers])) == 0) {
 						(*it)->InputBuffer.clear();
 						if ((*it)->RightAnswers == 6) {
-							static const char *success = "March Hare daemon initialized";
+							static const char *success = "March Hare daemon initialized.\nConnection Terminated";
 							send((*it)->FD, success, strlen(success), 0);
 							keepRunning = false;
 						} else {
@@ -163,10 +164,12 @@ int main(int arc, char *agrv[]) {
 							(*it)->RightAnswers++;
 							char buf[128];
 							generateRandomShit(&buf[0], sizeof(buf));
-							(*it)->bufferOut(buf,128);
+							(*it)->bufferOut(buf, 128);
 						}
 					} else {
 						printf("Wrong answer sent by connection: %s", inet_ntoa(their_addr.sin_addr));
+						const char *message = "Incorrect code.\nConnection closed.";
+						(*it)->bufferOut(message, strlen(message));
 						(*it)->Dead = true;
 					}
 				} else {
