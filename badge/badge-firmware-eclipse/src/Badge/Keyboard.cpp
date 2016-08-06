@@ -61,6 +61,7 @@ void KeyBoardLetterCtx::decPosition() {
 
 void KeyBoardLetterCtx::finalize() {
 	Buffer[CursorPosition] = CurrentLetter;
+	Buffer[BufferSize-1] = '\0';
 }
 
 void KeyBoardLetterCtx::incPosition() {
