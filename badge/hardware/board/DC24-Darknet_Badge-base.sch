@@ -728,8 +728,8 @@ Commonly used for 1/4W through-hole resistors. 0.3" pitch between holes.&lt;br&g
 <rectangle x1="-2.921" y1="-12.954" x2="-2.159" y2="-9.017" layer="51"/>
 <rectangle x1="-0.381" y1="-12.954" x2="0.381" y2="-9.017" layer="51"/>
 <rectangle x1="2.159" y1="-12.954" x2="2.921" y2="-9.017" layer="51"/>
-<rectangle x1="-5.08" y1="-5.08" x2="5.08" y2="6.35" layer="1"/>
-<rectangle x1="-5.334" y1="-5.334" x2="5.334" y2="6.604" layer="29"/>
+<rectangle x1="-5.3975" y1="-5.08" x2="5.3975" y2="6.35" layer="1"/>
+<rectangle x1="-5.3975" y1="-5.08" x2="5.3975" y2="6.35" layer="29"/>
 </package>
 <package name="TO262-V">
 <description>&lt;b&gt;Molded Package&lt;/b&gt;</description>
